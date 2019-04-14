@@ -1,0 +1,38 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway:700);
+/*----------------------------------------------------------------
+[Table of contents]
+
+1. General
+-------------------------------------------------------------------*/
+/***************************************/
+/* 1. GENERAL */
+/***************************************/
+.xmcountdown {
+	overflow: hidden;
+}
+
+.xmcountdown > div {
+	position: relative;
+	margin-right: 30px;
+}
+
+.xmcountdown > div:last-child {
+	margin-right: 0;
+}
+
+.xmcountdown > div > p {
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	color: #fff;
+	font-family: 'Raleway', sans-serif;	
+	font-size: 2.5em; /* 40px / 16px */
+	font-weight: 700;
+	text-align: center;
+	line-height: 23px;
+	text-transform: uppercase;
+}
+
+.xmcountdown > div > p span.tag {
+	font-size: 0.25em; /* 10px / 40px */
+}

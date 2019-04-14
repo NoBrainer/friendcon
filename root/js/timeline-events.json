@@ -1,0 +1,449 @@
+[
+   {
+      "date" : {
+         "day" : 26,
+         "month" : 5,
+         "year" : 2018
+      },
+      "events" : [
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 5,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Pool Party",
+                  "subtitle" : "Pool!",
+                  "description" : "Party! In the Pool!\r\n\r\nWOAH"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 7,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Pre-Orientation",
+                  "subtitle" : "Main Room",
+                  "description" : "A brief orientation for those who are here to help set up the room\r\n"
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 7,
+               "minutes" : 30,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Room Set Up",
+                  "subtitle" : "Main Room",
+                  "description" : "Setting up the room, feel free to bring all hardware to set the convention space"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 11,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : "http://media.salon.com/2012/12/shutterstock_122448193.jpg",
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Mixer",
+                  "subtitle" : "Hotel Bar",
+                  "description" : "A mixer at the hotel bar. Booze will be here!!?"
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "date" : {
+         "day" : 27,
+         "month" : 5,
+         "year" : 2018
+      },
+      "events" : [
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 12,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : "images/fcbanner.jpg",
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Orientation",
+                  "subtitle" : "Main Room",
+                  "description" : "Mandatory orientation for those attending Friendcon. We go over the rules, regulations, and schedule\r\n"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 2,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Hearthstone Tournament",
+                  "subtitle" : "Main Room",
+                  "description" : "Double elimination tournament - Standard mode"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 4,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "SMITH",
+                  "subtitle" : "Main Room",
+                  "description" : "Representing crafts and labor. He is usually prayed to when work needs to be done, for strength. He carries a hammer.\r\n\r\nTwo events will take place that the houses will participate in to gain its favor."
+               },
+               {
+                  "title" : "Drawing Competition",
+                  "subtitle" : "",
+                  "description" : "First a lego competition will occur. each house will be given an equal amount and type of lego bricks, and are tasked with making a creation based off of a prompt revealed before the event. After a set time, they will be on display for the attendees to vote on. An attendee may not vote for their own house. After a set time, the house with the most votes gains the favor. Votes will be done via an online interface, accessible via smartphones. A manual option will also be available for those without smartphones/internet access."
+               },
+               {
+                  "title" : "Lego competition",
+                  "subtitle" : "",
+                  "description" : "Additionally, a second chance to gain the favor of the Smith will occur in the form of an art competition. Attendees will be told ahead of time, in case they would like to bring their own materials to the convention to use. A theme will be given at the start of the event, and participants will have a set time to create their work based on the set theme. After a set time, they will be on display for the attendees to vote on. An attendee may not vote for their own house. After a set time, the house with the most votes gains the favor. Votes will be done via an online interface, accessible via smartphones. A manual option will also be available for those without smartphones/internet access."
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 8,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "CRONE",
+                  "subtitle" : "Main Room",
+                  "description" : "Representing wisdom. She carries a lantern and is prayed to for guidance."
+               },
+               {
+                  "title" : "Fibbage",
+                  "subtitle" : "",
+                  "description" : "A trivia competition will occur, by playing The Jackbox Party pack game Fibage, involving 3-4 members of each house over 2-3 rounds. All houses compete each round. The House that gains the highest point total over all of the games will win the aspect of the crone."
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 10,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "FATHER",
+                  "subtitle" : "Main Room",
+                  "description" : "Representing judgment. He is depicted as a bearded man who carries scales, and is prayed to for justice.\r\n"
+               },
+               {
+                  "title" : "amiibo Betting",
+                  "subtitle" : "",
+                  "description" : "We wanted a trial that tried to best show this virtue. For this trial, participants would be given a number of beads to start off with to use for betting purposes. We would try to make sure the number of participants per house would be as equal as possible, for an even playing field. Super Smash Bros for Wii U will be played, with Amiibos being pitted against each other. Participants will place bets on who they think will be the winner, each round. After a predetermined number of rounds has been passed, the number of beads per house will be tallied to determine the house who gains the favor of the Father."
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 11,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "MAIDEN",
+                  "subtitle" : "Main Room",
+                  "description" : "Representing innocence and chastity. She is usually prayed to to protect a maiden's virtue."
+               },
+               {
+                  "title" : "Cosplay Contest",
+                  "subtitle" : "",
+                  "description" : "This will be occurring in tandem with the cosplay contest, run by Kristen. Winners decided by the audience via voting, will gain the favor of the Maiden."
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 12,
+               "minutes" : 0,
+               "am" : true,
+               "pm" : false
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Day one summary / Dance",
+                  "subtitle" : "Main Room",
+                  "description" : "Summary of the events that have transpired as well as a recap of standings of the various houses. Following the summary will be the dance."
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "date" : {
+         "day" : 28,
+         "month" : 5,
+         "year" : 2018
+      },
+      "events" : [
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 12,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : "images/fcbanner.jpg",
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Game Recap\r\n",
+                  "subtitle" : "Main room",
+                  "description" : "A brief standings of the houses"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 2,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "League of Legends 1v1 Tournament",
+                  "subtitle" : "main room",
+                  "description" : "Double elimination, winner is determined by the first player to destroy a tower or to get a kill."
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 4,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Double Dash Tournament",
+                  "subtitle" : "main room",
+                  "description" : "Double elimination, Frantic mode"
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 5,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "WARRIOR",
+                  "subtitle" : "main room",
+                  "description" : "Representing strength in battle. He is prayed to for courage and victory. He also carries a sword."
+               },
+               {
+                  "title" : "Codenames",
+                  "subtitle" : "",
+                  "description" : "One of the simpler trials to plan for, gaming tournaments will be used (Video Game: Joust, Board Game: Codenames) to determine the house who gains this favor. It would explicitly state for these tournaments that the winner will gain the favor of the Warrior for their house. \r\n"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 8,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Werewolf",
+                  "subtitle" : "main room",
+                  "description" : "Free play Werewolf of Miller’s Hollow, assorted game rules"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 10,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Joust",
+                  "subtitle" : "main room",
+                  "description" : "Free play of joust, just for fun"
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 11,
+               "minutes" : 0,
+               "am" : false,
+               "pm" : true
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "WARRIOR",
+                  "subtitle" : "main room",
+                  "description" : ""
+               },
+               {
+                  "title" : "Joust",
+                  "subtitle" : "",
+                  "description" : "Single elimination 3v3 matches"
+               }
+            ]
+         },
+         {
+            "side" : "right",
+            "bullet" : "big",
+            "time" : {
+               "hours" : 12,
+               "minutes" : 0,
+               "am" : true,
+               "pm" : false
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Throne ceremony",
+                  "subtitle" : "main room",
+                  "description" : "Announcement of the final standings!"
+               },
+               {
+                  "title" : "Raffle Drawings",
+                  "subtitle" : "main room",
+                  "description" : "Find out who won our AWESOME raffles!"
+               }
+            ]
+         },
+         {
+            "side" : "left",
+            "bullet" : "small",
+            "time" : {
+               "hours" : 12,
+               "minutes" : 30,
+               "am" : true,
+               "pm" : false
+            },
+            "image" : false,
+            "video" : false,
+            "items" : [
+               {
+                  "title" : "Dance",
+                  "subtitle" : "main room",
+                  "description" : "Saturday night dance!"
+               }
+            ]
+         }
+      ]
+   }
+]
