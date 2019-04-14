@@ -90,8 +90,8 @@ if (isset($_POST['btn-login'])) {
 <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    /*console.log("<?php echo $userSession; ?>");
-     console.log("<?php echo $userRow['name']; ?>");*/
+    //console.log("<?php echo $userSession; ?>");
+    //console.log("<?php echo $userRow['name']; ?>");
 </script>
 </body>
 </html>
