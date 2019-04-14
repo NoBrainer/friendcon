@@ -3,18 +3,18 @@ session_start();
 $userSession = $_SESSION['userSession'];
 
 if (!isset($userSession) || $userSession == "") {
-	// If not logged in, go to registration index
-	header("Location: /members/index.php");
-	exit;
+    // If not logged in, go to registration index
+    header("Location: /members/index.php");
+    exit;
 }
 include_once('../utils/dbconnect.php');
 include_once('../utils/checkadmin.php');
 include_once('../utils/check_app_state.php');
 
 if (!$isRegistrationEnabled) {
-	// Not ready for con registration
-	header("Location: /members/index.php");
-	exit;
+    // Not ready for con registration
+    header("Location: /members/index.php");
+    exit;
 }
 
 // Get the user data
@@ -39,9 +39,9 @@ $teeSize = $userRow['teeSize'];
 
 //Check user payment status
 if ($isPaid == 1) {
-	// If paid, go to members page
-	header("Location: home.php");
-	exit;
+    // If paid, go to members page
+    header("Location: home.php");
+    exit;
 }
 
 $MySQLi_CON->close();
@@ -49,320 +49,356 @@ $MySQLi_CON->close();
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pre-Registration</title>
-<link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"> 
-<link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen"> 
-<link rel="stylesheet" href="style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Registration</title>
+    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="style.css" type="text/css"/>
 </head>
 
 <body class="registration">
 <?php include_once('header.php'); ?>
 
 <div class="container content">
-	
-	<div class="container content-card">
-		<form method="post" id="update-form">
-			<h3 class="form-signin-heading center">FriendCon <?php echo $conYear; ?> Pre-Registration</h3>
-			<hr/>
-			
-			<h4 class="form-signin-heading center">FriendCon Code of Conduct</h4>
-			<div>
-				By checking the box, you agree to the <b><a href="http://friendcon.com/code_of_conduct.php" target="_blank">FriendCon Code of Conduct</a></b>.
-			</div>
-			<div class="acknowledge-color">
-				<label style="cursor:pointer">
-					<input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree" onchange="updateAcknowledgement()">
-					<b>I Acknowledge and Agree to the FriendCon Code of Conduct</b>
-				</label>
-			</div>
-			<div class="last-acknowledged">[Last acknowledged: <span class="timestamp"><?php echo $agreeToTerms; ?></span>]</div>
-			
-			<div class="hide-until-acknowledged" style="display:none">
-				<hr/>
-				<h4 class="form-signin-heading center">Badge Selection & T-shirt Pre-order</h4>
-				<div class="form-group">
-					<?php if($stillSellingPremium){ ?>
-						<ul>
-							<li>First-time and replacement Premium badges are only available through the end of <?php echo $premiumDueDateDisplay; ?>.</li>
-							<?php if($stillReservingTees){ ?>
-								<li>Pre-orders for t-shirts are only available through the end of <?php echo $teeDueDateDisplay; ?>.</li>
-							<?php }else{ ?>
-								<li>Pre-orders for t-shirts are no longer available.
-									<span id="tee-size-order-wrapper" style="display:none;">(Your order: <span id="tee-size-display"></span>)</span>
-								</li>
-							<?php } ?>
-						</ul>
-					<?php }else{ ?>
-						<div>Premium badges are no longer available (except the add-on).</div>
-					<?php } ?>
-					<div class="tee-container">
-						<img id="tee-model-image" src="/images/tee-2018-model.png" data-toggle="modal" data-target="#tee-modal">
-					</div>
-					<select class="badge-dropdown" name="badgeType" id="badgeType" <!--required="required"-->>
-						<option value="">No Badge Selected (Unregistered)</option>
-						<option value="1">Basic - $15</option>
-						<?php if($stillSellingPremium){ ?>
-							<option value="2">Premium (First timer!) - $30</option>
-						<?php }else{ ?>
-							<option value="2" disabled="disabled">Premium (First timer!) - $30</option>
-						<?php } ?>
-						<option value="3">Premium - $30</option>
-						<?php if($stillSellingPremium){ ?>
-							<option value="4">Premium (Replacement) - $35</option>
-						<?php }else{ ?>
-							<option value="4" disabled="disabled">Premium (Replacement badge) - $35</option>
-						<?php } ?>
-					</select>
-					<?php if($stillReservingTees){ ?>
-						<div class="update-registration-btn-row">
-							<label class="checkbox-label">
-								<input id="reserve-tee" type="checkbox"/>
-								<span>Pre-order $<?php echo $teePrice; ?> T-shirt?</span>
-							</label>
-							<select id="tee-size-dropdown">
-								<option value="S">Small</option>
-								<option value="M">Medium</option>
-								<option value="L">Large</option>
-								<option value="XL">XL</option>
-								<option value="2XL">2XL</option>
-								<option value="3XL">3XL</option>
-								<option value="4XL">4XL</option>
-								<option value="5XL">5XL</option>
-							</select>
-						</div>
-					<?php } ?>
-					<div class="update-registration-btn-row">
-						<button class="btn btn-primary" id="save-btn" onclick="saveBadgeSelection(); return false" style="display:none">Update Registration</button>
-						<button class="btn" id="saving-btn" onclick="return false" style="display:none">Saving...</button>
-						<button class="btn" id="done-saving-btn" onclick="return false">Changes Saved</button>
-					</div>
-				</div>
-				
-				<div class="payment-section" style="display:none">
-					<?php
-					/*
-					<hr/>
-					<h4 id="payment-title" class="form-signin-heading center">Basic Badge!</h4>
-					<h5 id="payment-description" class="form-signin-heading center">*Everything you need! (Excludes Pay2Win cosmetics)</h5>
-					<div class="update-registration-btn-row">
-						<a id="paypal-btn" class="btn btn-primary" href="https://www.paypal.me/TylarN" target="_blank">Pay via PayPal</a>
-					</div>
-					*/
-					?>
-					<hr/>
-					<h4 id="payment-title" class="form-signin-heading center">Payment FAQ</h4>
-					<div class="note"><b>How do I pay?</b> Payments must be made when you check-in at FriendCon this year.</div>
-					<?php
-					/*
-					<div class="note"><b>Who is TylarN, and why am I paying him for this?</b> He is our fearless leader, and he deals with our money.</div>
-					<div class="note"><b>How do I pre-order multiple shirts?</b> You can't. Pre-ordering is limited to one per attendee.</div>
-					<div class="note"><b>Can I still buy a t-shirt if I don't pre-order one?</b> Yes! We plan on ordering and selling extra shirts. Keep in mind that pre-ordering is the only way to guarantee that we will have your size.</div>
-					<div class="note"><b>How do I pay for multiple people?</b> Each attendee must sign up for an account on FriendCon.com and register via this form. Once that is done, manually increase your PayPal payment amount and include a note in your PayPal payment with all of your names.</div>
-					*/
-					?>
-				</div>
-			</div>
-		</form>
-	</div>
+
+    <div class="container content-card">
+        <form method="post" id="update-form">
+            <h3 class="form-signin-heading center">FriendCon <?php echo $conYear; ?> Pre-Registration</h3>
+            <hr/>
+
+            <h4 class="form-signin-heading center">FriendCon Code of Conduct</h4>
+            <div>
+                By checking the box, you agree to the <b><a href="http://friendcon.com/code_of_conduct.php"
+                                                            target="_blank">FriendCon Code of Conduct</a></b>.
+            </div>
+            <div class="acknowledge-color">
+                <label style="cursor:pointer">
+                    <input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree"
+                           onchange="updateAcknowledgement()">
+                    <b>I Acknowledge and Agree to the FriendCon Code of Conduct</b>
+                </label>
+            </div>
+            <div class="last-acknowledged">[Last acknowledged: <span
+                        class="timestamp"><?php echo $agreeToTerms; ?></span>]
+            </div>
+
+            <div class="hide-until-acknowledged" style="display:none">
+                <hr/>
+                <h4 class="form-signin-heading center">Badge Selection & T-shirt Pre-order</h4>
+                <div class="form-group">
+                    <?php if ($stillSellingPremium) { ?>
+                        <ul>
+                            <li>First-time and replacement Premium badges are only available through the end
+                                of <?php echo $premiumDueDateDisplay; ?>.
+                            </li>
+                            <?php if ($stillReservingTees) { ?>
+                                <li>Pre-orders for t-shirts are only available through the end
+                                    of <?php echo $teeDueDateDisplay; ?>.
+                                </li>
+                            <?php } else { ?>
+                                <li>Pre-orders for t-shirts are no longer available.
+                                    <span id="tee-size-order-wrapper" style="display:none;">(Your order: <span
+                                                id="tee-size-display"></span>)</span>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    <?php } else { ?>
+                        <div>Premium badges are no longer available (except the add-on).</div>
+                    <?php } ?>
+                    <div class="tee-container">
+                        <img id="tee-model-image" src="/images/tee-2018-model.png" data-toggle="modal"
+                             data-target="#tee-modal">
+                    </div>
+                    <select class="badge-dropdown" name="badgeType" id="badgeType" <!--required="required"-->>
+                    <option value="">No Badge Selected (Unregistered)</option>
+                    <option value="1">Basic - $15</option>
+                    <?php if ($stillSellingPremium) { ?>
+                        <option value="2">Premium (First timer!) - $30</option>
+                    <?php } else { ?>
+                        <option value="2" disabled="disabled">Premium (First timer!) - $30</option>
+                    <?php } ?>
+                    <option value="3">Premium - $30</option>
+                    <?php if ($stillSellingPremium) { ?>
+                        <option value="4">Premium (Replacement) - $35</option>
+                    <?php } else { ?>
+                        <option value="4" disabled="disabled">Premium (Replacement badge) - $35</option>
+                    <?php } ?>
+                    </select>
+                    <?php if ($stillReservingTees) { ?>
+                        <div class="update-registration-btn-row">
+                            <label class="checkbox-label">
+                                <input id="reserve-tee" type="checkbox"/>
+                                <span>Pre-order $<?php echo $teePrice; ?> T-shirt?</span>
+                            </label>
+                            <select id="tee-size-dropdown">
+                                <option value="S">Small</option>
+                                <option value="M">Medium</option>
+                                <option value="L">Large</option>
+                                <option value="XL">XL</option>
+                                <option value="2XL">2XL</option>
+                                <option value="3XL">3XL</option>
+                                <option value="4XL">4XL</option>
+                                <option value="5XL">5XL</option>
+                            </select>
+                        </div>
+                    <?php } ?>
+                    <div class="update-registration-btn-row">
+                        <button class="btn btn-primary" id="save-btn" onclick="saveBadgeSelection(); return false"
+                                style="display:none">Update Registration
+                        </button>
+                        <button class="btn" id="saving-btn" onclick="return false" style="display:none">Saving...
+                        </button>
+                        <button class="btn" id="done-saving-btn" onclick="return false">Changes Saved</button>
+                    </div>
+                </div>
+
+                <div class="payment-section" style="display:none">
+                    <?php
+                    /*
+                    <hr/>
+                    <h4 id="payment-title" class="form-signin-heading center">Basic Badge!</h4>
+                    <h5 id="payment-description" class="form-signin-heading center">*Everything you need! (Excludes Pay2Win cosmetics)</h5>
+                    <div class="update-registration-btn-row">
+                        <a id="paypal-btn" class="btn btn-primary" href="https://www.paypal.me/TylarN" target="_blank">Pay via PayPal</a>
+                    </div>
+                    */
+                    ?>
+                    <hr/>
+                    <h4 id="payment-title" class="form-signin-heading center">Payment FAQ</h4>
+                    <div class="note"><b>How do I pay?</b> Payments must be made when you check-in at FriendCon this
+                        year.
+                    </div>
+                    <?php
+                    /*
+                    <div class="note"><b>Who is TylarN, and why am I paying him for this?</b> He is our fearless leader, and he deals with our money.</div>
+                    <div class="note"><b>How do I pre-order multiple shirts?</b> You can't. Pre-ordering is limited to one per attendee.</div>
+                    <div class="note"><b>Can I still buy a t-shirt if I don't pre-order one?</b> Yes! We plan on ordering and selling extra shirts. Keep in mind that pre-ordering is the only way to guarantee that we will have your size.</div>
+                    <div class="note"><b>How do I pay for multiple people?</b> Each attendee must sign up for an account on FriendCon.com and register via this form. Once that is done, manually increase your PayPal payment amount and include a note in your PayPal payment with all of your names.</div>
+                    */
+                    ?>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 <div id="tee-modal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document" data-dismiss="modal">
-		<img class="tee-logo-large" src="/images/tee-2018-logo.png" width="1000" height="auto" style="background-color: black;">
-	</div>
+    <div class="modal-dialog" role="document" data-dismiss="modal">
+        <img class="tee-logo-large" src="/images/tee-2018-logo.png" width="1000" height="auto"
+             style="background-color: black;">
+    </div>
 </div>
 
 <!-- JavaScript -->
 <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-var $acknowledgeCheckbox, $badgeDropdown, $reserveTeeCheckbox, $teeSizeDropdown, $teeSizeOrderWrapper, $teeSizeDisplay, teePrice;
+    var $acknowledgeCheckbox, $badgeDropdown, $reserveTeeCheckbox, $teeSizeDropdown, $teeSizeOrderWrapper,
+        $teeSizeDisplay, teePrice;
 
-function initializeForm(acknowledgedCode, badgeType, isReservingTee, teeSize) {
-	$acknowledgeCheckbox.prop('checked', acknowledgedCode);
-	$badgeDropdown.val(badgeType || "");
-	$reserveTeeCheckbox.prop('checked', badgeType && isReservingTee);
-	$teeSizeDropdown.val(teeSize);
-	$teeSizeOrderWrapper.toggle(!!teeSize);
-	$teeSizeDisplay.text(teeSize);
-	updateSectionVisibility(acknowledgedCode, badgeType);
-	updateReserveTeeCheckboxState();
-}
-function getBadgeTypeFromForm() {
-	return $badgeDropdown.val() || 0;
-}
-function getIsReservingTeeFromForm() {
-	return $reserveTeeCheckbox.is(':checked');
-}
-function getTeeSizeFromForm() {
-	return $teeSizeDropdown.val();
-}
-function updateAcknowledgement() {
-	updateSectionVisibility();
-	saveAcknowledgement();
-}
-function getPaymentTitle(badgeType) {
-	switch(badgeType) {
-		case 1: //basic badge
-			return "Basic Badge!";
-		case 2: //premium badge (first-timer)
-			return "First-timer Premium Badge!";
-		case 3: //premium badge (add-on)
-			return "Veteran Premium Badge!";
-		case 4: //replacement badge + add-on
-			return "Replacement Premium Badge!";
-		default:
-			return "";
-	}
-}
-function getPaymentLink(badgeType) {
-	var baseUrl = "https://www.paypal.me/TylarN";
-	var price = getIsReservingTeeFromForm() ? teePrice : 0;
+    function initializeForm(acknowledgedCode, badgeType, isReservingTee, teeSize) {
+        $acknowledgeCheckbox.prop('checked', acknowledgedCode);
+        $badgeDropdown.val(badgeType || "");
+        $reserveTeeCheckbox.prop('checked', badgeType && isReservingTee);
+        $teeSizeDropdown.val(teeSize);
+        $teeSizeOrderWrapper.toggle(!!teeSize);
+        $teeSizeDisplay.text(teeSize);
+        updateSectionVisibility(acknowledgedCode, badgeType);
+        updateReserveTeeCheckboxState();
+    }
 
-	switch(badgeType) {
-		case 1: //basic badge
-			price += 15; break;
-		case 2: //premium badge (first-timer)
-			price += 30; break;
-		case 3: //premium badge (add-on)
-			price += 30; break;
-		case 4: //replacement badge + add-on
-			price += 35; break;
-	}
+    function getBadgeTypeFromForm() {
+        return $badgeDropdown.val() || 0;
+    }
 
-	// Build the URL
-	return baseUrl + (price ? "/"+price : "");
-}
-function getPaymentDescription(badgeType) {
-	switch(badgeType) {
-		case 1: //basic badge
-			return "Everything you need! (Excludes Pay2Win cosmetics)";
-		case 2: //premium badge (first-timer)
-			return "You will get a custom badge made for you based on your <a class='preferences-link' target='_blank' href='/members/profile.php'>preferences</a>!";
-		case 3: //premium badge (add-on)
-			return "You need to bring your badge from prior years. You will get an add-on.<br/>(If you don't have a premium badge, please select the first timer or replacement premium badge.)";
-		case 4: //replacement badge + add-on
-			return "Your custom premium badge (based on your <a class='preferences-link' target='_blank' href='/members/profile.php'>preferences</a>) will be re-made from unicorn tears!";
-		default:
-			return "";
-	}
-}
-function updateSectionVisibility(acknowledgedCode, badgeType) {
-	acknowledgedCode = acknowledgedCode || $acknowledgeCheckbox.is(':checked');
-	badgeType = parseInt(badgeType || getBadgeTypeFromForm());
-	var reserveTee = getIsReservingTeeFromForm();
+    function getIsReservingTeeFromForm() {
+        return $reserveTeeCheckbox.is(':checked');
+    }
 
-	// Hide most sections until the code of conduct is acknowledged
-	$('.hide-until-acknowledged').toggle(acknowledgedCode);
+    function getTeeSizeFromForm() {
+        return $teeSizeDropdown.val();
+    }
 
-	// Show the payment section for registered users and update the contents
-	$('.payment-section').toggle(!!badgeType);
-	$('#payment-title').text(getPaymentTitle(badgeType));
-	$('#payment-description').html(getPaymentDescription(badgeType));
-	$('#paypal-btn').prop('href', getPaymentLink(badgeType));
-}
-function toggleButtonsForSaving() {
-	$('#saving-btn').show();
-	$('#save-btn,#done-saving-btn').hide();
-}
-function toggleButtonsForDoneSaving() {
-	$('#done-saving-btn').show();
-	$('#saving-btn,#save-btn').hide();
-}
-function toggleSaveButtonsForChanges() {
-	$('#save-btn').show();
-	$('#saving-btn,#done-saving-btn').hide();
-}
-function saveBadgeSelection() {
-	toggleButtonsForSaving();
-	updateRegistration()
-		.always(function() {
-			toggleButtonsForDoneSaving();
-			updateSectionVisibility();
-		});
-}
-function saveAcknowledgement() {
-	if (!$acknowledgeCheckbox.is(':checked')) {
-		return; //don't save unless the checkbox is checked
-	}
-	$.ajax({
-		type: 'POST',
-		url: '/utils/modifyregistration.php',
-		data: "uid=<?php echo $userSession; ?>&agreeToTerms"
-	})
-	.done(function(resp){
-		$('.last-acknowledged .timestamp').text(resp.agreeToTerms);
-	});
-}
-function updateRegistration() {
-	var badgeType = getBadgeTypeFromForm();
-	var setRegistered = badgeType ? 1 : 0;
-	var reserveTee = getIsReservingTeeFromForm();
-	var teeSize = getTeeSizeFromForm();
+    function updateAcknowledgement() {
+        updateSectionVisibility();
+        saveAcknowledgement();
+    }
 
-	var params = [];
-	params.push("setRegistered=" + setRegistered);
-	params.push("uid=<?php echo $userSession; ?>");
-	params.push("badgeType=" + badgeType);
-	params.push("reserveTee=" + (reserveTee ? "1" : "0"));
-	params.push("teeSize=" + teeSize);
+    function getPaymentTitle(badgeType) {
+        switch(badgeType) {
+            case 1: //basic badge
+                return "Basic Badge!";
+            case 2: //premium badge (first-timer)
+                return "First-timer Premium Badge!";
+            case 3: //premium badge (add-on)
+                return "Veteran Premium Badge!";
+            case 4: //replacement badge + add-on
+                return "Replacement Premium Badge!";
+            default:
+                return "";
+        }
+    }
 
-	return $.ajax({
-		type: 'POST',
-		url: '/utils/modifyregistration.php',
-		data: params.join('&')
-	}).done(function(resp) {
-		//console.log(resp);
-	});
-}
-function updateReserveTeeCheckboxState() {
-	// Uncheck reserve tee if unregistered
-	if (!$badgeDropdown.val()) {
-		$reserveTeeCheckbox.prop('checked', false).prop('disabled', true);
-		$reserveTeeCheckbox.parent().addClass('disabled');
-		$teeSizeDropdown.prop('disabled', true);
-	} else {
-		$reserveTeeCheckbox.prop('disabled', false);
-		$reserveTeeCheckbox.parent().removeClass('disabled');
-		$teeSizeDropdown.prop('disabled', !getIsReservingTeeFromForm());
-	}
-}
+    function getPaymentLink(badgeType) {
+        var baseUrl = "https://www.paypal.me/TylarN";
+        var price = getIsReservingTeeFromForm() ? teePrice : 0;
 
-//Run things after page renders
-(function() {
+        switch(badgeType) {
+            case 1: //basic badge
+                price += 15;
+                break;
+            case 2: //premium badge (first-timer)
+                price += 30;
+                break;
+            case 3: //premium badge (add-on)
+                price += 30;
+                break;
+            case 4: //replacement badge + add-on
+                price += 35;
+                break;
+        }
 
-$acknowledgeCheckbox = $('#acknowledge-code-of-conduct');
-$badgeDropdown = $('#badgeType');
-$reserveTeeCheckbox = $('#reserve-tee');
-$teeSizeDropdown = $('#tee-size-dropdown');
-$teeSizeDisplay = $('#tee-size-display');
-$teeSizeOrderWrapper = $('#tee-size-order-wrapper');
-$teeModal = $('#tee-modal');
+        // Build the URL
+        return baseUrl + (price ? "/" + price : "");
+    }
 
-// Check to see if the user agreed to the terms within the past 30 days
-var now = new Date();
-var agreeToTermsTimestamp = "<?php echo $agreeToTerms; ?>";
-var agreeToTermsDate = new Date(agreeToTermsTimestamp);
-var THIRTY_DAYS = 1000 * 86400 * 30;
-var agreedRecently = now - THIRTY_DAYS < agreeToTermsDate;
+    function getPaymentDescription(badgeType) {
+        switch(badgeType) {
+            case 1: //basic badge
+                return "Everything you need! (Excludes Pay2Win cosmetics)";
+            case 2: //premium badge (first-timer)
+                return "You will get a custom badge made for you based on your <a class='preferences-link' target='_blank' href='/members/profile.php'>preferences</a>!";
+            case 3: //premium badge (add-on)
+                return "You need to bring your badge from prior years. You will get an add-on.<br/>(If you don't have a premium badge, please select the first timer or replacement premium badge.)";
+            case 4: //replacement badge + add-on
+                return "Your custom premium badge (based on your <a class='preferences-link' target='_blank' href='/members/profile.php'>preferences</a>) will be re-made from unicorn tears!";
+            default:
+                return "";
+        }
+    }
 
-// Default tee size is 'S'
-var teeSize = "<?php echo $teeSize; ?>" || "S";
+    function updateSectionVisibility(acknowledgedCode, badgeType) {
+        acknowledgedCode = acknowledgedCode || $acknowledgeCheckbox.is(':checked');
+        badgeType = parseInt(badgeType || getBadgeTypeFromForm());
+        var reserveTee = getIsReservingTeeFromForm();
 
-// Save the t-shirt price for the page
-teePrice = (<?php echo $teePrice; ?>);
+        // Hide most sections until the code of conduct is acknowledged
+        $('.hide-until-acknowledged').toggle(acknowledgedCode);
 
-initializeForm(agreedRecently, <?php echo $badgeType; ?>, !!<?php echo $reserveTee; ?>, teeSize);
+        // Show the payment section for registered users and update the contents
+        $('.payment-section').toggle(!!badgeType);
+        $('#payment-title').text(getPaymentTitle(badgeType));
+        $('#payment-description').html(getPaymentDescription(badgeType));
+        $('#paypal-btn').prop('href', getPaymentLink(badgeType));
+    }
 
-// Update the buttons and payment section on badge selection and reserve tee changes
-$('#badgeType,#reserve-tee,#tee-size-dropdown').change(function() {
-	$('.payment-section').hide();
-	toggleSaveButtonsForChanges();
-	updateReserveTeeCheckboxState();
-});
+    function toggleButtonsForSaving() {
+        $('#saving-btn').show();
+        $('#save-btn,#done-saving-btn').hide();
+    }
 
-})();
+    function toggleButtonsForDoneSaving() {
+        $('#done-saving-btn').show();
+        $('#saving-btn,#save-btn').hide();
+    }
+
+    function toggleSaveButtonsForChanges() {
+        $('#save-btn').show();
+        $('#saving-btn,#done-saving-btn').hide();
+    }
+
+    function saveBadgeSelection() {
+        toggleButtonsForSaving();
+        updateRegistration()
+            .always(function() {
+                toggleButtonsForDoneSaving();
+                updateSectionVisibility();
+            });
+    }
+
+    function saveAcknowledgement() {
+        if (!$acknowledgeCheckbox.is(':checked')) {
+            return; //don't save unless the checkbox is checked
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/utils/modifyregistration.php',
+            data: "uid=<?php echo $userSession; ?>&agreeToTerms"
+        })
+            .done(function(resp) {
+                $('.last-acknowledged .timestamp').text(resp.agreeToTerms);
+            });
+    }
+
+    function updateRegistration() {
+        var badgeType = getBadgeTypeFromForm();
+        var setRegistered = badgeType ? 1 : 0;
+        var reserveTee = getIsReservingTeeFromForm();
+        var teeSize = getTeeSizeFromForm();
+
+        var params = [];
+        params.push("setRegistered=" + setRegistered);
+        params.push("uid=<?php echo $userSession; ?>");
+        params.push("badgeType=" + badgeType);
+        params.push("reserveTee=" + (reserveTee ? "1" : "0"));
+        params.push("teeSize=" + teeSize);
+
+        return $.ajax({
+            type: 'POST',
+            url: '/utils/modifyregistration.php',
+            data: params.join('&')
+        }).done(function(resp) {
+            //console.log(resp);
+        });
+    }
+
+    function updateReserveTeeCheckboxState() {
+        // Uncheck reserve tee if unregistered
+        if (!$badgeDropdown.val()) {
+            $reserveTeeCheckbox.prop('checked', false).prop('disabled', true);
+            $reserveTeeCheckbox.parent().addClass('disabled');
+            $teeSizeDropdown.prop('disabled', true);
+        } else {
+            $reserveTeeCheckbox.prop('disabled', false);
+            $reserveTeeCheckbox.parent().removeClass('disabled');
+            $teeSizeDropdown.prop('disabled', !getIsReservingTeeFromForm());
+        }
+    }
+
+    //Run things after page renders
+    (function() {
+
+        $acknowledgeCheckbox = $('#acknowledge-code-of-conduct');
+        $badgeDropdown = $('#badgeType');
+        $reserveTeeCheckbox = $('#reserve-tee');
+        $teeSizeDropdown = $('#tee-size-dropdown');
+        $teeSizeDisplay = $('#tee-size-display');
+        $teeSizeOrderWrapper = $('#tee-size-order-wrapper');
+        $teeModal = $('#tee-modal');
+
+        // Check to see if the user agreed to the terms within the past 30 days
+        var now = new Date();
+        var agreeToTermsTimestamp = "<?php echo $agreeToTerms; ?>";
+        var agreeToTermsDate = new Date(agreeToTermsTimestamp);
+        var THIRTY_DAYS = 1000 * 86400 * 30;
+        var agreedRecently = now - THIRTY_DAYS < agreeToTermsDate;
+
+        // Default tee size is 'S'
+        var teeSize = "<?php echo $teeSize; ?>" || "S";
+
+        // Save the t-shirt price for the page
+        teePrice = (<?php echo $teePrice; ?>);
+
+        initializeForm(agreedRecently, <?php echo $badgeType; ?>, !!<?php echo $reserveTee; ?>, teeSize);
+
+        // Update the buttons and payment section on badge selection and reserve tee changes
+        $('#badgeType,#reserve-tee,#tee-size-dropdown').change(function() {
+            $('.payment-section').hide();
+            toggleSaveButtonsForChanges();
+            updateReserveTeeCheckboxState();
+        });
+
+    })();
 </script>
 </body>
 </html>
