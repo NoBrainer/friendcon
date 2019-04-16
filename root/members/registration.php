@@ -94,7 +94,7 @@ $MySQLi_CON->close();
 
                 <h4 class="form-signin-heading center">TODO</h4>
                 <div>
-                    [UNDER CONSTRUCTION]
+                    [UNDER CONSTRUCTION] Make sure to mention that people are paying for FriendCon membership.
                 </div>
 
                 <div class="payment-section" style="display:none">
