@@ -7,7 +7,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('../utils/dbconnect.php');
+include_once('utils/dbconnect.php');
 
 // Get the user data
 $query = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, u.phone, u.uid, u.upoints, uh.housename AS housename 
@@ -17,17 +17,17 @@ $query = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.fa
 $userRow = $query->fetch_array();
 $MySQLi_CON->close();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome <?php echo $userRow['email']; ?></title>
-    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body>
@@ -92,9 +92,9 @@ $MySQLi_CON->close();
 </div>
 
 <!-- JavaScript -->
-<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
-<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
-<script src="/js/utils/formatter.js"></script>
+<script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
+<script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
+<script src="/members/js/formatter.js"></script>
 <script type="text/javascript">
     (function() {
         // When the phone number input loses focus, format the phone number, if possible
@@ -141,7 +141,7 @@ $MySQLi_CON->close();
         $('#submit').click(function() {
             $.ajax({
                 type: 'POST',
-                url: '/utils/update_profile.php',
+                url: '/members/utils/update_profile.php',
                 data: buildProfileParams()
             })
                 .done(function(resp) {

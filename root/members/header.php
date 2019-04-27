@@ -8,12 +8,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="home.php">FriendCon Members Home</a>
+            <a class="navbar-brand" href="/members/home.php">FriendCon Members Home</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="http://friendcon.com">Back to FriendCon Site</a>
+                    <a href="/">Back to FriendCon Site</a>
                 </li>
                 <li>
                     <a target="_blank" href="https://www.facebook.com/friendconofficial/">FriendCon Facebook Page</a>
@@ -27,7 +27,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="../utils/logout.php?logout&dest=members">
+                        <a href="/members/utils/logout.php?logout&dest=members">
                             <span class="glyphicon glyphicon-log-out"></span>
                             <span>Logout</span>
                         </a>

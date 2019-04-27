@@ -4,12 +4,12 @@ $userSession = $_SESSION['userSession'];
 
 if (!isset($userSession) || $userSession == "") {
     // If not logged in, go to main homepage
-    header("Location: /");
+    header("Location: /members/index.php");
     exit;
 }
-include_once('../utils/dbconnect.php');
-include_once('../utils/checkadmin.php');
-include_once('../utils/check_app_state.php');
+include_once('utils/dbconnect.php');
+include_once('utils/checkadmin.php');
+include_once('utils/check_app_state.php');
 
 // Get the user data
 $userResult = $MySQLi_CON->query("SELECT u.email, u.name, u.uid, u.upoints, h.housename
@@ -44,16 +44,17 @@ $userListResult->free_result();
 
 $MySQLi_CON->close();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FriendCon - Points</title>
-    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body>
@@ -329,9 +330,9 @@ $MySQLi_CON->close();
 </div>
 
 <!-- JavaScript -->
-<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/js/typeahead/typeahead.jquery.min.js"></script>
-<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
+<script type="text/javascript" src="/members/lib/typeahead/typeahead.jquery.min.js"></script>
+<script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script type="text/javascript">
     function typeAheadMatcher(list) {
         return function findMatches(query, callback) {
@@ -396,7 +397,7 @@ $MySQLi_CON->close();
     }
 
     function updateMyPoints() {
-        return $.get("/utils/getpoints.php")
+        return $.get("/members/utils/getpoints.php")
             .done(function(resp) {
                 $('#my-points').text(resp);
             });
@@ -415,7 +416,7 @@ $MySQLi_CON->close();
         $prevPage.hide();
         $nextPage.hide();
         $pageLabel.text("");
-        return $.get('/utils/gethistory.php')
+        return $.get('/members/utils/gethistory.php')
             .done(function(resp) {
                 $tableBody.empty();
                 if (!(resp instanceof Array)) {
@@ -516,7 +517,7 @@ $MySQLi_CON->close();
     function updateAdminUserTable() {
         var $tableBody = $('#admin-user-table tbody'),
             $tableHead = $('#admin-user-table thead');
-        return $.get('/utils/getusers.php?forAdmin')
+        return $.get('/members/utils/getusers.php?forAdmin')
             .done(function(resp) {
                 $tableBody.empty();
                 if (!(resp instanceof Array)) {
@@ -552,7 +553,7 @@ $MySQLi_CON->close();
     function updatePendingRequests() {
         var $tableBody = $('#pending-requests-table tbody'),
             $tableHead = $('#pending-requests-table thead');
-        $.get('/utils/pointsrequest_get.php')
+        $.get('/members/utils/pointsrequest_get.php')
             .done(function(resp) {
                 $tableBody.empty();
                 if (!(resp instanceof Array)) {
@@ -609,7 +610,7 @@ $MySQLi_CON->close();
             $success.text("Processing...");
             $row.addClass('disabled');
             $.ajax({
-                url: "/utils/pointsrequest_accept.php",
+                url: "/members/utils/pointsrequest_accept.php",
                 type: 'POST',
                 data: "source_uid=" + sourceUid
             }).done(function(resp) {
@@ -644,7 +645,7 @@ $MySQLi_CON->close();
             $success.text("Processing...");
             $row.addClass('disabled');
             $.ajax({
-                url: "/utils/pointsrequest_reject.php",
+                url: "/members/utils/pointsrequest_reject.php",
                 type: 'POST',
                 data: "source_uid=" + sourceUid
             }).done(function(resp) {
@@ -766,7 +767,7 @@ $MySQLi_CON->close();
 
         // Send the points via a POST
         $.ajax({
-            url: "/utils/sendpoints.php",
+            url: "/members/utils/sendpoints.php",
             type: 'POST',
             data: "num_points=" + numPoints + "&to_uid=" + toUid
         }).done(function(resp) {
@@ -810,7 +811,7 @@ $MySQLi_CON->close();
 
         // Request the points via a POST
         $.ajax({
-            url: "/utils/pointsrequest_send.php",
+            url: "/members/utils/pointsrequest_send.php",
             type: 'POST',
             data: "num_points=" + numPoints + "&target_uid=" + toUid
         }).done(function(resp) {
@@ -869,7 +870,7 @@ $MySQLi_CON->close();
 
         // Change the points via a POST
         $.ajax({
-            url: "/utils/sendpoints_admin.php",
+            url: "/members/utils/sendpoints_admin.php",
             type: 'POST',
             data: "num_points=" + numPoints + "&target_uid=" + targetUid
         }).done(function(resp) {

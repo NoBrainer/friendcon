@@ -2,12 +2,12 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (isset($userSession) != "") {
+if (isset($userSession) && $userSession != "") {
     // If logged in, go to home instead
     header("Location: /members/home.php");
     exit;
 }
-include_once('../utils/dbconnect.php');
+include_once('utils/dbconnect.php');
 
 if (isset($_POST['btn-login'])) {
     $email = $MySQLi_CON->real_escape_string(trim($_POST['email']));
@@ -19,7 +19,7 @@ if (isset($_POST['btn-login'])) {
     if (!empty($row)) {
         if (md5($password) === $row['password']) {
             $_SESSION['userSession'] = $row['uid'];
-            header("Location: home.php");
+            header("Location: /members/home.php");
         } else {
             echo $_SESSION['uid'];
             $msg = "<div class='alert alert-danger'>
@@ -35,17 +35,17 @@ if (isset($_POST['btn-login'])) {
     $MySQLi_CON->close();
 }
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FriendCon - Sign In</title>
-    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body>
@@ -56,7 +56,7 @@ if (isset($_POST['btn-login'])) {
         <form method="post" id="login-form">
             <h2 class="form-signin-heading center">Sign In</h2>
             <h3 class="form-signin-heading">
-                <a href="signup.php" class="btn btn-default btn-wide">Sign up for an account here!</a>
+                <a href="/members/signup.php" class="btn btn-default btn-wide">Sign up for an account here!</a>
             </h3>
             <hr/>
 
@@ -75,9 +75,10 @@ if (isset($_POST['btn-login'])) {
 
             <div class="form-group">
                 <button type="submit" name="btn-login" id="btn-login"
-                        style=" display:block; margin-left: auto; margin-right: auto;"
-                " >
-                <span class="glyphicon glyphicon-log-in"></span> &nbsp; Sign In
+                        style="display:block; margin-left: auto; margin-right: auto;">
+                    <span class="glyphicon glyphicon-log-in"></span>
+                    &nbsp;
+                    <span>Sign In</span>
                 </button>
             </div>
 
@@ -87,8 +88,8 @@ if (isset($_POST['btn-login'])) {
 </div>
 
 <!-- JavaScript -->
-<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
-<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
+<script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script type="text/javascript">
     //console.log("<?php echo $userSession; ?>");
     //console.log("<?php echo $userRow['name']; ?>");

@@ -7,9 +7,9 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('../utils/dbconnect.php');
-include_once('../utils/checkadmin.php');
-include_once('../utils/check_app_state.php');
+include_once('utils/dbconnect.php');
+include_once('utils/checkadmin.php');
+include_once('utils/check_app_state.php');
 
 if (!$isSuperAdmin) {
     die("You are not a super admin! GTFO.");
@@ -25,16 +25,16 @@ $emailAddress = $userRow['email'];
 
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>FriendCon Super Admin</title>
-    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <link href="../css/datatables.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/datatables/datatables-1.10.12.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body class="admin-check-in">
@@ -98,9 +98,9 @@ $emailAddress = $userRow['email'];
 </div>
 
 <!-- JavaScript -->
-<script type="text/javascript" src="/js/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="/lib/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/underscore.min.js"></script>
+<script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
+<script type="text/javascript" src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
+<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -119,12 +119,8 @@ $emailAddress = $userRow['email'];
             var conMonth = (<?php echo $conMonth; ?>);
             var conDay = (<?php echo $conDay; ?>);
             var conYear = (<?php echo $conYear; ?>);
-            var isRegistrationEnabled = (<?php echo $isRegistrationEnabled; ?> === 1
-        )
-            ;
-            var isPointsEnabled = (<?php echo $isPointsEnabled; ?> === 1
-        )
-            ;
+            var isRegistrationEnabled = (<?php echo $isRegistrationEnabled; ?>) === 1;
+            var isPointsEnabled = (<?php echo $isPointsEnabled; ?>) === 1;
 
             // Set the starting state
             $conMonthTextbox.val(conMonth);
@@ -150,7 +146,7 @@ $emailAddress = $userRow['email'];
                 // Make the ajax call
                 $.ajax({
                     type: 'POST',
-                    url: '/utils/set_app_state.php',
+                    url: '/members/utils/set_app_state.php',
                     data: params.join('&')
                 }).done(function _onSuccess(resp) {
                     $message.text(resp);

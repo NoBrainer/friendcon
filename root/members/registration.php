@@ -7,9 +7,9 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('../utils/dbconnect.php');
-include_once('../utils/checkadmin.php');
-include_once('../utils/check_app_state.php');
+include_once('utils/dbconnect.php');
+include_once('utils/checkadmin.php');
+include_once('utils/check_app_state.php');
 
 if (!$isRegistrationEnabled) {
     // Not ready for con registration
@@ -33,7 +33,7 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
 //Check user payment status
 if ($isPaid == 1) {
     // If paid, go to members page
-    header("Location: home.php");
+    header("Location: /members/home.php");
     exit;
 }
 
@@ -45,9 +45,9 @@ $MySQLi_CON->close();
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="../lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="style.css" type="text/css"/>
+    <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body class="registration">
@@ -62,7 +62,7 @@ $MySQLi_CON->close();
 
             <h4 class="form-signin-heading center">FriendCon Code of Conduct</h4>
             <div>
-                By checking the box, you agree to the <b><a href="http://friendcon.com/code_of_conduct.php"
+                By checking the box, you agree to the <b><a href="/members/fwd/code_of_conduct.php"
                                                             target="_blank">FriendCon Code of Conduct</a></b>.
             </div>
             <div class="acknowledge-color">
@@ -128,8 +128,8 @@ $MySQLi_CON->close();
 </div>
 
 <!-- JavaScript -->
-<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
-<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
+<script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script type="text/javascript">
     var $acknowledgeCheckbox;
 
@@ -174,7 +174,7 @@ $MySQLi_CON->close();
         }
         $.ajax({
             type: 'POST',
-            url: '/utils/modifyregistration.php',
+            url: '/members/utils/modifyregistration.php',
             data: "uid=<?php echo $userSession; ?>&agreeToTerms"
         })
             .done(function(resp) {
@@ -192,7 +192,7 @@ $MySQLi_CON->close();
 
         return $.ajax({
             type: 'POST',
-            url: '/utils/modifyregistration.php',
+            url: '/members/utils/modifyregistration.php',
             data: params.join('&')
         }).done(function(resp) {
             //console.log(resp);
