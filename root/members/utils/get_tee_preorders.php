@@ -7,9 +7,9 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
-include_once('check_app_state.php');
+include('dbconnect.php');
+include('checkadmin.php');
+include('check_app_state.php');
 
 // Reject non-admins
 if (!$isAdmin) {
@@ -35,38 +35,38 @@ $num5XL = 0;
 $num5XLPaid = 0;
 
 // Run the query and traverse each row to build up the counts
-$result = $MySQLi_CON->query("SELECT s.teeSize, u.isPaid
+$result = $MySQLi_CON->query("SELECT s.teeSize, u.isRegistered
 	 FROM registration_stats s
 	 JOIN users u ON u.uid = s.uid
 	 WHERE s.conYear = {$conYear} AND s.reserveTee = 1");
 $row = $result->fetch_array();
 while ($row) {
     $size = $row['teeSize'];
-    $isPaid = $row['isPaid'];
+    $isRegistered = $row['isRegistered'];
     if ($size == 'S') {
         $numSmall++;
-        $numSmallPaid += ($isPaid ? 1 : 0);
+        $numSmallPaid += ($isRegistered ? 1 : 0);
     } else if ($size == 'M') {
         $numMedium++;
-        $numMediumPaid += ($isPaid ? 1 : 0);
+        $numMediumPaid += ($isRegistered ? 1 : 0);
     } else if ($size == 'L') {
         $numLarge++;
-        $numLargePaid += ($isPaid ? 1 : 0);
+        $numLargePaid += ($isRegistered ? 1 : 0);
     } else if ($size == 'XL') {
         $numXL++;
-        $numXLPaid += ($isPaid ? 1 : 0);
+        $numXLPaid += ($isRegistered ? 1 : 0);
     } else if ($size == '2XL') {
         $num2XL++;
-        $num2XLPaid += ($isPaid ? 1 : 0);
+        $num2XLPaid += ($isRegistered ? 1 : 0);
     } else if ($size == '3XL') {
         $num3XL++;
-        $num3XLPaid += ($isPaid ? 1 : 0);
+        $num3XLPaid += ($isRegistered ? 1 : 0);
     } else if ($size == '4XL') {
         $num4XL++;
-        $num4XLPaid += ($isPaid ? 1 : 0);
+        $num4XLPaid += ($isRegistered ? 1 : 0);
     } else if ($size == '5XL') {
         $num5XL++;
-        $num5XLPaid += ($isPaid ? 1 : 0);
+        $num5XLPaid += ($isRegistered ? 1 : 0);
     }
     $row = $result->fetch_array();
 }

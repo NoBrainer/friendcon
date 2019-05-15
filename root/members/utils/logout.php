@@ -7,7 +7,7 @@ if (!isset($userSession)) {
 } else if (isset($userSession) != "") {
     header("Location: /members/home.php");
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Get parameters from the url
 $logout = $MySQLi_CON->real_escape_string($_GET['logout']);

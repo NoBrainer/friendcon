@@ -7,7 +7,7 @@ if (isset($userSession) && $userSession != "") {
     header("Location: /members/home.php");
     exit;
 }
-include_once('utils/dbconnect.php');
+include('utils/dbconnect.php');
 
 if (isset($_POST['btn-signup'])) {
     $name = $MySQLi_CON->real_escape_string(trim($_POST['name']));
@@ -60,8 +60,6 @@ if (isset($_POST['btn-signup'])) {
     $txt = "Hey there, " . $name . "!" . "\r\n" . "\r\n" . "We're so happy you decided to create an account and hopefully join us at the next FriendCon! We look forward to seeing you there!" . "\r\n" . "\r\n" . "All the best from your friends at FriendCon!" . "\r\n";
 
     mail($to, $subject, $txt, $headers);
-
-    $MySQLi_CON->close();
 }
 ?>
 
@@ -78,7 +76,7 @@ if (isset($_POST['btn-signup'])) {
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <div class="container content-card">
@@ -156,8 +154,9 @@ if (isset($_POST['btn-signup'])) {
 
             <h4 class="form-signin-heading center">FriendCon Code of Conduct</h4>
             <div>
-                By checking the box, you agree to the <a href="/members/fwd/code_of_conduct.php"
-                                                         target="_blank">FriendCon Code of Conduct</a>.
+                By checking the box, you agree to the
+                <a href="/members/fwd/code_of_conduct.php" target="_blank">FriendCon Code of Conduct
+                    <i class="fa fa-external-link-alt"></i></a>.
             </div>
             <div class="acknowledge-color">
                 <input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree">

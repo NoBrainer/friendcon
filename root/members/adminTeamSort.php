@@ -7,23 +7,21 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
 
 if (!$isAdmin) {
     die("You are not an admin! GTFO.");
 }
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
+$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$userRow = $result->fetch_array();
 
 // User Information
 $name = $userRow['name'];
 $emailAddress = $userRow['email'];
-
-$MySQLi_CON->close();
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +37,7 @@ $MySQLi_CON->close();
 </head>
 
 <body class="admin-check-in admin-team-sort">
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 <br/>
 <br/>
 <br/>
@@ -102,8 +100,7 @@ $MySQLi_CON->close();
                             uid: user.uid,
                             name: user.name,
                             email: user.email,
-                            housename: user.housename,
-                            isPaid: user.isPaid
+                            housename: user.housename
                         };
                         dataArr.push(dataRow);
                     });
@@ -148,12 +145,6 @@ $MySQLi_CON->close();
                                 render: function(house, type, row, meta) {
                                     return renderTeamDropdown(house, row.uid);
                                 }
-                            },
-                            {
-                                title: "Paid?", data: "isPaid",
-                                render: function(isPaid, type, row, meta) {
-                                    return renderToggleButton(isPaid, 'paid-toggle-btn', row.uid);
-                                }
                             }
                         ],
                         // Default order
@@ -183,56 +174,8 @@ $MySQLi_CON->close();
             });
         }
 
-        var processingPaid = [];
-
         function setupActionButtonClickHandlers() {
             renumberRows();
-
-            var YES = 1;
-            var NO = 0;
-
-            // Click handler for the paid toggle button
-            $('.paid-toggle-btn').off().on('click', function(e) {
-                var $btn = $(this);
-                var $row = $btn.closest('tr');
-                var uid = $btn.attr('uid') || "";
-
-                // Do nothing if it's already processing for this row
-                if (isTogglingPaidLocked(uid)) {
-                    alert("Toggling this won't work until the last request finishes processing.");
-                    return;
-                }
-                lockTogglingIsPaid(uid);
-
-                // Update the value in the table
-                var row = dataTableForUserTable.row($row[0]);
-                var data = row.data();
-                data.isPaid = (data.isPaid ? NO : YES);
-                row.invalidate();
-                setupActionButtonClickHandlers();
-
-                // Make the ajax call
-                $.ajax({
-                    url: "/members/utils/modifyregistration.php",
-                    type: 'POST',
-                    data: "togglePaid=true&uid=" + uid
-                }).done(function(resp) {
-                    if (typeof resp == 'object') {
-                        // Make the change
-                        data.isRegistered = resp.isRegistered;
-                        data.isPaid = resp.isPaid;
-                        data.isPresent = resp.isPresent;
-                    } else {
-                        // Print the error message and revert the change
-                        alert(resp);
-                        data.isPaid = (data.isPaid ? NO : YES);
-                    }
-                    row.invalidate();
-                    setupActionButtonClickHandlers();
-                }).always(function() {
-                    unlockTogglingIsPaid(uid);
-                });
-            });
 
             $('#sort-the-unsorted').on('click', function() {
                 $.get('/members/utils/getusers.php?forTeamSort')
@@ -283,20 +226,6 @@ $MySQLi_CON->close();
             sortPromise = $.get("/members/utils/sortuser.php?uid=" + uid)
                 .always(nextTeamSort);
         }
-
-        // Helper functions for locking/unlocking isPaid toggling
-        function isTogglingPaidLocked(uid) {
-            return _.contains(processingPaid, uid);
-        }
-
-        function lockTogglingIsPaid(uid) {
-            processingPaid = _.union(processingPaid, [uid]);
-        }
-
-        function unlockTogglingIsPaid(uid) {
-            processingPaid = _.without(processingPaid, uid);
-        }
-
     });
 </script>
 </body>

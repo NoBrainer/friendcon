@@ -7,8 +7,8 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
+include('dbconnect.php');
+include('checkadmin.php');
 
 if (!$isAdmin) {
     die("You are not an admin! GTFO.");

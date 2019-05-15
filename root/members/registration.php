@@ -7,9 +7,10 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
+include('utils/paypal.php');
 
 if (!$isRegistrationEnabled) {
     // Not ready for con registration
@@ -18,8 +19,8 @@ if (!$isRegistrationEnabled) {
 }
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
+$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$userRow = $result->fetch_array();
 
 // User Information
 $name = $userRow['name'];
@@ -27,17 +28,7 @@ $emailAddress = $userRow['email'];
 $points = $userRow['upoints'];
 $houseName = $userRow['housename'];
 $isRegistered = $userRow['isRegistered'];
-$isPaid = $userRow['isPaid'];
 $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
-
-//Check user payment status
-if ($isPaid == 1) {
-    // If paid, go to members page
-    header("Location: /members/home.php");
-    exit;
-}
-
-$MySQLi_CON->close();
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -47,11 +38,12 @@ $MySQLi_CON->close();
     <title>Registration</title>
     <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
     <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/fontawesome/css/fontawesome-all.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
 <body class="registration">
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
 
@@ -62,65 +54,42 @@ $MySQLi_CON->close();
 
             <h4 class="form-signin-heading center">FriendCon Code of Conduct</h4>
             <div>
-                By checking the box, you agree to the <b><a href="/members/fwd/code_of_conduct.php"
-                                                            target="_blank">FriendCon Code of Conduct</a></b>.
+                <span>By checking the box, you agree to the</span>
+                <b><a href="/members/fwd/code_of_conduct.php" target="_blank">FriendCon Code of Conduct</a></b>
+                <span>.</span>
             </div>
             <div class="acknowledge-color">
                 <label style="cursor:pointer">
-                    <input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree"
-                           onchange="updateAcknowledgement()">
+                    <input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree" onchange="updateAcknowledgement()">
                     <b>I Acknowledge and Agree to the FriendCon Code of Conduct</b>
                 </label>
             </div>
-            <div class="last-acknowledged">[Last acknowledged: <span
-                        class="timestamp"><?php echo $agreeToTerms; ?></span>]
+            <div class="last-acknowledged">
+                <span>[Last acknowledged:</span>
+                <span class="timestamp"><?php echo $agreeToTerms; ?></span>
+                <span>]</span>
             </div>
 
             <div class="hide-until-acknowledged" style="display:none">
                 <hr/>
-                <h4 class="form-signin-heading center">Hotel Room Block</h4>
-                <div>
-                    <p>Joining the room block online*:</p>
-                    <ol>
-                        <li>Go to the hotel website: <a href="https://statecollege.place.hyatt.com" target="_new">Hyatt
-                                Place State College</a></li>
-                        <li>Pick the dates (July 19-21)</li>
-                        <li>Click on the <b>Special Rates</b> dropdown</li>
-                        <li>Pick <b>Corporate or Group Code</b></li>
-                        <li>Enter the group code: <b>G-FRCO</b></li>
-                    </ol>
-                    <p>*If reserving your room over the phone, make sure to mention the group code.</p>
+                <div id="paypal-section" style="<?php if($isRegistered) echo 'display:none'; ?>">
+                    <h4 class="form-signin-heading center">FriendCon Membership</h4>
+                    <p>By paying for FriendCon membership, you gain access to the convention space and activities for
+                        the duration of FriendCon <?php echo $conYear; ?> (Friday through Saturday).</p>
+                    <p>FriendCon 2019 Membership: $<?php echo $badgePrice; ?></p>
+                    <div id="paypal-button-container"></div>
+                    <!-- TODO: log registration updates to the database -->
                 </div>
-
-                <h4 class="form-signin-heading center">TODO</h4>
                 <div>
-                    [UNDER CONSTRUCTION] Make sure to mention that people are paying for FriendCon membership.
+                    <span id="registration-message"></span>
+                    <span id="registration-spinner" style="display:none">
+                        <i class="fa fa-spinner fa-spin"></i>
+                    </span>
                 </div>
-
-                <div class="payment-section" style="display:none">
-                    <?php
-                    /*
-                    <hr/>
-                    <h4 id="payment-title" class="form-signin-heading center">Basic Badge!</h4>
-                    <h5 id="payment-description" class="form-signin-heading center">*Everything you need! (Excludes Pay2Win cosmetics)</h5>
-                    <div class="update-registration-btn-row">
-                        <a id="paypal-btn" class="btn btn-primary" href="https://www.paypal.me/TylarN" target="_blank">Pay via PayPal</a>
-                    </div>
-                    */
-                    ?>
-                    <hr/>
-                    <h4 id="payment-title" class="form-signin-heading center">Payment FAQ</h4>
-                    <div class="note"><b>How do I pay?</b> Payments must be made when you check-in at FriendCon this
-                        year.
-                    </div>
-                    <?php
-                    /*
-                    <div class="note"><b>Who is TylarN, and why am I paying him for this?</b> He is our fearless leader, and he deals with our money.</div>
-                    <div class="note"><b>How do I pre-order multiple shirts?</b> You can't. Pre-ordering is limited to one per attendee.</div>
-                    <div class="note"><b>Can I still buy a t-shirt if I don't pre-order one?</b> Yes! We plan on ordering and selling extra shirts. Keep in mind that pre-ordering is the only way to guarantee that we will have your size.</div>
-                    <div class="note"><b>How do I pay for multiple people?</b> Each attendee must sign up for an account on FriendCon.com and register via this form. Once that is done, manually increase your PayPal payment amount and include a note in your PayPal payment with all of your names.</div>
-                    */
-                    ?>
+                <div id="room-block-section" style="<?php if(!$isRegistered) echo 'display:none'; ?>">
+                    <h4 class="form-signin-heading center">FriendCon Hotel Room Block</h4>
+                    <p>You can find information for registration and the <a href="/tickets/" target="_blank">hotel room
+                            block <i class="fa fa-external-link-alt"></i></a> on the main site.</p>
                 </div>
             </div>
         </form>
@@ -130,6 +99,7 @@ $MySQLi_CON->close();
 <!-- JavaScript -->
 <script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
 <script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=<?php echo $PAYPAL_CLIENT_ID; ?>&disable-funding=credit,card"></script>
 <script type="text/javascript">
     var $acknowledgeCheckbox;
 
@@ -148,24 +118,6 @@ $MySQLi_CON->close();
 
         // Hide most sections until the code of conduct is acknowledged
         $('.hide-until-acknowledged').toggle(acknowledgedCode);
-
-        // Show the payment section for registered users and update the contents
-        //TODO
-    }
-
-    function toggleButtonsForSaving() {
-        $('#saving-btn').show();
-        $('#save-btn,#done-saving-btn').hide();
-    }
-
-    function toggleButtonsForDoneSaving() {
-        $('#done-saving-btn').show();
-        $('#saving-btn,#save-btn').hide();
-    }
-
-    function toggleSaveButtonsForChanges() {
-        $('#save-btn').show();
-        $('#saving-btn,#done-saving-btn').hide();
     }
 
     function saveAcknowledgement() {
@@ -182,26 +134,72 @@ $MySQLi_CON->close();
             });
     }
 
-    function updateRegistration() {
-        //TODO: get registration from checkbox or something
-        var setRegistered = 1;
+    function initializePayPalForm() {
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                // Set up the transaction
+                return actions.order.create({
+                    application_context: {
+                        brand_name: 'FriendCon',
+                        user_action: 'PAY_NOW'
+                    },
+                    intent: 'CAPTURE',
+                    purchase_units: [{
+                        amount: {
+                            currency_code: 'USD',
+                            value: '<?php echo $badgePrice; ?>'
+                        },
+                        description: "FriendCon <?php echo $conYear; ?> Membership",
+                        soft_descriptor: "FriendCon Membership" //shows up for transaction (prefix: PayPal *)
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                setMessage("[ Processing... ]");
+                $('#registration-spinner').show();
+                $('#paypal-section').hide();
 
-        var params = [];
-        params.push("setRegistered=" + setRegistered);
-        params.push("uid=<?php echo $userSession; ?>");
+                // Capture the funds from the transaction
+                return actions.order.capture().then(function(details) {
+                    // Handle success
+                    if (details.intent !== 'CAPTURE' || details.status !== 'COMPLETED') {
+                        alert("Something went wrong with your payment. Please copy the following text and send it to " +
+                            "admin@friendcon.com for assistance: [" + JSON.stringify(details) + "]");
+                    } else {
+                        saveOrder(details.id);
+                    }
+                    return this;
+                });
+            }
+        }).render('#paypal-button-container');
+    }
 
-        return $.ajax({
+    function saveOrder(orderId) {
+        $.ajax({
             type: 'POST',
-            url: '/members/utils/modifyregistration.php',
-            data: params.join('&')
-        }).done(function(resp) {
-            //console.log(resp);
-        });
+            url: '/members/utils/paypal_handle_change.php',
+            data: 'orderId=' + orderId
+        })
+            .done(function(resp) {
+                if (resp === "Registration complete!") {
+                    setMessage("[ Registration complete! ]");
+                    $('#room-block-section').show();
+                } else {
+                    setMessage("Error registering... [" + resp + "]");
+                }
+            })
+            .fail(function(resp) {
+                setMessage("Error registering... [" + resp + "]");
+            });
+    }
+
+    function setMessage(str) {
+        $('#registration-message').text(str);
+        $('#registration-spinner').hide();
     }
 
     //Run things after page renders
     (function() {
-
         $acknowledgeCheckbox = $('#acknowledge-code-of-conduct');
 
         // Check to see if the user agreed to the terms within the past 30 days
@@ -213,6 +211,7 @@ $MySQLi_CON->close();
 
         initializeForm(agreedRecently);
 
+        initializePayPalForm();
     })();
 </script>
 </body>

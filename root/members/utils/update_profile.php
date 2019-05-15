@@ -17,7 +17,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Get parameters from the url
 $setStr = "";

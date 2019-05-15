@@ -7,17 +7,17 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, 
-        u.favoriteNerdism, u.name, u.phone, u.uid, u.isRegistered, u.isPaid, u.isPresent, u.upoints, h.housename AS housename 
+$result = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, 
+        u.favoriteNerdism, u.name, u.phone, u.uid, u.isRegistered, u.isPresent, u.upoints, h.housename AS housename 
 	FROM users u 
 	JOIN house h ON h.houseid = u.houseid 
 	WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
+$userRow = $result->fetch_array();
 
 // User Information
 $name = $userRow['name'];
@@ -25,10 +25,7 @@ $emailAddress = $userRow['email'];
 $points = $userRow['upoints'];
 $houseName = $userRow['housename'];
 $isRegistered = $userRow['isRegistered'] == 1;
-$isPaid = $userRow['isPaid'] == 1;
 $isPresent = $userRow['isPresent'] == 1;
-
-$MySQLi_CON->close();
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +42,7 @@ $MySQLi_CON->close();
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <!-- TODO: clean this up after we figure out if we want to keep houses
@@ -53,13 +50,7 @@ $MySQLi_CON->close();
 		<br/>
 		<br/>
 		<?php if ($isRegistrationEnabled) { ?>
-			<?php if ($isRegistered && $isPaid) { ?>
-				<p>You are registered, and your payment has been confirmed!</p>
-				<div class="container content-card">
-					<p>Registered: <i class="fa fa-check-square"></i></p>
-					<p>Payment Confirmed: <i class="fa fa-check-square"></i></p>
-				</div>
-			<?php } else if ($isRegistered) { ?>
+			<?php if ($isRegistered) { ?>
 				<?php if ("$houseName" == "Unsorted") { ?>
 					<p>You are registered!</p>
 					<div class="container content-card">
@@ -83,19 +74,13 @@ $MySQLi_CON->close();
     <?php if ($isRegistrationEnabled) { ?>
         <div class="container content-card registration-card">
             <h4>FriendCon <?php echo $conYear; ?> Registration</h4>
-            <?php if ($isRegistered && $isPaid && $isPresent) { ?>
+            <?php if ($isRegistered && $isPresent) { ?>
                 <p><i class="fa fa-check-square green"></i> Registered!</p>
-                <p><i class="fa fa-check-square green"></i> Payment Confirmed!</p>
                 <p><i class="fa fa-check-square green"></i> Checked In!</p>
-            <?php } else if ($isRegistered && $isPaid) { ?>
-                <p><i class="fa fa-check-square green"></i> Registered!</p>
-                <p><i class="fa fa-check-square green"></i> Payment Confirmed!</p>
-                <p><i class="fa fa-times-circle"></i> Attend FriendCon and Check-in...</p>
-                <a href="/members/registration.php" class="btn btn-default btn-wide">Update My Registration</a>
             <?php } else if ($isRegistered) { ?>
-                <p><i class="fa fa-check-square green"></i> Registered!</p>
-                <p><i class="fa fa-times-circle"></i> Awaiting Payment Confirmation...</p>
-                <a href="/members/registration.php" class="btn btn-default btn-wide">Update My Registration</a>
+                <p><i class="fa fa-check-square green"></i> Registered!
+                    (<a href="/tickets/" target="_blank">Hotel Room Block <i class="fa fa-external-link-alt"></i></a>)</p>
+                <p><i class="fa fa-times-circle"></i> Attend FriendCon and Check-in...</p>
             <?php } else { ?>
                 <a href="/members/registration.php" class="btn btn-default btn-wide">Registration</a>
             <?php } ?>
@@ -138,7 +123,7 @@ $MySQLi_CON->close();
 <script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
 <script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script type="text/javascript">
-    console.log("<?php echo $userSession; ?>");
+    //console.log("<?php //echo $userSession; ?>//");
     //console.log("<?php echo $name; ?>");
 </script>
 </body>

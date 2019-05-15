@@ -14,10 +14,7 @@ if (!isset($userSession) || $userSession == "" || !$MySQLi_CON) {
 }
 
 // Check if app state
-$query = "SELECT *
-		 FROM app_state
-		 ORDER BY conYear DESC
-		 LIMIT 1";
+$query = "SELECT * FROM app_state ORDER BY conYear DESC LIMIT 1";
 $result = $MySQLi_CON->query($query);
 if (!$result) {
     $conDay = 26;
@@ -25,6 +22,7 @@ if (!$result) {
     $conYear = 2018;
     $isRegistrationEnabled = 0;
     $isPointsEnabled = 0;
+    $badgePrice = '40.00';
     $premiumLastMonth = 5;
     $premiumLastDay = 12;
     $premiumDueDateDisplay = "May 12th (EST)";
@@ -40,6 +38,7 @@ if (!$result) {
     $conYear = $row['conYear'];
     $isRegistrationEnabled = $row['registrationEnabled'];
     $isPointsEnabled = $row['pointsEnabled'];
+    $badgePrice = "{$row['badgePrice']}";
     $premiumLastMonth = $row['premiumLastMonth'];
     $premiumLastDay = $row['premiumLastDay'];
     $premiumDueDateDisplay = $row['premiumDueDateDisplay'];

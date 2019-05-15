@@ -7,15 +7,14 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
+include('utils/dbconnect.php');
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, u.phone, u.uid, u.upoints, uh.housename AS housename 
+$result = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, u.phone, u.uid, u.upoints, uh.housename AS housename 
 							FROM users u 
 							JOIN house uh ON uh.houseid = u.houseid 
 							WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
-$MySQLi_CON->close();
+$userRow = $result->fetch_array();
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +30,7 @@ $MySQLi_CON->close();
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
 

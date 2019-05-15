@@ -24,9 +24,9 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
-include_once('check_app_state.php');
+include('dbconnect.php');
+include('checkadmin.php');
+include('check_app_state.php');
 
 if (!$isAdmin) {
     die("Must be admin to set app state");
@@ -41,6 +41,9 @@ if (isset($_POST['conMonth']) && $_POST['conMonth'] > 0 && $_POST['conMonth'] < 
 }
 if (isset($_POST['conYear']) && $_POST['conYear'] > 1000) {
     $conYear = $_POST['conYear'];
+}
+if (isset($_POST['badgePrice'])) {
+    $badgePrice = $_POST['badgePrice'];
 }
 if (isset($_POST['enableRegistration'])) {
     $isRegistrationEnabled = 1;
@@ -63,18 +66,15 @@ $checkResult->free_result();
 
 if (!$checkResult || $numRows == 0) {
     // Insert a new row
-    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `registrationEnabled`, `pointsEnabled`)
-		VALUES ({$conMonth}, {$conDay}, {$conYear}, {$isRegistrationEnabled}, {$isPointsEnabled})";
+    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`, `pointsEnabled`)
+		VALUES ({$conMonth}, {$conDay}, {$conYear}, '{$badgePrice}', {$isRegistrationEnabled}, {$isPointsEnabled})";
     $MySQLi_CON->query($insertQuery);
     die("Added entry for {$conYear}!");
 } else {
     // Update an existing row
     $updateQuery = "UPDATE app_state s
-		 SET s.conDay = {$conDay},
-			s.conMonth = {$conMonth},
-			s.conYear = {$conYear},
-			s.registrationEnabled = {$isRegistrationEnabled},
-			s.pointsEnabled = {$isPointsEnabled}
+		 SET s.conDay = {$conDay}, s.conMonth = {$conMonth}, s.conYear = {$conYear}, s.badgePrice = '{$badgePrice}',
+			s.registrationEnabled = {$isRegistrationEnabled}, s.pointsEnabled = {$isPointsEnabled}
 		 WHERE s.conYear = {$conYear}";
 
     $updateResult = $MySQLi_CON->query($updateQuery);

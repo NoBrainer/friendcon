@@ -7,7 +7,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Get the points request rows
 $pointsRequestResult = $MySQLi_CON->query("SELECT r.*, u.name AS source_name

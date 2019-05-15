@@ -7,22 +7,21 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
 
 if (!$isSuperAdmin) {
     die("You are not a super admin! GTFO.");
 }
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
+$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$userRow = $result->fetch_array();
 
 // User Information
 $name = $userRow['name'];
 $emailAddress = $userRow['email'];
-
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +37,7 @@ $emailAddress = $userRow['email'];
 </head>
 
 <body class="admin-check-in">
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 <br/>
 <br/>
 <br/>
@@ -81,6 +80,10 @@ $emailAddress = $userRow['email'];
             <td><input type="text" id="con-year"/></td>
         </tr>
         <tr>
+            <td>Badge Price (##.##)</td>
+            <td><input type="text" id="badge-price"/></td>
+        </tr>
+        <tr>
             <td>Enable Registration</td>
             <td><input type="checkbox" id="enable-registration"/></td>
         </tr>
@@ -110,6 +113,7 @@ $emailAddress = $userRow['email'];
             var $conMonthTextbox = $('#con-month');
             var $conDayTextbox = $('#con-day');
             var $conYearTextbox = $('#con-year');
+            var $badgePriceTextbox = $('#badge-price');
             var $enableRegistrationCheckbox = $('#enable-registration');
             var $enablePointsCheckbox = $('#enable-points');
             var $saveButton = $('#save-changes');
@@ -119,6 +123,7 @@ $emailAddress = $userRow['email'];
             var conMonth = (<?php echo $conMonth; ?>);
             var conDay = (<?php echo $conDay; ?>);
             var conYear = (<?php echo $conYear; ?>);
+            var badgePrice = ("<?php echo $badgePrice; ?>");
             var isRegistrationEnabled = (<?php echo $isRegistrationEnabled; ?>) === 1;
             var isPointsEnabled = (<?php echo $isPointsEnabled; ?>) === 1;
 
@@ -126,6 +131,7 @@ $emailAddress = $userRow['email'];
             $conMonthTextbox.val(conMonth);
             $conDayTextbox.val(conDay);
             $conYearTextbox.val(conYear);
+            $badgePriceTextbox.val(badgePrice);
             $enableRegistrationCheckbox.prop('checked', isRegistrationEnabled);
             $enablePointsCheckbox.prop('checked', isPointsEnabled);
 
@@ -135,11 +141,15 @@ $emailAddress = $userRow['email'];
                 params.push('conMonth=' + $conMonthTextbox.val());
                 params.push('conDay=' + $conDayTextbox.val());
                 params.push('conYear=' + $conYearTextbox.val());
+                params.push('badgePrice=' + $badgePriceTextbox.val());
                 params.push($enableRegistrationCheckbox.is(':checked') ? 'enableRegistration' : 'disableRegistration');
                 params.push($enablePointsCheckbox.is(':checked') ? 'enablePoints' : 'disablePoints');
 
                 if (isInvalidYear($conYearTextbox.val())) {
                     $message.text("Changes ignored. Cannot edit past/future/invalid years.");
+                    return;
+                } else if (isInvalidPrice(""+$badgePriceTextbox.val())) {
+                    $message.text("Changes ignored. Invalid badge price.");
                     return;
                 }
 
@@ -169,6 +179,9 @@ $emailAddress = $userRow['email'];
             return year !== currentYear;
         }
 
+        function isInvalidPrice(price) {
+            return !price.match(/^\d{2}\.\d{2}$/);
+        }
     });
 </script>
 </body>

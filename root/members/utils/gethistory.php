@@ -7,7 +7,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Get the points history
 $pointsHistoryResult = $MySQLi_CON->query("SELECT h.*, u1.name AS from_name, u2.name AS to_name, u1.uid AS from_uid, u2.uid AS to_uid, u1.email AS from_email, u2.email AS to_email

@@ -6,8 +6,8 @@ if (!isset($userSession) || $userSession == "") {
     // If not logged in, go to main homepage
     die();
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
+include('dbconnect.php');
+include('checkadmin.php');
 if (!$isAdmin) {
     // If not admin, go to the main homepage
     die();

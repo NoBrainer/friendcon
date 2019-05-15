@@ -7,14 +7,14 @@ if (isset($userSession) && $userSession != "") {
     header("Location: /members/home.php");
     exit;
 }
-include_once('utils/dbconnect.php');
+include('utils/dbconnect.php');
 
 if (isset($_POST['btn-login'])) {
     $email = $MySQLi_CON->real_escape_string(trim($_POST['email']));
     $password = $MySQLi_CON->real_escape_string(trim($_POST['password']));
 
-    $query = $MySQLi_CON->query("SELECT uid, email, password FROM users WHERE email='$email'");
-    $row = $query->fetch_array();
+    $result = $MySQLi_CON->query("SELECT uid, email, password FROM users WHERE email='$email'");
+    $row = $result->fetch_array();
 
     if (!empty($row)) {
         if (md5($password) === $row['password']) {
@@ -32,7 +32,6 @@ if (isset($_POST['btn-login'])) {
 					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; No registration entry with this email!
 				</div>";
     }
-    $MySQLi_CON->close();
 }
 ?>
 
@@ -49,7 +48,7 @@ if (isset($_POST['btn-login'])) {
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <div class="container content-card">

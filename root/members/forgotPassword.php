@@ -7,7 +7,7 @@ if (isset($userSession) && $userSession != "") {
     header("Location: /members/home.php");
     exit;
 }
-include_once('utils/dbconnect.php');
+include('utils/dbconnect.php');
 
 //on button submit action
 if (isset($_POST['btn-signup'])) {
@@ -42,20 +42,18 @@ if (isset($_POST['btn-signup'])) {
 
             mail($to, $subject, $txt, $headers);
 
-        } //if the sql query failed, do this
-        else {
+        } else {
+            //if the sql query failed, do this
             $msg = "<div class='alert alert-danger'>
 						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something went wrong. Inexplicably. 
 					</div>";
         }
-    } //if there is no account record found, do this
-    else {
+    } else {
+        //if there is no account record found, do this
         $msg = "<div class='alert alert-danger'>
 					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something went wrong! Contact us at admins@friendcon.com
 				</div>";
     }
-
-    $MySQLi_CON->close();
 }
 ?>
 
@@ -72,7 +70,7 @@ if (isset($_POST['btn-signup'])) {
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <div class="container content-card">

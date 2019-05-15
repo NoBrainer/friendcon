@@ -7,8 +7,8 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
+include('dbconnect.php');
+include('checkadmin.php');
 
 if (!$isAdmin) {
     die("GTFO non-admin scum!");
@@ -21,8 +21,9 @@ $pointsHistoryResult = $MySQLi_CON->query("SELECT h.*, u1.name AS from_name, u2.
 	 JOIN `users` u2 ON u2.uid = h.to_uid
 	 WHERE h.from_uid != h.to_uid
 	 ORDER BY h.timestamp DESC");
-if (!$pointsHistoryResult)
+if (!$pointsHistoryResult) {
     die("Points history query failed [DB-1]");
+}
 $historyList = array();
 while ($row = $pointsHistoryResult->fetch_array()) {
     array_push($historyList, $row);

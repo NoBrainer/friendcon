@@ -7,7 +7,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Get the submit data
 $fromUid = $userSession;
@@ -22,8 +22,9 @@ if (!isset($toUid) || !isset($sendNumPoints) || !isset($fromUid)) {
 
 // Check the 'from' points
 $result = $MySQLi_CON->query("SELECT u.upoints FROM users u WHERE u.uid={$userSession}");
-if (!$result)
+if (!$result) {
     die("Sending points failed [DB-1]");
+}
 $checkPoints = $result->fetch_array();
 $result->free_result();
 $updatedPoints = $checkPoints['upoints'];

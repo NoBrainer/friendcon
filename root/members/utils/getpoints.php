@@ -7,7 +7,7 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Check the user points
 $result = $MySQLi_CON->query("SELECT u.upoints FROM users u WHERE u.uid={$userSession}");

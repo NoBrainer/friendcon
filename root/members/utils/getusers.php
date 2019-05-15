@@ -7,8 +7,8 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /");
     exit;
 }
-include_once('dbconnect.php');
-include_once('checkadmin.php');
+include('dbconnect.php');
+include('checkadmin.php');
 
 // Get parameters from the url
 
@@ -29,12 +29,12 @@ if (isset($forAdmin) && $isAdmin) {
 		 WHERE u.isPresent = 1 OR u.isRegistered = -1
 		 ORDER BY h.housename ASC, isHouse DESC, u.upoints DESC, u.name ASC";
 } else if (isset($forCheckIn) && $isAdmin) {
-    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, u.isPaid, h.housename
+    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename
 		 FROM users u
 		 JOIN house h ON u.houseid = h.houseid
 		 ORDER BY u.name ASC, u.isRegistered DESC";
 } else if (isset($forTeamSort) && $isAdmin) {
-    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, u.isPaid, h.housename, h.houseid
+    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename, h.houseid
 		 FROM users u
 		 JOIN house h ON u.houseid = h.houseid
 		 WHERE u.isPresent = 1
@@ -75,7 +75,6 @@ while ($i < $length) {
     $favoriteAnimal = $row['favoriteAnimal'];
     $favoriteBooze = $row['favoriteBooze'];
     $favoriteNerdism = $row['favoriteNerdism'];
-    $isPaid = $row['isPaid'];
     $isPresent = $row['isPresent'];
     $isRegistered = $row['isRegistered'];
     $isHouse = $row['isHouse'];
@@ -142,12 +141,6 @@ while ($i < $length) {
         if ($attrsPrinted > 0)
             $str = "{$str},"; //add comma
         $str = "{$str}\"favoriteNerdism\":\"{$favoriteNerdism}\"";
-        $attrsPrinted++;
-    }
-    if (isset($isPaid)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"isPaid\":{$isPaid}";
         $attrsPrinted++;
     }
     if (isset($isPresent)) {

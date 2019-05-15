@@ -7,23 +7,21 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
 
 if (!$isAdmin) {
     die("You are not an admin! GTFO.");
 }
 
 // Get the user data
-$query = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
-$userRow = $query->fetch_array();
+$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$userRow = $result->fetch_array();
 
 // User Information
 $name = $userRow['name'];
 $emailAddress = $userRow['email'];
-
-$MySQLi_CON->close();
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +37,7 @@ $MySQLi_CON->close();
 </head>
 
 <body class="admin-check-in">
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 <br/>
 <br/>
 <br/>

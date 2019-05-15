@@ -7,7 +7,7 @@ if (isset($userSession) && $userSession != "") {
     header("Location: /members/home.php");
     exit;
 }
-include_once('utils/dbconnect.php');
+include('utils/dbconnect.php');
 
 if (isset($_POST['btn-signup'])) {
     //sanitize the inputs
@@ -47,20 +47,18 @@ if (isset($_POST['btn-signup'])) {
             $headers = "From: admin@friendcon.com";
 
             mail($to, $subject, $txt, $headers);
-        } //if the query fails, give an error message
-        else {
+        } else {
+            //if the query fails, give an error message
             $msg = "<div class='alert alert-danger'>
 			<span class='glyphicon glyphicon-info-sign'></span> &nbsp; There was an error processing your request. Please Try Again.
 			</div>";
         }
-    } //If the info doesn't match, throw an error
-    else {
+    } else {
+        //If the info doesn't match, throw an error
         $msg = "<div class='alert alert-danger'>
 					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something is not correct with the info provided. Try again if you want.
 				</div>";
     }
-
-    $MySQLi_CON->close();
 }
 ?>
 
@@ -77,7 +75,7 @@ if (isset($_POST['btn-signup'])) {
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <div class="container content-card">

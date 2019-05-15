@@ -16,7 +16,8 @@
                     <a href="/">Back to FriendCon Site</a>
                 </li>
                 <li>
-                    <a target="_blank" href="https://www.facebook.com/friendconofficial/">FriendCon Facebook Page</a>
+                    <a target="_blank" href="https://www.facebook.com/friendconofficial/">FriendCon Facebook Page
+                        <i class="fa fa-external-link-alt"></i></a>
                 </li>
             </ul>
             <?php if (isset($userSession) && $userSession != "" && $userRow) { ?>

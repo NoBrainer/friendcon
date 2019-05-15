@@ -1,5 +1,5 @@
 <?php
-include_once('dbconnect.php');
+include('dbconnect.php');
 
 // Check the house points
 $result = $MySQLi_CON->query("SELECT	sum(IF(u.houseid = 0, u.upoints, 0)) AS unsorted_points,

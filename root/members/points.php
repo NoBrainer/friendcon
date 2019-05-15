@@ -7,18 +7,20 @@ if (!isset($userSession) || $userSession == "") {
     header("Location: /members/index.php");
     exit;
 }
-include_once('utils/dbconnect.php');
-include_once('utils/checkadmin.php');
-include_once('utils/check_app_state.php');
+include('utils/dbconnect.php');
+include('utils/checkadmin.php');
+include('utils/check_app_state.php');
 
 // Get the user data
 $userResult = $MySQLi_CON->query("SELECT u.email, u.name, u.uid, u.upoints, h.housename
 	 FROM users u
 	 JOIN house h ON u.houseid = h.houseid
 	 WHERE uid={$userSession}");
-if (!$userResult)
+if (!$userResult) {
     die("User query failed");
+}
 $userRow = $userResult->fetch_array();
+
 $email = $userRow['email'];
 $name = $userRow['name'];
 $uid = $userRow['uid'];
@@ -32,17 +34,15 @@ if (!$isAdmin && $housename == "Unsorted") {
 }
 
 // Get the list of users
-$userListResult = $MySQLi_CON->query("SELECT u.name, u.uid
-	 FROM users u");
-if (!$userListResult)
+$userListResult = $MySQLi_CON->query("SELECT u.name, u.uid FROM users u");
+if (!$userListResult) {
     die("User list query failed");
+}
 $userList = array();
 while ($row = $userListResult->fetch_array()) {
     array_push($userList, $row);
 }
 $userListResult->free_result();
-
-$MySQLi_CON->close();
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +58,7 @@ $MySQLi_CON->close();
 </head>
 
 <body>
-<?php include_once('header.php'); ?>
+<?php include('header.php'); ?>
 
 <div class="container content">
     <?php if ($isAdmin) { ?>

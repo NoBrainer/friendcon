@@ -23,14 +23,11 @@ if (!isset($userSession) || $userSession == "" || !$MySQLi_CON) {
 // 32 = Gary
 // 43 = Vince
 // 77, 110 = Sarah
-$superAdminArray = array(31, 43);
+$superAdminArray = array(23, 31, 32, 43); //TODO: get this from the database instead
 $isSuperAdmin = in_array($userSession, $superAdminArray);
 
 // Check if the user is an admin
-$selfQuery = "SELECT u.isAdmin
-		 FROM users u
-		 WHERE u.uid = {$userSession}";
-$userResult = $MySQLi_CON->query($selfQuery);
+$userResult = $MySQLi_CON->query("SELECT u.isAdmin FROM users u WHERE u.uid = {$userSession}");
 if (!$userResult) {
     $isAdmin = 0;
 } else {
