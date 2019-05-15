@@ -20,45 +20,34 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 
 // Get parameters from the url
-$setStr = "";
+$params = [];
 if (isset($_POST['phone'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['phone']));
     $param = preg_replace('/\D+/', '', $param);
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}phone='$param'";
+    $params[] = "phone='$param'";
 }
 if (isset($_POST['emergencyCN'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCN']));
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}emergencyCN='$param'";
+    $params[] = "emergencyCN='$param'";
 }
 if (isset($_POST['emergencyCNP'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCNP']));
     $param = preg_replace('/\D+/', '', $param);
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}emergencyCNP='$param'";
+    $params[] = "emergencyCNP='$param'";
 }
 if (isset($_POST['favoriteAnimal'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteAnimal']));
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}favoriteAnimal='$param'";
+    $params[] = "favoriteAnimal='$param'";
 }
 if (isset($_POST['favoriteBooze'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteBooze']));
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}favoriteBooze='$param'";
+    $params[] = "favoriteBooze='$param'";
 }
 if (isset($_POST['favoriteNerdism'])) {
     $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteNerdism']));
-    if ($setStr !== "")
-        $setStr = "{$setStr}, ";
-    $setStr = "{$setStr}favoriteNerdism='$param'";
+    $params[] = "favoriteNerdism='$param'";
 }
+$setStr = join(", ", $params);
 
 if ($setStr === '') {
     die("No changes.");

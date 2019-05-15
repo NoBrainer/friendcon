@@ -52,16 +52,16 @@ if (isset($forAdmin) && $isAdmin) {
 $userListResult = $MySQLi_CON->query($userListQuery);
 if (!$userListResult)
     die("User list query failed [DB-1]");
-$userList = array();
+$userList = [];
 while ($row = $userListResult->fetch_array()) {
-    array_push($userList, $row);
+    $userList[] = $row;
 }
 $userListResult->free_result();
 
 // Build an array of users
 $length = count($userList);
 $i = 0;
-$str = "[";
+$rowArray = [];
 while ($i < $length) {
     $row = $userList[$i];
     $i++;
@@ -79,95 +79,27 @@ while ($i < $length) {
     $isRegistered = $row['isRegistered'];
     $isHouse = $row['isHouse'];
 
-    if ($str != "[") {
-        // Add comma if previous items were added
-        $str = "{$str},";
-    }
+    // Build an array of attributes
+    $attrArray = [];
+    if (isset($uid)) $attrArray[] = "\"uid\":{$uid}";
+    if (isset($email)) $attrArray[] = "\"email\":\"{$email}\"";
+    if (isset($name)) $attrArray[] = "\"name\":\"{$name}\"";
+    if (isset($upoints)) $attrArray[] = "\"upoints\":{$upoints}";
+    if (isset($housename)) $attrArray[] = "\"housename\":\"{$housename}\"";
+    if (isset($houseid)) $attrArray[] = "\"houseid\":\"{$houseid}\"";
+    if (isset($favoriteAnimal)) $attrArray[] = "\"favoriteAnimal\":\"{$favoriteAnimal}\"";
+    if (isset($favoriteBooze)) $attrArray[] = "\"favoriteBooze\":\"{$favoriteBooze}\"";
+    if (isset($favoriteNerdism)) $attrArray[] = "\"favoriteNerdism\":\"{$favoriteNerdism}\"";
+    if (isset($isPresent)) $attrArray[] = "\"isPresent\":{$isPresent}";
+    if (isset($isRegistered)) $attrArray[] = "\"isRegistered\":{$isRegistered}";
+    if (isset($isHouse)) $attrArray[] = "\"isHouse\":{$isHouse}";
 
-    // Row start
-    $str = "{$str}{";
-
-    // Print each attribute
-    $attrsPrinted = 0;
-    if (isset($uid)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"uid\":{$uid}";
-        $attrsPrinted++;
-    }
-    if (isset($email)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"email\":\"{$email}\"";
-        $attrsPrinted++;
-    }
-    if (isset($name)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"name\":\"{$name}\"";
-        $attrsPrinted++;
-    }
-    if (isset($upoints)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"upoints\":{$upoints}";
-        $attrsPrinted++;
-    }
-    if (isset($housename)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"housename\":\"{$housename}\"";
-        $attrsPrinted++;
-    }
-    if (isset($houseid)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"houseid\":\"{$houseid}\"";
-        $attrsPrinted++;
-    }
-    if (isset($favoriteAnimal)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"favoriteAnimal\":\"{$favoriteAnimal}\"";
-        $attrsPrinted++;
-    }
-    if (isset($favoriteBooze)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"favoriteBooze\":\"{$favoriteBooze}\"";
-        $attrsPrinted++;
-    }
-    if (isset($favoriteNerdism)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"favoriteNerdism\":\"{$favoriteNerdism}\"";
-        $attrsPrinted++;
-    }
-    if (isset($isPresent)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"isPresent\":{$isPresent}";
-        $attrsPrinted++;
-    }
-    if (isset($isRegistered)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"isRegistered\":{$isRegistered}";
-        $attrsPrinted++;
-    }
-    if (isset($isHouse)) {
-        if ($attrsPrinted > 0)
-            $str = "{$str},"; //add comma
-        $str = "{$str}\"isHouse\":{$isHouse}";
-        $attrsPrinted++;
-    }
-
-    // Row end
-    $str = "{$str}}";
+    // Add the row to the array
+    $rowArray[] = "{" . join(",", $attrArray) . "}";
 }
-$str = "{$str}]";
+$json = "[" . join(",", $rowArray) . "]";
 
 // Return the history array string
 header('Content-Type: application/json');
-die($str);
+die($json);
 ?>

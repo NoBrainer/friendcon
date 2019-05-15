@@ -75,7 +75,7 @@ $houseQuery = "SELECT u.houseid, COUNT(*) AS `count`
 $houseResult = $MySQLi_CON->query($houseQuery);
 if (!$houseResult)
     die("House query failed [DB-4]");
-$houseList = array();
+$houseList = [];
 $hasHouse1 = 0;
 $hasHouse2 = 0;
 $hasHouse3 = 0;
@@ -96,26 +96,26 @@ while ($row = $houseResult->fetch_array()) {
             $hasHouse4 = 1;
             break;
     }
-    array_push($houseList, $row);
+    $houseList[] = $row;
 }
 $houseResult->free_result();
 
 // Make sure all houses are included in $houseList
 if (!$hasHouse1) {
-    $row = array("houseid" => "1", "count" => 0);
-    array_push($houseList, $row);
+    $row = ["houseid" => "1", "count" => 0];
+    $houseList[] = $row;
 }
 if (!$hasHouse2) {
-    $row = array("houseid" => "2", "count" => 0);
-    array_push($houseList, $row);
+    $row = ["houseid" => "2", "count" => 0];
+    $houseList[] = $row;
 }
 if (!$hasHouse3) {
-    $row = array("houseid" => "3", "count" => 0);
-    array_push($houseList, $row);
+    $row = ["houseid" => "3", "count" => 0];
+    $houseList[] = $row;
 }
 if (!$hasHouse4) {
-    $row = array("houseid" => "4", "count" => 0);
-    array_push($houseList, $row);
+    $row = ["houseid" => "4", "count" => 0];
+    $houseList[] = $row;
 }
 
 // Go through and remove houses if their member count is too high

@@ -137,14 +137,14 @@ if ($isRegistered == 0) {
 }
 
 // Build JSON with the updated data
-$str = "{";
-$str = "{$str}\"uid\":\"{$uid}\",";
-$str = "{$str}\"isPresent\":{$isPresent},";
-$str = "{$str}\"isRegistered\":{$isRegistered},";
-$str = "{$str}\"agreeToTerms\":\"{$agreeToTerms}\",";
-$str = "{$str}\"statsOperation\":\"{$statsOperation}\",";
-$str = "{$str}\"statsQuery\":\"{$statsQuery}\"";
-$str = "{$str}}";
+$attrArray = [];
+$attrArray[] = "\"uid\":\"{$uid}\"";
+$attrArray[] = "\"isPresent\":\"{$isPresent}\"";
+$attrArray[] = "\"isRegistered\":\"{$isRegistered}\"";
+$attrArray[] = "\"agreeToTerms\":\"{$agreeToTerms}\"";
+$attrArray[] = "\"statsOperation\":\"{$statsOperation}\"";
+$attrArray[] = "\"statsQuery\":\"{$statsQuery}\"";
+$json = "{" . join(",", $attrArray) . "}";
 
 // Set the starting points
 if ($isRegistrationEnabled) {
@@ -159,5 +159,5 @@ if ($isRegistrationEnabled) {
 
 // Return the JSON string
 header('Content-Type: application/json');
-die($str);
+die($json);
 ?>

@@ -73,26 +73,26 @@ while ($row) {
 $result->free_result();
 
 // Build JSON with the counts
-$str = "{";
-$str = "{$str}\"S\":{$numSmall},";
-$str = "{$str}\"M\":{$numMedium},";
-$str = "{$str}\"L\":{$numLarge},";
-$str = "{$str}\"XL\":{$numXL},";
-$str = "{$str}\"2XL\":{$num2XL},";
-$str = "{$str}\"3XL\":{$num3XL},";
-$str = "{$str}\"4XL\":{$num4XL},";
-$str = "{$str}\"5XL\":{$num5XL},";
-$str = "{$str}\"SPaid\":{$numSmallPaid},";
-$str = "{$str}\"MPaid\":{$numMediumPaid},";
-$str = "{$str}\"LPaid\":{$numLargePaid},";
-$str = "{$str}\"XLPaid\":{$numXLPaid},";
-$str = "{$str}\"2XLPaid\":{$num2XLPaid},";
-$str = "{$str}\"3XLPaid\":{$num3XLPaid},";
-$str = "{$str}\"4XLPaid\":{$num4XLPaid},";
-$str = "{$str}\"5XLPaid\":{$num5XLPaid}";
-$str = "{$str}}";
+$attrArray = [];
+$attrArray[] = "\"S\":$numSmall";
+$attrArray[] = "\"M\":$numMedium";
+$attrArray[] = "\"L\":$numLarge";
+$attrArray[] = "\"XL\":$numXL";
+$attrArray[] = "\"2XL\":$num2XL";
+$attrArray[] = "\"3XL\":$num3XL";
+$attrArray[] = "\"4XL\":$num4XL";
+$attrArray[] = "\"5XL\":$num5XL";
+$attrArray[] = "\"SPaid\":$numSmallPaid";
+$attrArray[] = "\"MPaid\":$numMediumPaid";
+$attrArray[] = "\"LPaid\":$numLargePaid";
+$attrArray[] = "\"XLPaid\":$numXLPaid";
+$attrArray[] = "\"2XLPaid\":$num2XLPaid";
+$attrArray[] = "\"3XLPaid\":$num3XLPaid";
+$attrArray[] = "\"4XLPaid\":$num4XLPaid";
+$attrArray[] = "\"5XLPaid\":$num5XLPaid";
+$json = "{" . join(",", $attrArray) . "}";
 
 // Return the JSON string
 header('Content-Type: application/json');
-die($str);
+die($json);
 ?>

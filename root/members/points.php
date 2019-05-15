@@ -38,9 +38,9 @@ $userListResult = $MySQLi_CON->query("SELECT u.name, u.uid FROM users u");
 if (!$userListResult) {
     die("User list query failed");
 }
-$userList = array();
+$userList = [];
 while ($row = $userListResult->fetch_array()) {
-    array_push($userList, $row);
+    $userList[] = $row;
 }
 $userListResult->free_result();
 ?>

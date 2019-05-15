@@ -24,16 +24,16 @@ $pointsHistoryResult = $MySQLi_CON->query("SELECT h.*, u1.name AS from_name, u2.
 if (!$pointsHistoryResult) {
     die("Points history query failed [DB-1]");
 }
-$historyList = array();
+$historyList = [];
 while ($row = $pointsHistoryResult->fetch_array()) {
-    array_push($historyList, $row);
+    $historyList[] = $row;
 }
 $pointsHistoryResult->free_result();
 
 // Build the history array string
 $length = count($historyList);
 $i = 0;
-$str = "[";
+$rowArray = [];
 while ($i < $length) {
     $hRow = $historyList[$i];
     $i++;
@@ -64,17 +64,23 @@ while ($i < $length) {
             }
         }
     }
-    if ($str != "[") {
-        // Add comma if previous items were added
-        $str = "{$str},";
-    }
 
-    // Print a row
-    $str = "{$str}{\"timestamp\":\"{$hRow['timestamp']}\",\"fromName\":\"{$fromName}\",\"toName\":\"{$toName}\",\"numPoints\":{$hRow['num_points']},\"isAdminAction\":{$isAdminAction},\"toEmail\":\"{$hRow['to_email']}\",\"fromEmail\":\"{$hRow['from_email']}\"}";
+    // Build an array of attributes
+    $attrArray = [];
+    $attrArray[] = "{\"timestamp\":\"{$hRow['timestamp']}\"";
+    $attrArray[] = "{\"fromName\":\"{$fromName}\"";
+    $attrArray[] = "{\"toName\":\"{$toName}\"";
+    $attrArray[] = "{\"numPoints\":\"{$hRow['num_points']}\"";
+    $attrArray[] = "{\"isAdminAction\":\"{$isAdminAction}\"";
+    $attrArray[] = "{\"toEmail\":\"{$hRow['to_email']}\"";
+    $attrArray[] = "{\"fromEmail\":\"{$hRow['from_email']}\"";
+
+    // Add the row to the array
+    $rowArray[] = "{" . join(",", $attrArray) . "}";
 }
-$str = "{$str}]";
+$json = "[" . join(",", $rowArray) . "]";
 
 // Return the history array string
 header('Content-Type: application/json');
-die($str);
+die($json);
 ?>
