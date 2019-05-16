@@ -26,18 +26,18 @@ $baratheon_points = $row['baratheon_points'];
 $maesters_points = $row['maesters_points'];
 $the_faith_points = $row['the_faith_points'];
 
-// Build the json
-$attrArray = [];
-$attrArray[] = "\"unsorted\":{$unsorted_points}";
-$attrArray[] = "\"stark\":{$stark_points}";
-$attrArray[] = "\"lannister\":{$lannister_points}";
-$attrArray[] = "\"martel\":{$martel_points}";
-$attrArray[] = "\"baratheon\":{$baratheon_points}";
-$attrArray[] = "\"maesters\":{$maesters_points}";
-$attrArray[] = "\"the_faith\":{$the_faith_points}";
-$json = "{" . join(",", $attrArray) . "}";
+// Build the points object
+$obj = [
+    "unsorted" => $unsorted_points,
+    "stark" => $stark_points,
+    "lannister" => $lannister_points,
+    "martel" => $martel_points,
+    "baratheon" => $baratheon_points,
+    "maesters" => $maesters_points,
+    "the_faith" => $the_faith_points
+];
 
-// Return the json
+// Return the JSON
 header('Content-Type: application/json');
-die("{$json}");
+die(json_encode($obj));
 ?>

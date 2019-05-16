@@ -56,7 +56,7 @@ if ($setStr === '') {
 // Build query
 $query = "UPDATE users
 	SET $setStr
-	WHERE uid=" . $_SESSION['userSession'];
+	WHERE uid={$_SESSION['userSession']}";
 if ($MySQLi_CON->query($query)) {
     die("Update Successful!");
 } else {

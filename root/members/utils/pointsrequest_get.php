@@ -25,28 +25,28 @@ while ($row = $pointsRequestResult->fetch_array()) {
 }
 $pointsRequestResult->free_result();
 
-// Build the request array string
+// Build the request array
 $length = count($requestList);
 $i = 0;
-$rowArray = [];
+$requestArr = [];
 while ($i < $length) {
     $reqRow = $requestList[$i];
     $i++;
 
-    // Build an array of attributes
-    $attrArray = [];
-    $attrArray[] = "\"timestamp\":\"{$reqRow['timestamp']}\"";
-    $attrArray[] = "\"targetUid\":\"{$reqRow['target_uid']}\"";
-    $attrArray[] = "\"sourceUid\":\"{$reqRow['source_uid']}\"";
-    $attrArray[] = "\"numPoints\":\"{$reqRow['num_points']}\"";
-    $attrArray[] = "\"sourceName\":\"{$reqRow['source_name']}\"";
+    // Build the request entry
+    $entry = [
+        "timestamp" => "{$reqRow['timestamp']}",
+        "targetUid" => "{$reqRow['target_uid']}",
+        "sourceUid" => "{$reqRow['source_uid']}",
+        "numPoints" => "{$reqRow['num_points']}",
+        "sourceName" => "{$reqRow['source_name']}"
+    ];
 
-    // Add the row to the array
-    $rowArray[] = "{" . join(",", $attrArray) . "}";
+    // Add the entry
+    $requestArr[] = $entry;
 }
-$json = "[" . join(",", $rowArray) . "]";
 
-// Return the request array string
+// Return the JSON
 header('Content-Type: application/json');
-die($json);
+die(json_encode($requestArr));
 ?>

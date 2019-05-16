@@ -24,10 +24,10 @@ while ($row = $pointsHistoryResult->fetch_array()) {
 }
 $pointsHistoryResult->free_result();
 
-// Build the history array string
+// Build the array of history entries
 $length = count($historyList);
 $i = 0;
-$rowArray = [];
+$entryArr = [];
 while ($i < $length) {
     $hRow = $historyList[$i];
     $i++;
@@ -55,22 +55,22 @@ while ($i < $length) {
         }
     }
 
-    // Build up the row
-    $attrArray = [];
-    $attrArray[] = "\"timestamp\":\"{$hRow['timestamp']}\"";
-    $attrArray[] = "\"fromName\":\"{$fromName}\"";
-    $attrArray[] = "\"toName\":\"{$toName}\"";
-    $attrArray[] = "\"numPoints\":\"{$hRow['num_points']}\"";
-    $attrArray[] = "\"isAdminAction\":\"{$isAdminAction}\"";
-    $attrArray[] = "\"toEmail\":\"{$hRow['to_email']}\"";
-    $attrArray[] = "\"fromEmail\":\"{$hRow['from_email']}\"";
+    // Build the history entry
+    $entry = [
+        "timestamp" => "{$hRow['timestamp']}",
+        "fromName" => "$fromName",
+        "toName" => "$toName",
+        "numPoints" => "{$hRow['num_points']}",
+        "isAdminAction" => "$isAdminAction",
+        "toEmail" => "{$hRow['to_email']}",
+        "fromEmail" => "{$hRow['from_email']}"
+    ];
 
-    // Add the row to the array
-    $rowArray[] = "{" . join(",", $attrArray) . "}";
+    // Add the entry
+    $entryArr[] = $entry;
 }
-$json = "[" . join(",", $rowArray) . "]";
 
-// Return the history array string
+// Return the JSON
 header('Content-Type: application/json');
-die($json);
+die(json_encode($entryArr));
 ?>

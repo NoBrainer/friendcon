@@ -11,7 +11,6 @@ include('dbconnect.php');
 include('checkadmin.php');
 
 // Get parameters from the url
-
 if (isset($_GET['forAdmin'])) {
     $forAdmin = 1;
 } else if (isset($_GET['forCheckIn'])) {
@@ -61,7 +60,7 @@ $userListResult->free_result();
 // Build an array of users
 $length = count($userList);
 $i = 0;
-$rowArray = [];
+$userArr = [];
 while ($i < $length) {
     $row = $userList[$i];
     $i++;
@@ -79,27 +78,26 @@ while ($i < $length) {
     $isRegistered = $row['isRegistered'];
     $isHouse = $row['isHouse'];
 
-    // Build an array of attributes
-    $attrArray = [];
-    if (isset($uid)) $attrArray[] = "\"uid\":{$uid}";
-    if (isset($email)) $attrArray[] = "\"email\":\"{$email}\"";
-    if (isset($name)) $attrArray[] = "\"name\":\"{$name}\"";
-    if (isset($upoints)) $attrArray[] = "\"upoints\":{$upoints}";
-    if (isset($housename)) $attrArray[] = "\"housename\":\"{$housename}\"";
-    if (isset($houseid)) $attrArray[] = "\"houseid\":\"{$houseid}\"";
-    if (isset($favoriteAnimal)) $attrArray[] = "\"favoriteAnimal\":\"{$favoriteAnimal}\"";
-    if (isset($favoriteBooze)) $attrArray[] = "\"favoriteBooze\":\"{$favoriteBooze}\"";
-    if (isset($favoriteNerdism)) $attrArray[] = "\"favoriteNerdism\":\"{$favoriteNerdism}\"";
-    if (isset($isPresent)) $attrArray[] = "\"isPresent\":{$isPresent}";
-    if (isset($isRegistered)) $attrArray[] = "\"isRegistered\":{$isRegistered}";
-    if (isset($isHouse)) $attrArray[] = "\"isHouse\":{$isHouse}";
+    // Build the user entry
+    $entry = [];
+    if (isset($uid)) $entry['uid'] = $uid;
+    if (isset($email)) $entry['email'] = "$email";
+    if (isset($name)) $entry['name'] = "$name";
+    if (isset($upoints)) $entry['upoints'] = $upoints;
+    if (isset($housename)) $entry['housename'] = "$housename";
+    if (isset($houseid)) $entry['houseid'] = "$houseid";
+    if (isset($favoriteAnimal)) $entry['favoriteAnimal'] = "$favoriteAnimal";
+    if (isset($favoriteBooze)) $entry['favoriteBooze'] = "$favoriteBooze";
+    if (isset($favoriteNerdism)) $entry['favoriteNerdism'] = "$favoriteNerdism";
+    if (isset($isPresent)) $entry['isPresent'] = $isPresent;
+    if (isset($isRegistered)) $entry['isRegistered'] = $isRegistered;
+    if (isset($isHouse)) $entry['isHouse'] = $isHouse;
 
-    // Add the row to the array
-    $rowArray[] = "{" . join(",", $attrArray) . "}";
+    // Add the entry
+    $userArr[] = $entry;
 }
-$json = "[" . join(",", $rowArray) . "]";
 
-// Return the history array string
+// Return the JSON
 header('Content-Type: application/json');
-die($json);
+die(json_encode($userArr));
 ?>

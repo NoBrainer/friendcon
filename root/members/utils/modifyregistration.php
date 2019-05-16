@@ -136,15 +136,15 @@ if ($isRegistered == 0) {
     $statsQuery = $updateQuery;
 }
 
-// Build JSON with the updated data
-$attrArray = [];
-$attrArray[] = "\"uid\":\"{$uid}\"";
-$attrArray[] = "\"isPresent\":\"{$isPresent}\"";
-$attrArray[] = "\"isRegistered\":\"{$isRegistered}\"";
-$attrArray[] = "\"agreeToTerms\":\"{$agreeToTerms}\"";
-$attrArray[] = "\"statsOperation\":\"{$statsOperation}\"";
-$attrArray[] = "\"statsQuery\":\"{$statsQuery}\"";
-$json = "{" . join(",", $attrArray) . "}";
+// Build the registration object
+$obj = [
+    "uid" => "$uid",
+    "isPresent" => "$isPresent",
+    "isRegistered" => "$isRegistered",
+    "agreeToTerms" => "$agreeToTerms",
+    "statsOperation" => "$statsOperation",
+    "statsQuery" => "$statsQuery"
+];
 
 // Set the starting points
 if ($isRegistrationEnabled) {
@@ -157,7 +157,7 @@ if ($isRegistrationEnabled) {
     }
 }
 
-// Return the JSON string
+// Return the JSON
 header('Content-Type: application/json');
-die($json);
+die(json_encode($obj));
 ?>
