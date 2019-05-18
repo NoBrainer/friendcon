@@ -70,8 +70,8 @@ while ($i < $length) {
         "timestamp" => "{$hRow['timestamp']}",
         "fromName" => "$fromName",
         "toName" => "$toName",
-        "numPoints" => "{$hRow['num_points']}",
-        "isAdminAction" => "$isAdminAction",
+        "numPoints" => $hRow['num_points'],
+        "isAdminAction" => $isAdminAction==1 ? true : false,
         "toEmail" => "{$hRow['to_email']}",
         "fromEmail" => "{$hRow['from_email']}"
     ];

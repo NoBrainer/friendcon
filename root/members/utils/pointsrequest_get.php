@@ -38,7 +38,7 @@ while ($i < $length) {
         "timestamp" => "{$reqRow['timestamp']}",
         "targetUid" => "{$reqRow['target_uid']}",
         "sourceUid" => "{$reqRow['source_uid']}",
-        "numPoints" => "{$reqRow['num_points']}",
+        "numPoints" => $reqRow['num_points'],
         "sourceName" => "{$reqRow['source_name']}"
     ];
 

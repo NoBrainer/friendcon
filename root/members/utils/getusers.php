@@ -89,9 +89,9 @@ while ($i < $length) {
     if (isset($favoriteAnimal)) $entry['favoriteAnimal'] = "$favoriteAnimal";
     if (isset($favoriteBooze)) $entry['favoriteBooze'] = "$favoriteBooze";
     if (isset($favoriteNerdism)) $entry['favoriteNerdism'] = "$favoriteNerdism";
-    if (isset($isPresent)) $entry['isPresent'] = $isPresent;
-    if (isset($isRegistered)) $entry['isRegistered'] = $isRegistered;
-    if (isset($isHouse)) $entry['isHouse'] = $isHouse;
+    if (isset($isPresent)) $entry['isPresent'] = $isPresent==1 ? true : false;
+    if (isset($isRegistered)) $entry['isRegistered'] = $isRegistered==1 ? true : false;
+    if (isset($isHouse)) $entry['isHouse'] = $isHouse==1 ? true : false;
 
     // Add the entry
     $userArr[] = $entry;

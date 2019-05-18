@@ -139,8 +139,8 @@ if ($isRegistered == 0) {
 // Build the registration object
 $obj = [
     "uid" => "$uid",
-    "isPresent" => "$isPresent",
-    "isRegistered" => "$isRegistered",
+    "isPresent" => $isPresent==1 ? true : false,
+    "isRegistered" => $isRegistered==1 ? true : false,
     "agreeToTerms" => "$agreeToTerms",
     "statsOperation" => "$statsOperation",
     "statsQuery" => "$statsQuery"
