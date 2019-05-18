@@ -78,7 +78,6 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
                         the duration of FriendCon <?php echo $conYear; ?> (Friday through Saturday).</p>
                     <p>FriendCon 2019 Membership: $<?php echo $badgePrice; ?></p>
                     <div id="paypal-button-container"></div>
-                    <!-- TODO: log registration updates to the database -->
                 </div>
                 <div>
                     <span id="registration-message"></span>
