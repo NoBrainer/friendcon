@@ -9,6 +9,7 @@ if (!isset($userSession) || $userSession == "") {
 }
 include('dbconnect.php');
 include('checkadmin.php');
+include('sql_functions.php');
 
 // Get parameters from the url
 if (isset($_GET['forAdmin'])) {
@@ -48,7 +49,7 @@ if (isset($forAdmin) && $isAdmin) {
 }
 
 // Get the list of users
-$userListResult = $MySQLi_CON->query($userListQuery);
+$userListResult = prepareSqlForResult($MySQLi_CON, $userListQuery);
 if (!$userListResult)
     die("User list query failed [DB-1]");
 $userList = [];
