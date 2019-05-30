@@ -12,7 +12,6 @@ include('utils/dbconnect.php');
 if (isset($_POST['btn-signup'])) {
     $name = $MySQLi_CON->real_escape_string(trim($_POST['name']));
     $phone = $MySQLi_CON->real_escape_string(trim($_POST['phone']));
-    $badgeType = $MySQLi_CON->real_escape_string(trim($_POST['badgeType']));
     $favoriteBooze = $MySQLi_CON->real_escape_string(trim($_POST['favoriteBooze']));
     $favoriteNerdism = $MySQLi_CON->real_escape_string(trim($_POST['favoriteNerdism']));
     $favoriteAnimal = $MySQLi_CON->real_escape_string(trim($_POST['favoriteAnimal']));
@@ -26,40 +25,51 @@ if (isset($_POST['btn-signup'])) {
     $check_email = $MySQLi_CON->query("SELECT email FROM users WHERE email='$email'");
     $count = $check_email->num_rows;
 
-    if ($count == 0) {
-        //get the shit outta here
+    if ($count > 0) {
+        // Email is already registered
+        $msg = "<div class='alert alert-danger'>
+					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; This email has previously registered!
+				</div>";
+    } else {
+        // Try to register the user
         $phone = preg_replace('/\D+/', '', $phone);
         $emergencyCNP = preg_replace('/\D+/', '', $emergencyCNP);
-        $query = "INSERT INTO users(name,badgeType,email,phone,password,favoriteAnimal,favoriteBooze,favoriteNerdism,emergencyCN,emergencyCNP) VALUES('$name','$badgeType','$email','$phone','$new_password','$favoriteAnimal','$favoriteBooze','$favoriteNerdism','$emergencyCN','$emergencyCNP')";
+        $query = "INSERT INTO users(name ,email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism, emergencyCN, emergencyCNP)
+            VALUES('$name','$email','$phone','$new_password','$favoriteAnimal','$favoriteBooze','$favoriteNerdism','$emergencyCN','$emergencyCNP')";
 
         if ($MySQLi_CON->query($query)) {
+            $shouldSendEmailToAdmin = true;
+            $shouldSendEmailToUser = true;
             $msg = "<div class='alert alert-success'>
 						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Registration Successful!
 					</div>";
         } else {
+            $shouldSendEmailToAdmin = true;
+            $shouldSendEmailToUser = false;
             $msg = "<div class='alert alert-danger'>
 						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; You gotta try again! Sorry.
 					</div>";
         }
-    } else {
-        $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; This email has previously registered!
-				</div>";
+
+        // Email settings
+        $headers = "From: admin@friendcon.com";
+        $toAdmin = "admin@friendcon.com";
+        $subjectAdmin = "New Friend Registered! Welcome, " . $name . "!";
+        $bodyAdmin = "Name: " . $name . "\r\n" . "Email: " . $email;
+        $toUser = $email;
+        $subjectUser = "Your FriendCon Account Has Been Created!";
+        $txtUser = "Hey there, " . $name . "!" . "\r\n" . "\r\n" . "We're so happy you decided to create an account and hopefully join us at the next FriendCon! We look forward to seeing you there!" . "\r\n" . "\r\n" . "All the best from your friends at FriendCon!" . "\r\n";
+
+        if ($shouldSendEmailToAdmin) {
+            // Send ourselves an email on new user registration
+            mail($toAdmin, $subjectAdmin, $bodyAdmin, $headers);
+        }
+
+        if ($shouldSendEmailToUser) {
+            // Send an email to the user saying it was successful
+            mail($toUser, $subjectUser, $txtUser, $headers);
+        }
     }
-    //send ourselves an email on new user registration
-    $toUs = "admin@friendcon.com";
-    $subjectUs = "New Friend Registered! Welcome, " . $name . "!";
-    $txtUs = "Name: " . $name . "\r\n" . "Email: " . $email;
-    $headers = "From: admin@friendcon.com";
-
-    mail($toUs, $subjectUs, $txtUs, $headers);
-
-    //send an email to the user saying it was successful
-    $to = $email;
-    $subject = "Your FriendCon Account Has Been Created!";
-    $txt = "Hey there, " . $name . "!" . "\r\n" . "\r\n" . "We're so happy you decided to create an account and hopefully join us at the next FriendCon! We look forward to seeing you there!" . "\r\n" . "\r\n" . "All the best from your friends at FriendCon!" . "\r\n";
-
-    mail($to, $subject, $txt, $headers);
 }
 ?>
 
@@ -167,7 +177,8 @@ if (isset($_POST['btn-signup'])) {
             <div class="form-group">
                 <a href="/members/index.php" class="btn btn-default">Already Signed Up?</a>
                 <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
-                    <span class="glyphicon glyphicon-log-in"></span> &nbsp; Create Account
+                    <span class="glyphicon glyphicon-log-in"></span>
+                    <span>Create Account</span>
                 </button>
             </div>
         </form>
