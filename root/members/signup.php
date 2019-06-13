@@ -8,57 +8,67 @@ if (isset($userSession) && $userSession != "") {
     exit;
 }
 include('utils/dbconnect.php');
+include('utils/sql_functions.php');
 
 if (isset($_POST['btn-signup'])) {
-    $name = $MySQLi_CON->real_escape_string(trim($_POST['name']));
-    $phone = $MySQLi_CON->real_escape_string(trim($_POST['phone']));
-    $favoriteBooze = $MySQLi_CON->real_escape_string(trim($_POST['favoriteBooze']));
-    $favoriteNerdism = $MySQLi_CON->real_escape_string(trim($_POST['favoriteNerdism']));
-    $favoriteAnimal = $MySQLi_CON->real_escape_string(trim($_POST['favoriteAnimal']));
-    $email = $MySQLi_CON->real_escape_string(trim($_POST['email']));
-    $upass = $MySQLi_CON->real_escape_string(trim($_POST['password']));
-    $emergencyCN = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCN']));
-    $emergencyCNP = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCNP']));
+    $name = trim($_POST['name']);
+    $phone = trim($_POST['phone']);
+    $favoriteBooze = trim($_POST['favoriteBooze']);
+    $favoriteNerdism = trim($_POST['favoriteNerdism']);
+    $favoriteAnimal = trim($_POST['favoriteAnimal']);
+    $email = trim($_POST['email']);
+    $hashedPassword = md5(trim($_POST['password']));
+    $emergencyCN = trim($_POST['emergencyCN']);
+    $emergencyCNP = trim($_POST['emergencyCNP']);
 
-    $new_password = md5($upass);
+    function isEmailRegistered($MySQLi_CON, $email) {
+        $emailQuery = "SELECT email FROM users WHERE email='?'";
+        $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', [$email]);
+        $count = $emailResult->num_rows;
+        return $count > 0;
+    }
 
-    $check_email = $MySQLi_CON->query("SELECT email FROM users WHERE email='$email'");
-    $count = $check_email->num_rows;
-
-    if ($count > 0) {
+    if (isEmailRegistered($MySQLi_CON, $email)) {
         // Email is already registered
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; This email has previously registered!
+					<span class='glyphicon glyphicon-info-sign'></span>
+					<span>This email has previously registered!</span>
 				</div>";
     } else {
         // Try to register the user
         $phone = preg_replace('/\D+/', '', $phone);
         $emergencyCNP = preg_replace('/\D+/', '', $emergencyCNP);
-        $query = "INSERT INTO users(name ,email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism, emergencyCN, emergencyCNP)
-            VALUES('$name','$email','$phone','$new_password','$favoriteAnimal','$favoriteBooze','$favoriteNerdism','$emergencyCN','$emergencyCNP')";
+        $query = "INSERT INTO users(name, email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism, " .
+                "emergencyCN, emergencyCNP)" .
+                "VALUES('?','?','?','?','?','?','?','?','?')";
+        $result = prepareSqlForResult($MySQLi_CON, $query, 'sssssssss', [$name, $email, $phone, $hashedPassword,
+                $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP]);
 
-        if ($MySQLi_CON->query($query)) {
+        if ($result) {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = true;
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Registration Successful!
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>Registration Successful!</span>
 					</div>";
         } else {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = false;
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; You gotta try again! Sorry.
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>You gotta try again! Sorry.</span>
 					</div>";
         }
 
         // Email settings
         $headers = "From: admin@friendcon.com";
         $toAdmin = "admin@friendcon.com";
-        $subjectAdmin = "New Friend Registered! Welcome, " . $name . "!";
-        $bodyAdmin = "Name: " . $name . "\r\n" . "Email: " . $email;
+        $subjectAdmin = "New Friend Registered! Welcome, {$name}!";
+        $bodyAdmin = "Name: {$name}\nEmail: {$email}";
         $toUser = $email;
         $subjectUser = "Your FriendCon Account Has Been Created!";
-        $txtUser = "Hey there, " . $name . "!" . "\r\n" . "\r\n" . "We're so happy you decided to create an account and hopefully join us at the next FriendCon! We look forward to seeing you there!" . "\r\n" . "\r\n" . "All the best from your friends at FriendCon!" . "\r\n";
+        $txtUser = "Hey there, {$name}!\n\nWe're so happy you decided to create an account and hopefully join us at " .
+                "the next FriendCon! We look forward to seeing you there!\n\nAll the best from your friends at FriendCon!\n";
 
         if ($shouldSendEmailToAdmin) {
             // Send ourselves an email on new user registration

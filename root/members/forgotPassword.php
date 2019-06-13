@@ -8,50 +8,55 @@ if (isset($userSession) && $userSession != "") {
     exit;
 }
 include('utils/dbconnect.php');
+include('utils/sql_functions.php');
 
 //on button submit action
 if (isset($_POST['btn-signup'])) {
-    $email = $MySQLi_CON->real_escape_string(trim($_POST['email']));
+    //TODO: clean this stuff up with my own conventions
+    $email = trim($_POST['email']);
 
     //check to see if the email exists
-    $check_email = $MySQLi_CON->query("SELECT email FROM users WHERE email='$email'");
-    $count = $check_email->num_rows;
+    $emailQuery = "SELECT email FROM users WHERE email='?'";
+    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', [$email]);
+    $count = $emailResult->num_rows;
 
     //if that email address has an account associated with it and thus has a return row, do this
     if ($count == 1) {
+        $passwordQuery = "SELECT password FROM users WHERE email='?'";
 
         //get the password hash
-        $passwordGet = $MySQLi_CON->query("SELECT password FROM users WHERE email='$email'");
+        $passwordResult = prepareSqlForResult($MySQLi_CON, $passwordQuery, 's', [$email]);
         //put the sqli item into an array
-        $row = mysqli_fetch_array($passwordGet);
+        $row = mysqli_fetch_array($passwordResult);
         //hash is now $row[0]
 
-        $password = "SELECT password FROM users WHERE email='$email'";
-
         //if query to get the password is successful, do this
-        if ($MySQLi_CON->query($password)) {
+        if ($passwordResult) {
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; You'll get a token in your email!
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>You'll get a token in your email!</span>
 					</div>";
 
             //Send Email to the User
             $to = $email;
             $subject = "Your FriendCon Account Password Request";
-            $txt = "Thanks for reaching out to us about your FriendCon account. Your token is below and can be used to reset your account at http://friendcon.com/members/passwordReset" . "\r\n" . "Token: " . $row[0];
+            $txt = "Thanks for reaching out to us about your FriendCon account. Your token is below and can be used " .
+                    "to reset your account at http://friendcon.com/members/passwordReset\nToken: " . $row[0];
             $headers = "From: admin@friendcon.com";
 
             mail($to, $subject, $txt, $headers);
-
         } else {
             //if the sql query failed, do this
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something went wrong. Inexplicably. 
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>Something went wrong. Inexplicably.</span>
 					</div>";
         }
     } else {
         //if there is no account record found, do this
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something went wrong! Contact us at admins@friendcon.com
+					<span class='glyphicon glyphicon-info-sign'></span>
+					<span>Something went wrong! Contact us at admins@friendcon.com</span>
 				</div>";
     }
 }

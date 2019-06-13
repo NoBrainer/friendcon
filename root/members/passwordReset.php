@@ -8,40 +8,41 @@ if (isset($userSession) && $userSession != "") {
     exit;
 }
 include('utils/dbconnect.php');
+include('utils/sql_functions.php');
 
 if (isset($_POST['btn-signup'])) {
     //sanitize the inputs
-    $safeHash = $MySQLi_CON->real_escape_string(trim($_POST['checkDatHash']));
-    $safePass = $MySQLi_CON->real_escape_string(trim($_POST['uPass']));
-    $safeEmail = $MySQLi_CON->real_escape_string(trim($_POST['uEmail']));
+    $hash = trim($_POST['checkDatHash']);
+    $password = trim($_POST['uPass']);
+    $email = trim($_POST['uEmail']);
 
     //get the pass hash from the db if it matches the token input
-    $tokenGet = $MySQLi_CON->query("SELECT password FROM users WHERE password = '$safeHash'");
-    //put results into an array
-    $row = mysqli_fetch_array($tokenGet);
-    //hash now in an array index starting at $row[0]
+    $hashQuery = "SELECT password FROM users WHERE password = '?'";
+    $hashResult = prepareSqlForResult($MySQLi_CON, $hashQuery, 's', [$hash]);
+    $hashArr = mysqli_fetch_array($hashResult);
 
     //get the email addresses from the db if it matches the token input
-    $tokenGetSuccess = $MySQLi_CON->query("SELECT email FROM users WHERE password = '$safeHash' AND email = '$safeEmail'");
-    //put results into an array
-    $email = mysqli_fetch_array($tokenGetSuccess);
-    //emails are now in an array with index at $email[0]
+    $emailQuery = "SELECT email FROM users WHERE password = '?' AND email = '?'";
+    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 'ss', [$hash, $email]);
+    $emailArr = mysqli_fetch_array($emailResult);
 
     //if emails match and hashes match, do this
-    if ($email[0] == $safeEmail && $safeHash == $row[0]) {
+    if ($emailArr[0] == $email && $hashArr[0] == $hash) {
 
         //hash the new password and update
-        $new_password = md5($safePass);
-        $query = "UPDATE users SET password = '$new_password' WHERE email = '$safeEmail'";
+        $newPassword = md5($password);
+        $query = "UPDATE users SET password = '?' WHERE email = '?'";
+        $result = prepareSqlForResult($MySQLi_CON, $query, 'ss', [$newPassword, $email]);
 
         //if update query is successful, do this
-        if ($MySQLi_CON->query($query)) {
+        if ($result) {
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Password Succesfully Updated!
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>Password Succesfully Updated!</span>
 					</div>";
 
             //send an email to the user saying it was successful
-            $to = $safeEmail;
+            $to = $email;
             $subject = "Your FriendCon Account Password Request";
             $txt = "Your Password has been successfully reset. If you did not change your password, please contact us immediately at admin@friendcon.com" . "\r\n";
             $headers = "From: admin@friendcon.com";
@@ -50,13 +51,15 @@ if (isset($_POST['btn-signup'])) {
         } else {
             //if the query fails, give an error message
             $msg = "<div class='alert alert-danger'>
-			<span class='glyphicon glyphicon-info-sign'></span> &nbsp; There was an error processing your request. Please Try Again.
-			</div>";
+                        <span class='glyphicon glyphicon-info-sign'></span>
+                        <span>There was an error processing your request. Please Try Again.</span>
+                    </div>";
         }
     } else {
         //If the info doesn't match, throw an error
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Something is not correct with the info provided. Try again if you want.
+					<span class='glyphicon glyphicon-info-sign'></span>
+					<span>Something is not correct with the info provided. Try again if you want.</span>
 				</div>";
     }
 }

@@ -8,6 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 include('checkadmin.php');
 include('check_app_state.php');
 
@@ -35,10 +36,11 @@ $num5XL = 0;
 $num5XLPaid = 0;
 
 // Run the query and traverse each row to build up the counts
-$result = $MySQLi_CON->query("SELECT s.teeSize, u.isRegistered
-	 FROM registration_stats s
-	 JOIN users u ON u.uid = s.uid
-	 WHERE s.conYear = {$conYear} AND s.reserveTee = 1");
+$query = "SELECT s.teeSize, u.isRegistered" .
+        "FROM registration_stats s" .
+        "JOIN users u ON u.uid = s.uid" .
+        "WHERE s.conYear = ? AND s.reserveTee = 1";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', [$conYear]);
 $row = $result->fetch_array();
 while ($row) {
     $size = $row['teeSize'];

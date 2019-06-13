@@ -8,12 +8,15 @@ if (isset($userSession) && $userSession != "") {
     exit;
 }
 include('utils/dbconnect.php');
+include('utils/sql_functions.php');
 
 if (isset($_POST['btn-login'])) {
-    $email = $MySQLi_CON->real_escape_string(trim($_POST['email']));
-    $password = $MySQLi_CON->real_escape_string(trim($_POST['password']));
+    //TODO: change this to follow my conventions
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $query = "SELECT uid, email, password FROM users WHERE email='?'";
 
-    $result = $MySQLi_CON->query("SELECT uid, email, password FROM users WHERE email='$email'");
+    $result = prepareSqlForResult($MySQLi_CON, $query, 's', [$email]);
     $row = $result->fetch_array();
 
     if (!empty($row)) {
@@ -23,13 +26,15 @@ if (isset($_POST['btn-login'])) {
         } else {
             echo $_SESSION['uid'];
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span> &nbsp; Your password does not match!
+						<span class='glyphicon glyphicon-info-sign'></span>
+						<span>Your password does not match!</span>
 					</div>";
         }
     } else {
         echo $_SESSION['uid'];
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span> &nbsp; No registration entry with this email!
+					<span class='glyphicon glyphicon-info-sign'></span>
+					<span>No registration entry with this email!</span>
 				</div>";
     }
 }
