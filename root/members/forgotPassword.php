@@ -12,26 +12,21 @@ include('utils/sql_functions.php');
 
 //on button submit action
 if (isset($_POST['btn-signup'])) {
-    //TODO: clean this stuff up with my own conventions
     $email = trim($_POST['email']);
 
     //check to see if the email exists
     $emailQuery = "SELECT email FROM users WHERE email='?'";
-    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', [$email]);
-    $count = $emailResult->num_rows;
+    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
     //if that email address has an account associated with it and thus has a return row, do this
-    if ($count == 1) {
+    if (hasRows($emailResult)) {
         $passwordQuery = "SELECT password FROM users WHERE email='?'";
-
-        //get the password hash
-        $passwordResult = prepareSqlForResult($MySQLi_CON, $passwordQuery, 's', [$email]);
-        //put the sqli item into an array
-        $row = mysqli_fetch_array($passwordResult);
-        //hash is now $row[0]
+        $passwordResult = prepareSqlForResult($MySQLi_CON, $passwordQuery, 's', $email);
 
         //if query to get the password is successful, do this
-        if ($passwordResult) {
+        if (hasRows($passwordResult, 1)) {
+            $row = getNextRow($passwordResult);
+            $hash = $row[0];
             $msg = "<div class='alert alert-success'>
 						<span class='glyphicon glyphicon-info-sign'></span>
 						<span>You'll get a token in your email!</span>
@@ -41,12 +36,12 @@ if (isset($_POST['btn-signup'])) {
             $to = $email;
             $subject = "Your FriendCon Account Password Request";
             $txt = "Thanks for reaching out to us about your FriendCon account. Your token is below and can be used " .
-                    "to reset your account at http://friendcon.com/members/passwordReset\nToken: " . $row[0];
+                    "to reset your account at http://friendcon.com/members/passwordReset\nToken: {$hash}";
             $headers = "From: admin@friendcon.com";
 
             mail($to, $subject, $txt, $headers);
         } else {
-            //if the sql query failed, do this
+            //if the sql query failed or the count != 1
             $msg = "<div class='alert alert-danger'>
 						<span class='glyphicon glyphicon-info-sign'></span>
 						<span>Something went wrong. Inexplicably.</span>

@@ -21,14 +21,10 @@ if (isset($_POST['btn-signup'])) {
     $emergencyCN = trim($_POST['emergencyCN']);
     $emergencyCNP = trim($_POST['emergencyCNP']);
 
-    function isEmailRegistered($MySQLi_CON, $email) {
-        $emailQuery = "SELECT email FROM users WHERE email='?'";
-        $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', [$email]);
-        $count = $emailResult->num_rows;
-        return $count > 0;
-    }
+    $emailQuery = "SELECT email FROM users WHERE email='?'";
+    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
-    if (isEmailRegistered($MySQLi_CON, $email)) {
+    if (hasRows($emailResult)) {
         // Email is already registered
         $msg = "<div class='alert alert-danger'>
 					<span class='glyphicon glyphicon-info-sign'></span>
@@ -38,13 +34,13 @@ if (isset($_POST['btn-signup'])) {
         // Try to register the user
         $phone = preg_replace('/\D+/', '', $phone);
         $emergencyCNP = preg_replace('/\D+/', '', $emergencyCNP);
-        $query = "INSERT INTO users(name, email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism, " .
-                "emergencyCN, emergencyCNP)" .
-                "VALUES('?','?','?','?','?','?','?','?','?')";
-        $result = prepareSqlForResult($MySQLi_CON, $query, 'sssssssss', [$name, $email, $phone, $hashedPassword,
-                $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP]);
+        $query = "INSERT INTO users(name, email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism," .
+                " emergencyCN, emergencyCNP)" .
+                " VALUES('?','?','?','?','?','?','?','?','?')";
+        $result = prepareSqlForResult($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone, $hashedPassword,
+                $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
 
-        if ($result) {
+        if (hasRows($result)) {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = true;
             $msg = "<div class='alert alert-success'>
@@ -68,7 +64,8 @@ if (isset($_POST['btn-signup'])) {
         $toUser = $email;
         $subjectUser = "Your FriendCon Account Has Been Created!";
         $txtUser = "Hey there, {$name}!\n\nWe're so happy you decided to create an account and hopefully join us at " .
-                "the next FriendCon! We look forward to seeing you there!\n\nAll the best from your friends at FriendCon!\n";
+                "the next FriendCon! We look forward to seeing you there!\n\nAll the best from your friends at " .
+                "FriendCon!\n";
 
         if ($shouldSendEmailToAdmin) {
             // Send ourselves an email on new user registration

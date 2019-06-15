@@ -40,9 +40,8 @@ $query = "SELECT s.teeSize, u.isRegistered" .
         "FROM registration_stats s" .
         "JOIN users u ON u.uid = s.uid" .
         "WHERE s.conYear = ? AND s.reserveTee = 1";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', [$conYear]);
-$row = $result->fetch_array();
-while ($row) {
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $conYear);
+while ($row = getNextRow($result)) {
     $size = $row['teeSize'];
     $isRegistered = $row['isRegistered'];
     if ($size == 'S') {
@@ -76,22 +75,22 @@ $result->free_result();
 
 // Build the counts object
 $obj = [
-    "S" => $numSmall,
-    "M" => $numMedium,
-    "L" => $numLarge,
-    "XL" => $numXL,
-    "2XL" => $num2XL,
-    "3XL" => $num3XL,
-    "4XL" => $num4XL,
-    "5XL" => $num5XL,
-    "SPaid" => $numSmallPaid,
-    "MPaid" => $numMediumPaid,
-    "LPaid" => $numLargePaid,
-    "XLPaid" => $numXLPaid,
-    "2XLPaid" => $num2XLPaid,
-    "3XLPaid" => $num3XLPaid,
-    "4XLPaid" => $num4XLPaid,
-    "5XLPaid" => $num5XLPaid
+        "S"       => $numSmall,
+        "M"       => $numMedium,
+        "L"       => $numLarge,
+        "XL"      => $numXL,
+        "2XL"     => $num2XL,
+        "3XL"     => $num3XL,
+        "4XL"     => $num4XL,
+        "5XL"     => $num5XL,
+        "SPaid"   => $numSmallPaid,
+        "MPaid"   => $numMediumPaid,
+        "LPaid"   => $numLargePaid,
+        "XLPaid"  => $numXLPaid,
+        "2XLPaid" => $num2XLPaid,
+        "3XLPaid" => $num3XLPaid,
+        "4XLPaid" => $num4XLPaid,
+        "5XLPaid" => $num5XLPaid
 ];
 
 // Return the JSON

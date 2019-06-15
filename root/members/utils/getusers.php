@@ -23,40 +23,40 @@ if (isset($_GET['forAdmin'])) {
 }
 
 if (isset($forAdmin) && $isAdmin) {
-    $userListQuery = "SELECT u.uid, u.email, u.name, u.upoints, h.housename, IF(u.isRegistered = -1, 1, 0) AS isHouse
-		 FROM users u
-		 JOIN house h ON u.houseid = h.houseid
-		 WHERE u.isPresent = 1 OR u.isRegistered = -1
-		 ORDER BY h.housename ASC, isHouse DESC, u.upoints DESC, u.name ASC";
+    $userListQuery = "SELECT u.uid, u.email, u.name, u.upoints, h.housename, IF(u.isRegistered = -1, 1, 0) AS isHouse" .
+            " FROM users u" .
+            " JOIN house h ON u.houseid = h.houseid" .
+            " WHERE u.isPresent = 1 OR u.isRegistered = -1" .
+            " ORDER BY h.housename ASC, isHouse DESC, u.upoints DESC, u.name ASC";
 } else if (isset($forCheckIn) && $isAdmin) {
-    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename
-		 FROM users u
-		 JOIN house h ON u.houseid = h.houseid
-		 ORDER BY u.name ASC, u.isRegistered DESC";
+    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename" .
+            " FROM users u" .
+            " JOIN house h ON u.houseid = h.houseid" .
+            " ORDER BY u.name ASC, u.isRegistered DESC";
 } else if (isset($forTeamSort) && $isAdmin) {
-    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename, h.houseid
-		 FROM users u
-		 JOIN house h ON u.houseid = h.houseid
-		 WHERE u.isPresent = 1
-		 ORDER BY h.housename ASC";
+    $userListQuery = "SELECT u.uid, u.email, u.name, u.isPresent, u.isRegistered, h.housename, h.houseid" .
+            " FROM users u" .
+            " JOIN house h ON u.houseid = h.houseid" .
+            " WHERE u.isPresent = 1" .
+            " ORDER BY h.housename ASC";
 } else if (isset($forEmailList) && $isAdmin) {
     $userListQuery = "SELECT u.email FROM users u";
 } else {
-    $userListQuery = "SELECT u.name, u.email, h.housename
-		 FROM users u
-		 JOIN house h ON u.houseid = h.houseid
-		 WHERE u.isRegistered = 1";//TODO: modify to only include present
+    $userListQuery = "SELECT u.name, u.email, h.housename" .
+            " FROM users u" .
+            " JOIN house h ON u.houseid = h.houseid" .
+            " WHERE u.isRegistered = 1";//TODO: modify to only include present
 }
 
 // Get the list of users
 $userListResult = prepareSqlForResult($MySQLi_CON, $userListQuery);
-if (!$userListResult)
+if (!$userListResult || !hasRows($userListQuery)) {
     die("User list query failed [DB-1]");
+}
 $userList = [];
-while ($row = $userListResult->fetch_array()) {
+while ($row = getNextRow($userListResult)) {
     $userList[] = $row;
 }
-$userListResult->free_result();
 
 // Build an array of users
 $length = count($userList);
@@ -90,9 +90,9 @@ while ($i < $length) {
     if (isset($favoriteAnimal)) $entry['favoriteAnimal'] = "$favoriteAnimal";
     if (isset($favoriteBooze)) $entry['favoriteBooze'] = "$favoriteBooze";
     if (isset($favoriteNerdism)) $entry['favoriteNerdism'] = "$favoriteNerdism";
-    if (isset($isPresent)) $entry['isPresent'] = $isPresent==1 ? true : false;
-    if (isset($isRegistered)) $entry['isRegistered'] = $isRegistered==1 ? true : false;
-    if (isset($isHouse)) $entry['isHouse'] = $isHouse==1 ? true : false;
+    if (isset($isPresent)) $entry['isPresent'] = $isPresent == 1 ? true : false;
+    if (isset($isRegistered)) $entry['isRegistered'] = $isRegistered == 1 ? true : false;
+    if (isset($isHouse)) $entry['isHouse'] = $isHouse == 1 ? true : false;
 
     // Add the entry
     $userArr[] = $entry;

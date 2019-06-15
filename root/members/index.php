@@ -11,27 +11,23 @@ include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
 if (isset($_POST['btn-login'])) {
-    //TODO: change this to follow my conventions
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $query = "SELECT uid, email, password FROM users WHERE email='?'";
+    $result = prepareSqlForResult($MySQLi_CON, $query, 's', $email);
 
-    $result = prepareSqlForResult($MySQLi_CON, $query, 's', [$email]);
-    $row = $result->fetch_array();
-
-    if (!empty($row)) {
+    if (hasRows($result, 1)) {
+        $row = getNextRow($result);
         if (md5($password) === $row['password']) {
             $_SESSION['userSession'] = $row['uid'];
             header("Location: /members/home.php");
         } else {
-            echo $_SESSION['uid'];
             $msg = "<div class='alert alert-danger'>
 						<span class='glyphicon glyphicon-info-sign'></span>
 						<span>Your password does not match!</span>
 					</div>";
         }
     } else {
-        echo $_SESSION['uid'];
         $msg = "<div class='alert alert-danger'>
 					<span class='glyphicon glyphicon-info-sign'></span>
 					<span>No registration entry with this email!</span>

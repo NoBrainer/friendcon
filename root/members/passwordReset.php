@@ -11,40 +11,40 @@ include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
 if (isset($_POST['btn-signup'])) {
-    //sanitize the inputs
     $hash = trim($_POST['checkDatHash']);
     $password = trim($_POST['uPass']);
     $email = trim($_POST['uEmail']);
 
     //get the pass hash from the db if it matches the token input
     $hashQuery = "SELECT password FROM users WHERE password = '?'";
-    $hashResult = prepareSqlForResult($MySQLi_CON, $hashQuery, 's', [$hash]);
-    $hashArr = mysqli_fetch_array($hashResult);
+    $hashResult = prepareSqlForResult($MySQLi_CON, $hashQuery, 's', $hash);
+    $hashRow = getNextRow($hashResult);
 
     //get the email addresses from the db if it matches the token input
     $emailQuery = "SELECT email FROM users WHERE password = '?' AND email = '?'";
-    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 'ss', [$hash, $email]);
-    $emailArr = mysqli_fetch_array($emailResult);
+    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 'ss', $hash, $email);
+    $emailRow = getNextRow($emailResult);
 
     //if emails match and hashes match, do this
-    if ($emailArr[0] == $email && $hashArr[0] == $hash) {
+    if ($emailRow && $emailRow[0] == $email && $hashRow && $hashRow[0] == $hash) {
 
         //hash the new password and update
-        $newPassword = md5($password);
+        $hashedPassword = md5($password);
         $query = "UPDATE users SET password = '?' WHERE email = '?'";
-        $result = prepareSqlForResult($MySQLi_CON, $query, 'ss', [$newPassword, $email]);
+        $result = prepareSqlForResult($MySQLi_CON, $query, 'ss', $hashedPassword, $email);
 
         //if update query is successful, do this
-        if ($result) {
+        if (hasRows($result)) {
             $msg = "<div class='alert alert-success'>
 						<span class='glyphicon glyphicon-info-sign'></span>
-						<span>Password Succesfully Updated!</span>
+						<span>Password Successfully Updated!</span>
 					</div>";
 
             //send an email to the user saying it was successful
             $to = $email;
             $subject = "Your FriendCon Account Password Request";
-            $txt = "Your Password has been successfully reset. If you did not change your password, please contact us immediately at admin@friendcon.com" . "\r\n";
+            $txt = "Your Password has been successfully reset. If you did not change your password, please contact " .
+                    "us immediately at admin@friendcon.com\n";
             $headers = "From: admin@friendcon.com";
 
             mail($to, $subject, $txt, $headers);
