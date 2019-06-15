@@ -49,21 +49,17 @@ if (isset($forAdmin) && $isAdmin) {
 }
 
 // Get the list of users
-$userListResult = prepareSqlForResult($MySQLi_CON, $userListQuery);
-if (!$userListResult || !hasRows($userListQuery)) {
+$userListResult = $MySQLi_CON->query($userListQuery); //TODO: get prepared statements utils working for empty params
+if (!$userListQuery) {
     die("User list query failed [DB-1]");
-}
-$userList = [];
-while ($row = getNextRow($userListResult)) {
-    $userList[] = $row;
 }
 
 // Build an array of users
-$length = count($userList);
+$length = $userListResult->num_rows;
 $i = 0;
 $userArr = [];
 while ($i < $length) {
-    $row = $userList[$i];
+    $row = getNextRow($userListResult);
     $i++;
 
     $uid = $row['uid'];
