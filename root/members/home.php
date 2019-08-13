@@ -2,6 +2,11 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
+    // Force https
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+    exit;
+}
 if (!isset($userSession) || $userSession == "") {
     // If not logged in, go to registration index
     header("Location: /members/index.php");
@@ -79,7 +84,8 @@ $isPresent = $userRow['isPresent'] == 1;
                 <p><i class="fa fa-check-square green"></i> Checked In!</p>
             <?php } else if ($isRegistered) { ?>
                 <p><i class="fa fa-check-square green"></i> Registered!
-                    (<a href="/tickets/" target="_blank">Hotel Room Block <i class="fa fa-external-link-alt"></i></a>)</p>
+                    (<a href="/tickets/" target="_blank">Hotel Room Block <i class="fa fa-external-link-alt"></i></a>)
+                </p>
                 <p><i class="fa fa-times-circle"></i> Attend FriendCon and Check-in...</p>
             <?php } else { ?>
                 <a href="/members/registration.php" class="btn btn-default btn-wide">Registration</a>

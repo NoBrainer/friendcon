@@ -2,6 +2,11 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
+    // Force https
+    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+    exit;
+}
 if (!isset($userSession) || $userSession == "") {
     // If not logged in, go to registration index
     header("Location: /members/index.php");
