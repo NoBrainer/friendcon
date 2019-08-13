@@ -1,4 +1,6 @@
 <?php
+header("Location: /members/index.php");
+/* TODO: uncomment after adding captcha and such
 session_start();
 $userSession = $_SESSION['userSession'];
 
@@ -251,3 +253,5 @@ if (isset($_POST['btn-signup'])) {
 </script>
 </body>
 </html>
+
+*/
