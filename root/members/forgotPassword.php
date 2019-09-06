@@ -2,16 +2,12 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-    // Force https
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+// Short-circuit forwarding
+include('utils/reroute_functions.php');
+if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-if (isset($userSession) && $userSession != "") {
-    // If logged in, go to registration home
-    header("Location: /members/home.php");
-    exit;
-}
+
 include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
@@ -20,12 +16,12 @@ if (isset($_POST['btn-signup'])) {
     $email = trim($_POST['email']);
 
     //check to see if the email exists
-    $emailQuery = "SELECT email FROM users WHERE email='?'";
+    $emailQuery = "SELECT email FROM users WHERE email=?";
     $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
     //if that email address has an account associated with it and thus has a return row, do this
     if (hasRows($emailResult)) {
-        $passwordQuery = "SELECT password FROM users WHERE email='?'";
+        $passwordQuery = "SELECT password FROM users WHERE email=?";
         $passwordResult = prepareSqlForResult($MySQLi_CON, $passwordQuery, 's', $email);
 
         //if query to get the password is successful, do this

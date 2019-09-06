@@ -2,16 +2,12 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-    // Force https
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+// Short-circuit forwarding
+include('utils/reroute_functions.php');
+if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
-if (!isset($userSession) || $userSession == "") {
-    // If not logged in, go to main homepage
-    header("Location: /members/index.php");
-    exit;
-}
+
 include('utils/dbconnect.php');
 include('utils/checkadmin.php');
 include('utils/check_app_state.php');

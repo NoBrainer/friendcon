@@ -4,16 +4,12 @@ header("Location: /members/index.php");
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-    // Force https
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+// Short-circuit forwarding
+include('utils/reroute_functions.php');
+if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-if (isset($userSession) && $userSession != "") {
-    // If logged in, go to registration home
-    header("Location: /members/home.php");
-    exit;
-}
+
 include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
@@ -28,7 +24,7 @@ if (isset($_POST['btn-signup'])) {
     $emergencyCN = trim($_POST['emergencyCN']);
     $emergencyCNP = trim($_POST['emergencyCNP']);
 
-    $emailQuery = "SELECT email FROM users WHERE email='?'";
+    $emailQuery = "SELECT email FROM users WHERE email=?";
     $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
     if (hasRows($emailResult)) {
@@ -43,7 +39,7 @@ if (isset($_POST['btn-signup'])) {
         $emergencyCNP = preg_replace('/\D+/', '', $emergencyCNP);
         $query = "INSERT INTO users(name, email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism," .
                 " emergencyCN, emergencyCNP)" .
-                " VALUES('?','?','?','?','?','?','?','?','?')";
+                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $result = prepareSqlForResult($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone, $hashedPassword,
                 $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
 

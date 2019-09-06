@@ -2,23 +2,19 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-    // Force https
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+// Short-circuit forwarding
+include('utils/reroute_functions.php');
+if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-if (isset($userSession) && $userSession != "") {
-    // If logged in, go to home instead
-    header("Location: /members/home.php");
-    exit;
-}
+
 include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
 if (isset($_POST['btn-login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    $query = "SELECT uid, email, password FROM users WHERE email='?'";
+    $query = "SELECT uid, email, password FROM users WHERE email=?";
     $result = prepareSqlForResult($MySQLi_CON, $query, 's', $email);
 
     if (hasRows($result, 1)) {

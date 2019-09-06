@@ -2,16 +2,12 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-    // Force https
-    header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+// Short-circuit forwarding
+include('utils/reroute_functions.php');
+if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-if (isset($userSession) && $userSession != "") {
-    // If logged in, go to registration home
-    header("Location: /members/home.php");
-    exit;
-}
+
 include('utils/dbconnect.php');
 include('utils/sql_functions.php');
 
@@ -21,12 +17,12 @@ if (isset($_POST['btn-signup'])) {
     $email = trim($_POST['uEmail']);
 
     //get the pass hash from the db if it matches the token input
-    $hashQuery = "SELECT password FROM users WHERE password = '?'";
+    $hashQuery = "SELECT password FROM users WHERE password = ?";
     $hashResult = prepareSqlForResult($MySQLi_CON, $hashQuery, 's', $hash);
     $hashRow = getNextRow($hashResult);
 
     //get the email addresses from the db if it matches the token input
-    $emailQuery = "SELECT email FROM users WHERE password = '?' AND email = '?'";
+    $emailQuery = "SELECT email FROM users WHERE password = ? AND email = ?";
     $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 'ss', $hash, $email);
     $emailRow = getNextRow($emailResult);
 
@@ -35,7 +31,7 @@ if (isset($_POST['btn-signup'])) {
 
         //hash the new password and update
         $hashedPassword = md5($password);
-        $query = "UPDATE users SET password = '?' WHERE email = '?'";
+        $query = "UPDATE users SET password = ? WHERE email = ?";
         $result = prepareSqlForResult($MySQLi_CON, $query, 'ss', $hashedPassword, $email);
 
         //if update query is successful, do this
