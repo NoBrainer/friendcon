@@ -57,7 +57,8 @@ if (isset($_POST['btn-login'])) {
         <form method="post" id="login-form">
             <h2 class="form-signin-heading center">Sign In</h2>
             <h3 class="form-signin-heading">
-                <a href="/members/signup.php" class="btn btn-default btn-wide">Sign up for an account here!</a>
+                <a href="/members/signup.php" class="btn btn-default btn-wide"
+                   onclick="alert('User sign-up currently disabled.')">Sign up for an account here!</a>
             </h3>
             <hr/>
 
