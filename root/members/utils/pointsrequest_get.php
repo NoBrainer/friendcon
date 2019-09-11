@@ -8,13 +8,14 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
 // Get the points request rows
-$pointsRequestResult = $MySQLi_CON->query("SELECT r.*, u.name AS source_name
-	 FROM `points_request` r
-	 JOIN `users` u ON u.uid = r.source_uid
-	 WHERE r.target_uid={$userSession} AND r.status_id=0" //target=me AND status=PENDING
-);
+$query = "SELECT r.*, u.name AS source_name
+        FROM `points_request` r
+        JOIN `users` u ON u.uid = r.source_uid
+        WHERE r.target_uid = ? AND r.status_id = 0"; //target=me AND status=PENDING
+$pointsRequestResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 if (!$pointsRequestResult) {
     header('Content-Type: application/json');
     die("[]");

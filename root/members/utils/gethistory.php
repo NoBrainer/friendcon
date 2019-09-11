@@ -10,14 +10,17 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 
 // Get the points history
-$pointsHistoryResult = $MySQLi_CON->query("SELECT h.*, u1.name AS from_name, u2.name AS to_name, u1.uid AS from_uid, u2.uid AS to_uid, u1.email AS from_email, u2.email AS to_email
-	 FROM `points_history` h
-	 JOIN `users` u1 ON u1.uid = h.from_uid
-	 JOIN `users` u2 ON u2.uid = h.to_uid
-	 WHERE h.from_uid != h.to_uid
-	 ORDER BY h.timestamp DESC");
-if (!$pointsHistoryResult)
+$query = "SELECT h.*, u1.name AS from_name, u2.name AS to_name, u1.uid AS from_uid, u2.uid AS to_uid,
+            u1.email AS from_email, u2.email AS to_email
+        FROM `points_history` h
+        JOIN `users` u1 ON u1.uid = h.from_uid
+        JOIN `users` u2 ON u2.uid = h.to_uid
+        WHERE h.from_uid != h.to_uid
+        ORDER BY h.timestamp DESC";
+$pointsHistoryResult = $MySQLi_CON->query($query);
+if (!$pointsHistoryResult) {
     die("Points history query failed [DB-1]");
+}
 $historyList = [];
 while ($row = $pointsHistoryResult->fetch_array()) {
     $historyList[] = $row;

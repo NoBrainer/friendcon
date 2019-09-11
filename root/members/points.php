@@ -11,12 +11,12 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 include('utils/dbconnect.php');
 include('utils/checkadmin.php');
 include('utils/check_app_state.php');
+include('utils/sql_functions.php');
 
 // Get the user data
-$userResult = $MySQLi_CON->query("SELECT u.email, u.name, u.uid, u.upoints, h.housename
-	 FROM users u
-	 JOIN house h ON u.houseid = h.houseid
-	 WHERE uid={$userSession}");
+$query = "SELECT u.email, u.name, u.uid, u.upoints, h.housename FROM users u JOIN house h ON u.houseid = h.houseid
+        WHERE uid = ?";
+$userResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 if (!$userResult) {
     die("User query failed");
 }

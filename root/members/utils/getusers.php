@@ -49,7 +49,7 @@ if (isset($forAdmin) && $isAdmin) {
 }
 
 // Get the list of users
-$userListResult = $MySQLi_CON->query($userListQuery); //TODO: get prepared statements utils working for empty params
+$userListResult = $MySQLi_CON->query($userListQuery);
 if (!$userListQuery) {
     die("User list query failed [DB-1]");
 }

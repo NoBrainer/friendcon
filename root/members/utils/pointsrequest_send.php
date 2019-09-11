@@ -8,6 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
 // Get the submit data
 $sourceUid = $userSession;
@@ -21,9 +22,11 @@ if (!isset($sourceUid) || !isset($targetUid) || !isset($requestNumPoints)) {
 }
 
 // Check the 'target' points
-$result = $MySQLi_CON->query("SELECT u.upoints FROM users u WHERE u.uid={$targetUid}");
-if (!$result)
+$query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $targetUid);
+if (!$result) {
     die("Requesting points failed [DB-1]");
+}
 $checkPoints = $result->fetch_array();
 $result->free_result();
 $targetPoints = $checkPoints['upoints'];
@@ -36,13 +39,13 @@ if ($requestNumPoints <= 0) {
 }
 
 // Remove any pending requests from source to target (so there's at most 1 request from each person)
-$MySQLi_CON->query("DELETE FROM points_request req
-	 WHERE req.source_uid={$sourceUid} AND req.target_uid={$targetUid} AND status_id=0");
+$deleteQuery = "DELETE FROM points_request req WHERE req.source_uid = ? AND req.target_uid = ? AND status_id = 0";
+$deleteResult = prepareSqlForResult($MySQLi_CON, $deleteQuery, 'ii', $sourceUid, $targetUid);
 
 // Send the request
-$requestQuery = "INSERT INTO points_request(source_uid, target_uid, num_points)
-	 VALUES ({$sourceUid}, {$targetUid}, {$requestNumPoints})";
-if ($MySQLi_CON->query($requestQuery)) {
+$requestQuery = "INSERT INTO points_request(source_uid, target_uid, num_points) VALUES (?, ?, ?)";
+$requestResult = prepareSqlForResult($MySQLi_CON, $requestQuery, 'iii', $sourceUid, $targetUid, $requestNumPoints);
+if ($requestResult) {
     die("SUCCESS");
 } else {
     die("Error requesting points [DB-2]");

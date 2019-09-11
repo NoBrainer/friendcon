@@ -19,6 +19,8 @@ if (!isset($userSession) || $userSession == "") {
 }
 include('dbconnect.php');
 
+//TODO: use prepared statements... This will be more complicated than most other places.
+
 // Get parameters from the url
 $params = [];
 if (isset($_POST['phone'])) {

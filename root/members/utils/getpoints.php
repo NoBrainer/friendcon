@@ -8,9 +8,11 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
 // Check the user points
-$result = $MySQLi_CON->query("SELECT u.upoints FROM users u WHERE u.uid={$userSession}");
+$query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 if (!$result) {
     die("Error getting points [DB-1]");
 }

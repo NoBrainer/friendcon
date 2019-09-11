@@ -27,6 +27,7 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 include('checkadmin.php');
 include('check_app_state.php');
+include('sql_functions.php');
 
 if (!$isAdmin) {
     die("Must be admin to set app state");
@@ -58,7 +59,8 @@ if (isset($_POST['enablePoints'])) {
 
 // Count the rows with the provided year
 $numRows = 0;
-$checkResult = $MySQLi_CON->query("SELECT s.conYear FROM app_state s WHERE s.conYear = {$conYear}");
+$checkQuery = "SELECT s.conYear FROM app_state s WHERE s.conYear = ?";
+$checkResult = prepareSqlForResult($MySQLi_CON, $checkQuery, 'i', $conYear);
 while ($checkResult->fetch_array()) {
     $numRows++;
 }
@@ -66,18 +68,19 @@ $checkResult->free_result();
 
 if (!$checkResult || $numRows == 0) {
     // Insert a new row
-    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`, `pointsEnabled`)
-		VALUES ({$conMonth}, {$conDay}, {$conYear}, '{$badgePrice}', {$isRegistrationEnabled}, {$isPointsEnabled})";
-    $MySQLi_CON->query($insertQuery);
+    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`,
+            `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
+    $insertResult = prepareSqlForResult($MySQLi_CON, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
+            $badgePrice, $isRegistrationEnabled, $isPointsEnabled);
     die("Added entry for {$conYear}!");
 } else {
     // Update an existing row
     $updateQuery = "UPDATE app_state s
-		 SET s.conDay = {$conDay}, s.conMonth = {$conMonth}, s.conYear = {$conYear}, s.badgePrice = '{$badgePrice}',
-			s.registrationEnabled = {$isRegistrationEnabled}, s.pointsEnabled = {$isPointsEnabled}
-		 WHERE s.conYear = {$conYear}";
-
-    $updateResult = $MySQLi_CON->query($updateQuery);
+            SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?,
+                s.pointsEnabled = ?
+            WHERE s.conYear = ?";
+    $updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear,
+            $badgePrice, $isRegistrationEnabled, $isPointsEnabled, $conYear);
     if (!$updateResult) {
         die("App state change failed [DB-2]");
     } else {

@@ -10,6 +10,7 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 include('checkadmin.php');
 include('check_app_state.php');
+include('sql_functions.php');
 
 function getBooleanValue($val) {
     if (!isset($val) || $val == 0 || $val == "false") {
@@ -44,15 +45,13 @@ if (!$isAdmin) {
 
 // Don't proceed unless we have changes to make
 if ($hasParamAgreeToTerms || $hasParamToggleRegistered || $hasParamTogglePresent || $hasParamSetRegistered || $hasParamSetPresent) {
-    $userQuery = "SELECT u.isPresent, u.isRegistered, u.agreeToTerms
-		 FROM users u
-		 WHERE u.uid = {$uid}";
+    $userQuery = "SELECT u.isPresent, u.isRegistered, u.agreeToTerms FROM users u WHERE u.uid = ?";
 } else {
     die("No changes made");
 }
 
 // Get the user
-$result = $MySQLi_CON->query($userQuery);
+$result = prepareSqlForResult($MySQLi_CON, $userQuery, 'i', $uid);
 $user = $result->fetch_array();
 $result->free_result();
 
@@ -69,14 +68,15 @@ if ($hasParamToggleRegistered) {
     $isRegistered = ($isRegistered ? 0 : 1);
 }
 
-// Include agreeToTerms in the query if it was included in the POST
-$agreeQueryPiece = !!$hasParamAgreeToTerms ? ", u.agreeToTerms = NOW()" : "";
+// Build the query, including agreeToTerms if it was included in the POST
+$updateQuery = "UPDATE users u SET u.isPresent = ?, u.isRegistered = ?";
+if (!!$hasParamAgreeToTerms) {
+    $userQuery = $userQuery . ", u.agreeToTerms = NOW()";
+}
+$userQuery = $userQuery . " WHERE u.uid = ?";
 
 // Update the database with the changes
-$updateQuery = "UPDATE users u
-	 SET u.isPresent = {$isPresent}, u.isRegistered = {$isRegistered}{$agreeQueryPiece}
-	 WHERE u.uid = {$uid}";
-$updateResult = $MySQLi_CON->query($updateQuery);
+$updateResult = prepareSqlForResult($MySQLi_CON, $userQuery, 'ii', $isPresent, $isRegistered);
 if (!$updateResult) {
     die("User registration change failed [DB-1]");
 }
@@ -104,16 +104,16 @@ $checkResult->free_result();
 if ($isRegistered == 0) {
     if ($prevOrderId == null) {
         // Delete registration stats when users unregister (if there's no orderId)
-        $deleteQuery = "DELETE FROM registration_stats WHERE uid = {$uid} AND conYear = {$conYear}";
-        $MySQLi_CON->query($deleteQuery);
+        $deleteQuery = "DELETE FROM registration_stats WHERE uid = ? AND conYear = ?";
+        $deleteResult = prepareSqlForResult($MySQLi_CON, $deleteQuery, 'ii', $uid, $conYear);
         $statsOperation = "DELETE";
         $statsQuery = $deleteQuery;
     } else {
         // If there is an orderId, just update
         $updateQuery = "UPDATE registration_stats s
-		 SET s.isRegistered = {$isRegistered}, s.isPresent = {$isPresent}, s.modified = CURRENT_TIMESTAMP()
-		 WHERE s.uid = {$uid} AND s.conYear = {$conYear}";
-        $MySQLi_CON->query($updateQuery);
+                SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()
+                WHERE s.uid = ? AND s.conYear = ?";
+        $updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
         $statsOperation = "UPDATE";
         $statsQuery = $updateQuery;
     }
@@ -122,16 +122,16 @@ if ($isRegistered == 0) {
 
     // Insert a new row for this year's registration stats for this user
     $insertQuery = "INSERT INTO `registration_stats`(`uid`, `conYear`, `isRegistered`, `isPresent`, `orderId`)
-		VALUES ({$uid}, {$conYear}, {$isRegistered}, {$isPresent}, {$orderId})";
-    $MySQLi_CON->query($insertQuery);
+		    VALUES (?, ?, ?, ?, ?)";
+    $insertResult = prepareSqlForResult($MySQLi_CON, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered, $isPresent, $orderId);
     $statsOperation = "INSERT";
     $statsQuery = $insertQuery;
 } else {
     // Update this year's registration stats for this user
     $updateQuery = "UPDATE registration_stats s
-		 SET s.isRegistered = {$isRegistered}, s.isPresent = {$isPresent}, s.modified = CURRENT_TIMESTAMP()
-		 WHERE s.uid = {$uid} AND s.conYear = {$conYear}";
-    $MySQLi_CON->query($updateQuery);
+            SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()
+            WHERE s.uid = ? AND s.conYear = ?";
+    $updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
     $statsOperation = "UPDATE";
     $statsQuery = $updateQuery;
 }
@@ -150,10 +150,8 @@ $obj = [
 if ($isRegistrationEnabled) {
     if ($setRegistered || ($hasParamToggleRegistered && $isRegistered)) {
         $startingPoints = 20;
-        $updatePointsQuery = "UPDATE users u
-			 SET u.upoints = {$startingPoints}
-			 WHERE u.uid = {$uid} AND u.upoints = 0";
-        $MySQLi_CON->query($updatePointsQuery);
+        $updatePointsQuery = "UPDATE users u SET u.upoints = ? WHERE u.uid = ? AND u.upoints = 0";
+        $updatePointsResult = prepareSqlForResult($MySQLi_CON, $updatePointsQuery, 'ii', $startingPoints, $uid);
     }
 }
 

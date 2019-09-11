@@ -12,6 +12,7 @@ if (!isset($userSession) || $userSession == "" || !$MySQLi_CON) {
     header("Location: /");
     exit;
 }
+include('sql_functions.php');
 
 // Array of super admins
 // 23 = Fil
@@ -27,7 +28,8 @@ $superAdminArray = array(23, 31, 32, 43); //TODO: get this from the database ins
 $isSuperAdmin = in_array($userSession, $superAdminArray);
 
 // Check if the user is an admin
-$userResult = $MySQLi_CON->query("SELECT u.isAdmin FROM users u WHERE u.uid = {$userSession}");
+$query = "SELECT u.isAdmin FROM users u WHERE u.uid = ?";
+$userResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 if (!$userResult) {
     $isAdmin = 0;
 } else {

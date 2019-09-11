@@ -14,7 +14,7 @@ include('utils/sql_functions.php');
 if (isset($_POST['btn-login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    $query = "SELECT uid, email, password FROM users WHERE email=?";
+    $query = "SELECT uid, email, password FROM users WHERE email = ?";
     $result = prepareSqlForResult($MySQLi_CON, $query, 's', $email);
 
     if (hasRows($result, 1)) {

@@ -8,6 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
 // Get the submit data
 $targetUid = $userSession;
@@ -20,11 +21,13 @@ if (!isset($sourceUid) || !isset($targetUid)) {
 }
 
 // Check if the request exists
-$requestResult = $MySQLi_CON->query("SELECT req.status_id, req.num_points
-	 FROM points_request req
-	 WHERE req.target_uid={$targetUid} AND req.source_uid={$sourceUid} AND req.status_id=0");
-if (!$requestResult)
+$query = "SELECT req.status_id, req.num_points
+        FROM points_request req
+        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$requestResult = prepareSqlForResult($MySQLi_CON, $query, 'ii', $targetUid, $sourceUid);
+if (!$requestResult) {
     die("Accepting request failed [DB-1]");
+}
 $checkRequest = $requestResult->fetch_array();
 $requestResult->free_result();
 $statusId = $checkRequest['status_id'];
@@ -37,11 +40,11 @@ if (!isset($statusId)) {
 }
 
 // Check if the source has enough points
-$pointsResult = $MySQLi_CON->query("SELECT u.upoints
-	 FROM users u
-	 WHERE u.uid={$targetUid}");
-if (!$pointsResult)
+$query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
+$pointsResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $targetUid);
+if (!$pointsResult) {
     die("Checking points for request failed [DB-2]");
+}
 $checkPoints = $pointsResult->fetch_array();
 $pointsResult->free_result();
 $targetPoints = $checkPoints['upoints'];
@@ -53,20 +56,20 @@ if (!isset($targetPoints)) {
 
 // Update the status id to ACCEPTED(1)
 $updateQuery = "UPDATE points_request req
-	 SET status_id=1
-	 WHERE req.target_uid={$targetUid} AND req.source_uid={$sourceUid} AND req.status_id=0";
-$MySQLi_CON->query($updateQuery);
+        SET status_id = 1
+        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'ii', $targetUid, $sourceUid);
 
 // Add an entry in history
-$historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points)
-	 VALUES ({$targetUid}, {$sourceUid}, {$numPoints})";
-$MySQLi_CON->query($historyQuery);
+$historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points) VALUES (?, ?, ?)";
+$historyResult = prepareSqlForResult($MySQLi_CON, $historyQuery, 'iii', $targetUid, $sourceUid, $numPoints);
 
 // Send the points
 $sendQuery = "UPDATE users from_u, users to_u
-	 SET from_u.upoints = from_u.upoints - {$numPoints}, to_u.upoints = to_u.upoints + {$numPoints}
-	 WHERE from_u.uid = {$targetUid} AND to_u.uid = {$sourceUid}";
-if ($MySQLi_CON->query($sendQuery)) {
+        SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?
+        WHERE from_u.uid = ? AND to_u.uid = ?";
+$sendResult = prepareSqlForResult($MySQLi_CON, $sendQuery, 'iiii', $numPoints, $numPoints, $targetUid, $sourceUid);
+if ($sendResult) {
     die("SUCCESS");
 } else {
     die("Error sending requested points [DB-4]");

@@ -11,6 +11,7 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 include('utils/dbconnect.php');
 include('utils/checkadmin.php');
 include('utils/check_app_state.php');
+include('utils/sql_functions.php');
 include('utils/paypal.php');
 
 if (!$isRegistrationEnabled) {
@@ -20,7 +21,8 @@ if (!$isRegistrationEnabled) {
 }
 
 // Get the user data
-$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$query = "SELECT * FROM users WHERE uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information

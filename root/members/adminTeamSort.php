@@ -17,7 +17,8 @@ if (!$isAdmin) {
 }
 
 // Get the user data
-$result = $MySQLi_CON->query("SELECT * FROM users WHERE uid={$userSession}");
+$query = "SELECT * FROM users WHERE uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information

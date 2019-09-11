@@ -8,6 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
 // Get the submit data
 $targetUid = $userSession;
@@ -20,11 +21,13 @@ if (!isset($sourceUid) || !isset($targetUid)) {
 }
 
 // Check if the request exists
-$result = $MySQLi_CON->query("SELECT req.status_id
-	 FROM points_request req
-	 WHERE req.target_uid={$targetUid} AND req.source_uid={$sourceUid} AND req.status_id=0");
-if (!$result)
+$query = "SELECT req.status_id
+        FROM points_request req
+        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'ii', $targetUid, $sourceUid);
+if (!$result) {
     die("Rejecting request failed [DB-1]");
+}
 $checkRequest = $result->fetch_array();
 $result->free_result();
 $statusId = $checkRequest['status_id'];
@@ -34,9 +37,10 @@ if (!isset($statusId)) {
 
 // Update the status id to REJECTED(2)
 $updateQuery = "UPDATE points_request req
-	 SET status_id=2
-	 WHERE req.target_uid={$targetUid} AND req.source_uid={$sourceUid} AND req.status_id=0";
-if ($MySQLi_CON->query($updateQuery)) {
+        SET status_id = 2
+        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'ii', $targetUid, $sourceUid);
+if ($updateResult) {
     die("SUCCESS");
 } else {
     die("Error rejecting request [DB-2]");

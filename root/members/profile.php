@@ -9,12 +9,13 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 }
 
 include('utils/dbconnect.php');
+include('utils/sql_functions.php');
 
 // Get the user data
-$result = $MySQLi_CON->query("SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, u.phone, u.uid, u.upoints, uh.housename AS housename 
-							FROM users u 
-							JOIN house uh ON uh.houseid = u.houseid 
-							WHERE uid={$userSession}");
+$query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, 
+            u.phone, u.uid, u.upoints, uh.housename AS housename FROM users u JOIN house uh ON uh.houseid = u.houseid
+        WHERE uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 ?>
 

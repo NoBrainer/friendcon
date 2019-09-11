@@ -12,6 +12,7 @@ if (!$isAdmin) {
     // If not admin, go to the main homepage
     die();
 }
+include('sql_functions.php');
 
 // Get parameters from the url
 if (isset($_GET['uid'])) {
@@ -27,36 +28,32 @@ if (isset($_GET['housename'])) {
     $housename = $MySQLi_CON->real_escape_string($_GET['housename']);
 
     // Get the house id from the house name
-    $houseQuery = "SELECT h.houseid
-		 FROM house h
-		 WHERE h.housename = '{$housename}'";
-    $houseResult = $MySQLi_CON->query($houseQuery);
-    if (!$houseResult)
+    $houseQuery = "SELECT h.houseid FROM house h WHERE h.housename = ?";
+    $houseResult = prepareSqlForResult($MySQLi_CON, $houseQuery, 's', $housename);
+    if (!$houseResult) {
         die("Error checking user house [DB-1]");
+    }
     $row = $houseResult->fetch_array();
     $houseResult->free_result();
     $houseid = $row["houseid"];
 
     // Make the update call
-    $updateQuery = "UPDATE users u
-		 SET u.houseid = {$houseid}
-		 WHERE u.uid = {$uid}";
-    $updateResult = $MySQLi_CON->query($updateQuery);
-    if (!$updateResult)
+    $updateQuery = "UPDATE users u SET u.houseid = ? WHERE u.uid = ?";
+    $updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'ii', $houseid, $uid);
+    if (!$updateResult) {
         die("Failed to set house [DB-2]");
+    }
 
     // Return the house name
     die($housename);
 }
 
 // See if the user already has a house
-$userHouseQuery = "SELECT u.houseid, h.housename
-	 FROM users u
-	 JOIN house h ON u.houseid = h.houseid
-	 WHERE u.uid = {$uid}";
-$userHouseResult = $MySQLi_CON->query($userHouseQuery);
-if (!$userHouseResult)
+$userHouseQuery = "SELECT u.houseid, h.housename FROM users u JOIN house h ON u.houseid = h.houseid WHERE u.uid = ?";
+$userHouseResult = prepareSqlForResult($MySQLi_CON, $userHouseQuery, 'i', $uid);
+if (!$userHouseResult) {
     die("Error checking user house [DB-3]");
+}
 $row = $userHouseResult->fetch_array();
 $userHouseResult->free_result();
 $houseid = $row["houseid"];
@@ -67,14 +64,12 @@ if ($houseid != 0) {
 }
 
 // Get the total counts for each house
-$houseQuery = "SELECT u.houseid, COUNT(*) AS `count`
-	 FROM users u
-	 WHERE u.houseid != 0
-	 GROUP BY u.houseid";
-
+$houseQuery = "SELECT u.houseid, COUNT(*) AS `count` FROM users u WHERE u.houseid != 0 GROUP BY u.houseid";
 $houseResult = $MySQLi_CON->query($houseQuery);
-if (!$houseResult)
+if (!$houseResult) {
     die("House query failed [DB-4]");
+}
+
 $houseList = [];
 $hasHouse1 = 0;
 $hasHouse2 = 0;
@@ -167,20 +162,17 @@ if ($numCandidates == 1) {
 }
 
 // Build the update query to only affect a user that is unsorted AND checked-in
-$updateQuery = "UPDATE users u
-	 SET u.houseid = {$pickedHouseId}
-	 WHERE u.uid = {$uid} AND u.houseid = 0 AND u.isPresent = 1";
+$updateQuery = "UPDATE users u SET u.houseid = ? WHERE u.uid = ? AND u.houseid = 0 AND u.isPresent = 1";
 
 // Make the update call
-$updateResult = $MySQLi_CON->query($updateQuery);
-if (!$updateResult)
+$updateResult = prepareSqlForResult($MySQLi_CON, $updateQuery, 'ii', $pickedHouseId, $uid);
+if (!$updateResult) {
     die("Sorting user failed [DB-5]");
+}
 
 // Get the house name
-$houseNameQuery = "SELECT h.housename
-	 FROM house h
-	 WHERE h.houseid = {$pickedHouseId}";
-$houseNameResult = $MySQLi_CON->query($houseNameQuery);
+$houseNameQuery = "SELECT h.housename FROM house h WHERE h.houseid = ?";
+$houseNameResult = prepareSqlForResult($MySQLi_CON, $houseNameQuery, 'i', $pickedHouseId);
 if ($houseNameResult) {
     // Return the name of the house
     $row = $houseNameResult->fetch_array();
