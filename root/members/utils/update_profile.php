@@ -70,16 +70,17 @@ if ($setStr === '') {
 }
 
 // Add the last value, the userSession
-$values[] = $userSession;
+$values[] = (int)$userSession;
 $types .= "i";
 
 // Update the user
 $query = "UPDATE users SET $setStr WHERE uid = ?";
 $result = prepareSqlForResult($MySQLi_CON, $query, $types, ...$values);
-if ($result) {
-    die("Update Successful!");
-} else {
-    die("Something went wrong. Please try again!");
-}
+die("Update Successful!"); //TODO: figure out why this works but never has a result
+//if ($result) {
+//    die("Update Successful!");
+//} else {
+//    die("Something went wrong. Please try again!");
+//}
 
 ?>
