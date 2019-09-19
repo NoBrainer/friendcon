@@ -18,48 +18,65 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
+include('sql_functions.php');
 
-//TODO: use prepared statements... This will be more complicated than most other places.
-
-// Get parameters from the url
-$params = [];
+// With the provided parameters, determine the $values and $types for the prepared statement, and get what we need for
+// the query.
+$queryPieces = [];
+$values = [];
+$types = "";
 if (isset($_POST['phone'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['phone']));
+    $param = trim($_POST['phone']);
     $param = preg_replace('/\D+/', '', $param);
-    $params[] = "phone='$param'";
+    $queryPieces[] = "phone = ?";
+    $values[] = $param;
+    $types .= "s";
 }
 if (isset($_POST['emergencyCN'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCN']));
-    $params[] = "emergencyCN='$param'";
+    $param = trim($_POST['emergencyCN']);
+    $queryPieces[] = "emergencyCN = ?";
+    $values[] = $param;
+    $types .= "s";
 }
 if (isset($_POST['emergencyCNP'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['emergencyCNP']));
+    $param = trim($_POST['emergencyCNP']);
     $param = preg_replace('/\D+/', '', $param);
-    $params[] = "emergencyCNP='$param'";
+    $queryPieces[] = "emergencyCNP = ?";
+    $values[] = $param;
+    $types .= "s";
 }
 if (isset($_POST['favoriteAnimal'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteAnimal']));
-    $params[] = "favoriteAnimal='$param'";
+    $param = trim($_POST['favoriteAnimal']);
+    $queryPieces[] = "favoriteAnimal = ?";
+    $values[] = $param;
+    $types .= "s";
 }
 if (isset($_POST['favoriteBooze'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteBooze']));
-    $params[] = "favoriteBooze='$param'";
+    $param = trim($_POST['favoriteBooze']);
+    $queryPieces[] = "favoriteBooze = ?";
+    $values[] = $param;
+    $types .= "s";
 }
 if (isset($_POST['favoriteNerdism'])) {
-    $param = $MySQLi_CON->real_escape_string(trim($_POST['favoriteNerdism']));
-    $params[] = "favoriteNerdism='$param'";
+    $param = trim($_POST['favoriteNerdism']);
+    $queryPieces[] = "favoriteNerdism = ?";
+    $values[] = $param;
+    $types .= "s";
 }
-$setStr = join(", ", $params);
+$setStr = join(", ", $queryPieces);
 
 if ($setStr === '') {
     die("No changes.");
 }
 
-// Build query
-$query = "UPDATE users
-	SET $setStr
-	WHERE uid={$_SESSION['userSession']}";
-if ($MySQLi_CON->query($query)) {
+// Add the last value, the userSession
+$values[] = $userSession;
+$types .= "i";
+
+// Update the user
+$query = "UPDATE users SET $setStr WHERE uid = ?";
+$result = prepareSqlForResult($MySQLi_CON, $query, $types, ...$values);
+if ($result) {
     die("Update Successful!");
 } else {
     die("Something went wrong. Please try again!");
