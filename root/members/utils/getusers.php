@@ -9,7 +9,7 @@ if (!isset($userSession) || $userSession == "") {
 }
 include('dbconnect.php');
 include('checkadmin.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 // Get parameters from the url
 if (isset($_GET['forAdmin'])) {

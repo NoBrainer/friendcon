@@ -9,7 +9,7 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 }
 
 include('utils/dbconnect.php');
-include('utils/sql_functions.php');
+include_once('utils/sql_functions.php');
 
 // Get the user data
 $query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, 

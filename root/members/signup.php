@@ -11,7 +11,7 @@ if (forwardHttps() || forwardHomeIfLoggedIn()) {
 }
 
 include('utils/dbconnect.php');
-include('utils/sql_functions.php');
+include_once('utils/sql_functions.php');
 
 if (isset($_POST['btn-signup'])) {
     $name = trim($_POST['name']);

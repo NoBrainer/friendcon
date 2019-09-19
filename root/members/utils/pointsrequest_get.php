@@ -8,7 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 // Get the points request rows
 $query = "SELECT r.*, u.name AS source_name

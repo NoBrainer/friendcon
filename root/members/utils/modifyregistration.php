@@ -10,7 +10,7 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 include('checkadmin.php');
 include('check_app_state.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 function getBooleanValue($val) {
     if (!isset($val) || $val == 0 || $val == "false") {

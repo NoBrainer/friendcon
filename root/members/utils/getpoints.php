@@ -8,7 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 // Check the user points
 $query = "SELECT u.upoints FROM users u WHERE u.uid = ?";

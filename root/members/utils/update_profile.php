@@ -18,7 +18,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 // With the provided parameters, determine the $values and $types for the prepared statement, and get what we need for
 // the query.

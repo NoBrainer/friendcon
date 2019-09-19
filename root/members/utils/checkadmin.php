@@ -12,7 +12,7 @@ if (!isset($userSession) || $userSession == "" || !$MySQLi_CON) {
     header("Location: /");
     exit;
 }
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 // Array of super admins
 // 23 = Fil

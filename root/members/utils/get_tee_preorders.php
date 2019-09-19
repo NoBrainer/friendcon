@@ -8,7 +8,7 @@ if (!isset($userSession) || $userSession == "") {
     exit;
 }
 include('dbconnect.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 include('checkadmin.php');
 include('check_app_state.php');
 

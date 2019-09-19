@@ -75,7 +75,7 @@ function isOrderComplete($urlRoot, $orderId, $accessToken) {
 }
 
 function saveOrder($MySQLi_CON, $uid, $orderId = null, $conYear) {
-    include('sql_functions.php');
+    include_once('sql_functions.php');
 
     // Update registration
     $query = "UPDATE users u SET u.isRegistered = 1 WHERE u.uid = ?";

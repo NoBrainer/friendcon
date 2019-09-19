@@ -9,7 +9,7 @@ if (!isset($userSession) || $userSession == "") {
 }
 include('dbconnect.php');
 include('checkadmin.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 if (!$isAdmin) {
     die("You are not an admin! GTFO.");

@@ -11,7 +11,7 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 include('utils/dbconnect.php');
 include('utils/checkadmin.php');
 include('utils/check_app_state.php');
-include('utils/sql_functions.php');
+include_once('utils/sql_functions.php');
 
 if (!$isAdmin) {
     die("You are not an admin! GTFO.");

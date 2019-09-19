@@ -27,7 +27,7 @@ if (!isset($userSession) || $userSession == "") {
 include('dbconnect.php');
 include('checkadmin.php');
 include('check_app_state.php');
-include('sql_functions.php');
+include_once('sql_functions.php');
 
 if (!$isAdmin) {
     die("Must be admin to set app state");
