@@ -15,7 +15,6 @@ function prepareSqlForResult($MySQLi_CON, $query, $types = '', ...$params) {
     $stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$params);
     $stmt->execute();
     $result = $stmt->get_result();
-    $stmt->close();
     return $result;
 }
 

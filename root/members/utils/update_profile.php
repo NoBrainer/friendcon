@@ -75,12 +75,13 @@ $types .= "i";
 
 // Update the user
 $query = "UPDATE users SET $setStr WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, $types, ...$values);
-die("Update Successful!"); //TODO: figure out why this works but never has a result
-//if ($result) {
-//    die("Update Successful!");
-//} else {
-//    die("Something went wrong. Please try again!");
-//}
+$stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$values);
+$stmt->execute();
+
+if ($stmt->affected_rows === 1) {
+    die("Update Successful!");
+} else {
+    die("No updates.");
+}
 
 ?>
