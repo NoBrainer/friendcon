@@ -30,7 +30,7 @@ if (isset($_POST['btn-signup'])) {
     if (hasRows($emailResult)) {
         // Email is already registered
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span>
+					<span class='fa fa-info-circle'></span>
 					<span>This email has previously registered!</span>
 				</div>";
     } else {
@@ -47,14 +47,14 @@ if (isset($_POST['btn-signup'])) {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = true;
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>Registration Successful!</span>
 					</div>";
         } else {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = false;
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>You gotta try again! Sorry.</span>
 					</div>";
         }
@@ -107,7 +107,7 @@ if (isset($_POST['btn-signup'])) {
                 <?php echo $msg; ?>
             <?php } else { ?>
                 <div class='alert alert-info'>
-                    <span class='glyphicon glyphicon-asterisk'></span> &nbsp; Everything is required. EVERYTHING!
+                    <span class='fa fa-asterisk'></span> &nbsp; Everything is required. EVERYTHING!
                 </div>
             <?php } ?>
 
@@ -187,7 +187,7 @@ if (isset($_POST['btn-signup'])) {
             <div class="form-group">
                 <a href="/members/index.php" class="btn btn-default">Already Signed Up?</a>
                 <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
-                    <span class="glyphicon glyphicon-log-in"></span>
+                    <span class="fa fa-sign-in-alt"></span>
                     <span>Create Account</span>
                 </button>
             </div>

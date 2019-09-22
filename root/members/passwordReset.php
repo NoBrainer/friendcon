@@ -37,7 +37,7 @@ if (isset($_POST['btn-signup'])) {
         //if update query is successful, do this
         if (hasRows($result)) {
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>Password Successfully Updated!</span>
 					</div>";
 
@@ -52,14 +52,14 @@ if (isset($_POST['btn-signup'])) {
         } else {
             //if the query fails, give an error message
             $msg = "<div class='alert alert-danger'>
-                        <span class='glyphicon glyphicon-info-sign'></span>
+                        <span class='fa fa-info-circle'></span>
                         <span>There was an error processing your request. Please Try Again.</span>
                     </div>";
         }
     } else {
         //If the info doesn't match, throw an error
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span>
+					<span class='fa fa-info-circle'></span>
 					<span>Something is not correct with the info provided. Try again if you want.</span>
 				</div>";
     }
@@ -108,7 +108,7 @@ if (isset($_POST['btn-signup'])) {
 
             <div class="form-group">
                 <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
-                    <span class="glyphicon glyphicon-log-in"></span> &nbsp; Reset Password
+                    <span class="fa fa-sign-in-alt"></span> &nbsp; Reset Password
                 </button>
             </div>
 

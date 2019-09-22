@@ -24,13 +24,13 @@ if (isset($_POST['btn-login'])) {
             header("Location: /members/home.php");
         } else {
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>Your password does not match!</span>
 					</div>";
         }
     } else {
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span>
+					<span class='fa fa-info-circle'></span>
 					<span>No registration entry with this email!</span>
 				</div>";
     }
@@ -79,7 +79,7 @@ if (isset($_POST['btn-login'])) {
             <div class="form-group">
                 <button type="submit" name="btn-login" id="btn-login"
                         style="display:block; margin-left: auto; margin-right: auto;">
-                    <span class="glyphicon glyphicon-log-in"></span>
+                    <span class="fa fa-sign-in-alt"></span>
                     &nbsp;
                     <span>Sign In</span>
                 </button>

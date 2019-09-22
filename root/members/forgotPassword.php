@@ -29,7 +29,7 @@ if (isset($_POST['btn-signup'])) {
             $row = getNextRow($passwordResult);
             $hash = $row[0];
             $msg = "<div class='alert alert-success'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>You'll get a token in your email!</span>
 					</div>";
 
@@ -44,14 +44,14 @@ if (isset($_POST['btn-signup'])) {
         } else {
             //if the sql query failed or the count != 1
             $msg = "<div class='alert alert-danger'>
-						<span class='glyphicon glyphicon-info-sign'></span>
+						<span class='fa fa-info-circle'></span>
 						<span>Something went wrong. Inexplicably.</span>
 					</div>";
         }
     } else {
         //if there is no account record found, do this
         $msg = "<div class='alert alert-danger'>
-					<span class='glyphicon glyphicon-info-sign'></span>
+					<span class='fa fa-info-circle'></span>
 					<span>Something went wrong! Contact us at admins@friendcon.com</span>
 				</div>";
     }
@@ -91,7 +91,7 @@ if (isset($_POST['btn-signup'])) {
             <hr/>
 
             <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
-                <span class="glyphicon glyphicon-log-in"></span> &nbsp; Send Token
+                <span class="fa fa-sign-in-alt"></span> &nbsp; Send Token
             </button>
 
             <a href="/members/passwordReset.php">Already have a token?</a>

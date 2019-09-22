@@ -86,7 +86,7 @@ $userRow = $result->fetch_array();
         </div>
 
         <div class="alert alert-success" style="display:none">
-            <span class="glyphicon glyphicon-info-sign"></span>
+            <span class="fa fa-info-circle"></span>
             <span class="message"></span>
         </div>
     </div>
