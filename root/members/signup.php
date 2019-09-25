@@ -1,31 +1,28 @@
 <?php
-header("Location: /members/index.php");
-/* TODO: uncomment after adding captcha and such
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/functions.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include_once('utils/sql_functions.php');
-
 if (isset($_POST['btn-signup'])) {
     $name = trim($_POST['name']);
-    $phone = trim($_POST['phone']);
+    $phone = preg_replace('/\D+/', '', trim($_POST['phone']));
     $favoriteBooze = trim($_POST['favoriteBooze']);
     $favoriteNerdism = trim($_POST['favoriteNerdism']);
     $favoriteAnimal = trim($_POST['favoriteAnimal']);
     $email = trim($_POST['email']);
     $hashedPassword = md5(trim($_POST['password']));
     $emergencyCN = trim($_POST['emergencyCN']);
-    $emergencyCNP = trim($_POST['emergencyCNP']);
+    $emergencyCNP = preg_replace('/\D+/', '', trim($_POST['emergencyCNP']));
 
-    $emailQuery = "SELECT email FROM users WHERE email=?";
-    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
+    $emailQuery = "SELECT email FROM users WHERE email = ?";
+    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
     if (hasRows($emailResult)) {
         // Email is already registered
@@ -35,15 +32,13 @@ if (isset($_POST['btn-signup'])) {
 				</div>";
     } else {
         // Try to register the user
-        $phone = preg_replace('/\D+/', '', $phone);
-        $emergencyCNP = preg_replace('/\D+/', '', $emergencyCNP);
-        $query = "INSERT INTO users(name, email, phone, password, favoriteAnimal, favoriteBooze, favoriteNerdism," .
-                " emergencyCN, emergencyCNP)" .
-                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $result = prepareSqlForResult($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone, $hashedPassword,
-                $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
+        $query = "INSERT INTO users(`name`, `email`, `phone`, `password`, `favoriteAnimal`, `favoriteBooze`, " .
+                "`favoriteNerdism`, `emergencyCN`, `emergencyCNP`, `agreeToTerms`) " .
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $affectedRows = executeSqlForAffectedRows($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone,
+                $hashedPassword, $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
 
-        if (hasRows($result)) {
+        if ($affectedRows === 1) {
             $shouldSendEmailToAdmin = true;
             $shouldSendEmailToUser = true;
             $msg = "<div class='alert alert-success'>
@@ -129,8 +124,7 @@ if (isset($_POST['btn-signup'])) {
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Confirm Password" name="Confirmpassword"
-                       id="pass2" onkeyup="checkPass(); return false;" required/>
+                <input type="password" class="form-control" placeholder="Confirm Password" name="Confirmpassword" id="pass2" onkeyup="checkPass(); return false;" required/>
             </div>
             <span id="confirm-message" class="confirm-message"></span>
             <hr/>
@@ -139,20 +133,17 @@ if (isset($_POST['btn-signup'])) {
             <h5 class="form-signin-heading center">*This section is used to make you a custom/premium badge.</h5>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Animal" name="favoriteAnimal"
-                       required="required"/>
+                <input type="text" class="form-control" placeholder="Favorite Animal" name="favoriteAnimal" required="required"/>
                 <span id="check-e"></span>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Nerdy Thing (Game, Book, Topic, etc.)"
-                       name="favoriteNerdism" required="required"/>
+                <input type="text" class="form-control" placeholder="Favorite Nerdy Thing (Game, Book, Topic, etc.)" name="favoriteNerdism" required="required"/>
                 <span id="check-e"></span>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Food/Beverage" name="favoriteBooze"
-                       required="required"/>
+                <input type="text" class="form-control" placeholder="Favorite Food/Beverage" name="favoriteBooze" required="required"/>
                 <span id="check-e"></span>
             </div>
             <hr/>
@@ -160,14 +151,12 @@ if (isset($_POST['btn-signup'])) {
             <h4 class="form-signin-heading center">Emergency Contact Information</h4>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Emergency Contact Name" name="emergencyCN"
-                       required="required"/>
+                <input type="text" class="form-control" placeholder="Emergency Contact Name" name="emergencyCN" required="required"/>
                 <span id="check-e"></span>
             </div>
 
             <div class="form-group">
-                <input type="tel" class="form-control" placeholder="Emergency Contact Phone Number" name="emergencyCNP"
-                       required/>
+                <input type="tel" class="form-control" placeholder="Emergency Contact Phone Number" name="emergencyCNP" required/>
                 <span id="check-e"></span>
             </div>
             <hr/>
@@ -195,10 +184,6 @@ if (isset($_POST['btn-signup'])) {
     </div>
 </div>
 
-<script>
-
-</script>
-
 <!-- JavaScript -->
 <script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
 <script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
@@ -215,14 +200,14 @@ if (isset($_POST['btn-signup'])) {
 
     function checkPass() {
         //Store the password field objects into variables ...
-        var $pass1 = $('#pass1'),
-            text1 = $pass1.val(),
-            $pass2 = $('#pass2'),
-            text2 = $pass2.val(),
-            $message = $('#confirm-message'),
-            goodColor = "#66cc66",
-            badColor = "#ff6666",
-            neutralColor = "#fff";
+        var $pass1 = $('#pass1');
+        var text1 = $pass1.val();
+        var $pass2 = $('#pass2');
+        var text2 = $pass2.val();
+        var $message = $('#confirm-message');
+        var goodColor = "#66cc66";
+        var badColor = "#ff6666";
+        var neutralColor = "#fff";
 
         if (text1 === text2) {
             if (text1 === "") {
@@ -254,5 +239,3 @@ if (isset($_POST['btn-signup'])) {
 </script>
 </body>
 </html>
-
-*/

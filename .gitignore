@@ -3,5 +3,4 @@
 .idea/workspace.xml
 
 # Sensitive files
-root/members/utils/dbconnect.php
-root/members/utils/paypal.php
+**/secrets/

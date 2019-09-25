@@ -2,14 +2,13 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/functions.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-
-include('utils/dbconnect.php');
-include_once('utils/sql_functions.php');
 
 if (isset($_POST['btn-signup'])) {
     $hash = trim($_POST['checkDatHash']);
@@ -18,50 +17,50 @@ if (isset($_POST['btn-signup'])) {
 
     //get the pass hash from the db if it matches the token input
     $hashQuery = "SELECT password FROM users WHERE password = ?";
-    $hashResult = prepareSqlForResult($MySQLi_CON, $hashQuery, 's', $hash);
+    $hashResult = executeSqlForResult($MySQLi_CON, $hashQuery, 's', $hash);
     $hashRow = getNextRow($hashResult);
 
     //get the email addresses from the db if it matches the token input
     $emailQuery = "SELECT email FROM users WHERE password = ? AND email = ?";
-    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 'ss', $hash, $email);
+    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 'ss', $hash, $email);
     $emailRow = getNextRow($emailResult);
 
     //if emails match and hashes match, do this
-    if ($emailRow && $emailRow[0] == $email && $hashRow && $hashRow[0] == $hash) {
+    if ($emailRow && $emailRow['email'] == $email && $hashRow && $hashRow['password'] == $hash) {
 
         //hash the new password and update
         $hashedPassword = md5($password);
         $query = "UPDATE users SET password = ? WHERE email = ?";
-        $result = prepareSqlForResult($MySQLi_CON, $query, 'ss', $hashedPassword, $email);
+        $info = executeSqlForInfo($MySQLi_CON, $query, 'ss', $hashedPassword, $email);
 
         //if update query is successful, do this
-        if (hasRows($result)) {
-            $msg = "<div class='alert alert-success'>
-						<span class='fa fa-info-circle'></span>
-						<span>Password Successfully Updated!</span>
-					</div>";
+        if ($info["matched"] > 0) {
+            $msg = "<div class='alert alert-success'>" .
+                    "	<span class='fa fa-info-circle'></span>" .
+                    "	<span>Password Successfully Updated!</span>" .
+                    "</div>";
 
             //send an email to the user saying it was successful
             $to = $email;
             $subject = "Your FriendCon Account Password Request";
-            $txt = "Your Password has been successfully reset. If you did not change your password, please contact " .
-                    "us immediately at admin@friendcon.com\n";
-            $headers = "From: admin@friendcon.com";
+            $txt = "<div>Your Password has been successfully reset. If you did not change your password, please " .
+                    "contact us immediately at: admin@friendcon.com</div>";
+            $headers = "From: admin@friendcon.com\r\nContent-type:text/html";
 
             mail($to, $subject, $txt, $headers);
         } else {
             //if the query fails, give an error message
-            $msg = "<div class='alert alert-danger'>
-                        <span class='fa fa-info-circle'></span>
-                        <span>There was an error processing your request. Please Try Again.</span>
-                    </div>";
+            $msg = "<div class='alert alert-danger'>" .
+                    "    <span class='fa fa-info-circle'></span>" .
+                    "    <span>There was an error processing your request. Please Try Again.</span>" .
+                    "</div>";
         }
     } else {
         //If the info doesn't match, throw an error
-        $msg = "<div class='alert alert-danger'>
-					<span class='fa fa-info-circle'></span>
-					<span>Something is not correct with the info provided. Try again if you want.</span>
-				</div>";
+        $msg = "<div class='alert alert-danger'>" .
+                "	<span class='fa fa-info-circle'></span>" .
+                "	<span>Something is not correct with the info provided. Try again if you want.</span>" .
+                "</div>";
     }
 }
 ?>
@@ -91,18 +90,15 @@ if (isset($_POST['btn-signup'])) {
             <?php } ?>
 
             <div class="form-group">
-                <input type="email" class="form-control" placeholder="Account Email" name="uEmail" id="uEmail"
-                       required/>
+                <input type="email" class="form-control" placeholder="Account Email" name="uEmail" id="uEmail" required/>
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Your Token" name="checkDatHash"
-                       id="checkDatHash" required/>
+                <input type="password" class="form-control" placeholder="Your Token" name="checkDatHash" id="checkDatHash" required/>
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="New Password" name="uPass" id="uPass"
-                       required/>
+                <input type="password" class="form-control" placeholder="New Password" name="uPass" id="uPass" required/>
             </div>
             <hr/>
 

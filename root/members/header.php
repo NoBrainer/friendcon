@@ -37,7 +37,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/members/utils/logout.php?logout&dest=members">
+                        <a href="/members/logout.php">
                             <span class="fa fa-sign-out-alt"></span>
                             <span>Logout</span>
                         </a>

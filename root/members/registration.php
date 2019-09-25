@@ -2,17 +2,16 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/secrets/paypal.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-include_once('utils/sql_functions.php');
-include('utils/paypal.php');
 
 if (!$isRegistrationEnabled) {
     // Not ready for con registration
@@ -22,8 +21,8 @@ if (!$isRegistrationEnabled) {
 
 // Get the user data
 $query = "SELECT * FROM users WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
-$userRow = $result->fetch_array();
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$userRow = getNextRow($result);
 
 // User Information
 $name = $userRow['name'];
@@ -75,7 +74,7 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
 
             <div class="hide-until-acknowledged" style="display:none">
                 <hr/>
-                <div id="paypal-section" style="<?php if($isRegistered) echo 'display:none'; ?>">
+                <div id="paypal-section" style="<?php if ($isRegistered) echo 'display:none'; ?>">
                     <h4 class="form-signin-heading center">FriendCon Membership</h4>
                     <p>By paying for FriendCon membership, you gain access to the convention space and activities for
                         the duration of FriendCon <?php echo $conYear; ?> (Friday through Saturday).</p>
@@ -88,7 +87,7 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
                         <i class="fa fa-spinner fa-spin"></i>
                     </span>
                 </div>
-                <div id="room-block-section" style="<?php if(!$isRegistered) echo 'display:none'; ?>">
+                <div id="room-block-section" style="<?php if (!$isRegistered) echo 'display:none'; ?>">
                     <h4 class="form-signin-heading center">FriendCon Hotel Room Block</h4>
                     <p>You can find information for registration and the <a href="/tickets/" target="_blank">hotel room
                             block <i class="fa fa-external-link-alt"></i></a> on the main site.</p>
@@ -128,7 +127,7 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
         }
         $.ajax({
             type: 'POST',
-            url: '/members/utils/modifyregistration.php',
+            url: '/members/api/registration/modify.php',
             data: "uid=<?php echo $userSession; ?>&agreeToTerms"
         })
             .done(function(resp) {
@@ -179,20 +178,18 @@ $agreeToTerms = $userRow['agreeToTerms'] ? $userRow['agreeToTerms'] : "n/a";
     function saveOrder(orderId) {
         $.ajax({
             type: 'POST',
-            url: '/members/utils/paypal_handle_change.php',
-            data: 'orderId=' + orderId
-        })
-            .done(function(resp) {
-                if (resp === "Registration complete!") {
-                    setMessage("[ Registration complete! ]");
-                    $('#room-block-section').show();
-                } else {
-                    setMessage("Error registering... [" + resp + "]");
-                }
-            })
-            .fail(function(resp) {
-                setMessage("Error registering... [" + resp + "]");
-            });
+            url: '/members/api-v2/paypal/saveOrder.php',
+            data: 'orderId=' + orderId,
+            success: function(resp) {
+                resp = resp || {data: ""};
+                setMessage("[ " + resp.data + " ]");
+                $('#room-block-section').show();
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                setMessage("Error registering... [" + resp.error + "]");
+            }
+        });
     }
 
     function setMessage(str) {

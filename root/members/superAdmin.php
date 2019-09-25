@@ -2,24 +2,24 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/constants.php');
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-include_once('utils/sql_functions.php');
-
 if (!$isSuperAdmin) {
-    die("You are not a super admin! GTFO.");
+    http_response_code($HTTP_FORBIDDEN);
+    return;
 }
 
 // Get the user data
 $query = "SELECT * FROM users WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information
@@ -151,7 +151,7 @@ $emailAddress = $userRow['email'];
                 if (isInvalidYear($conYearTextbox.val())) {
                     $message.text("Changes ignored. Cannot edit past/future/invalid years.");
                     return;
-                } else if (isInvalidPrice(""+$badgePriceTextbox.val())) {
+                } else if (isInvalidPrice("" + $badgePriceTextbox.val())) {
                     $message.text("Changes ignored. Invalid badge price.");
                     return;
                 }
@@ -159,12 +159,20 @@ $emailAddress = $userRow['email'];
                 // Make the ajax call
                 $.ajax({
                     type: 'POST',
-                    url: '/members/utils/set_app_state.php',
-                    data: params.join('&')
-                }).done(function _onSuccess(resp) {
-                    $message.text(resp);
-                }).fail(function _onFailure(resp) {
-                    $message.text(resp);
+                    url: '/members/api-v2/setAppState.php',
+                    data: params.join('&'),
+                    statusCode: {
+                        200: function(resp) {
+                            $message.text(resp.data);
+                        },
+                        304: function() {
+                            $message.text("No changes.");
+                        }
+                    },
+                    error: function(jqXHR) {
+                        var resp = jqXHR.responseJSON;
+                        $message.text(resp.error);
+                    }
                 });
             });
         }

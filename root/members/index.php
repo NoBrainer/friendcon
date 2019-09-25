@@ -2,20 +2,19 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/functions.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-
-include('utils/dbconnect.php');
-include_once('utils/sql_functions.php');
 
 if (isset($_POST['btn-login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $query = "SELECT uid, email, password FROM users WHERE email = ?";
-    $result = prepareSqlForResult($MySQLi_CON, $query, 's', $email);
+    $result = executeSqlForResult($MySQLi_CON, $query, 's', $email);
 
     if (hasRows($result, 1)) {
         $row = getNextRow($result);
@@ -58,13 +57,11 @@ if (isset($_POST['btn-login'])) {
         <form method="post" id="login-form">
             <h2 class="form-signin-heading center">Sign In</h2>
             <h3 class="form-signin-heading">
-                <a href="/members/signup.php" class="btn btn-default btn-wide"
-                   onclick="alert('User sign-up currently disabled.')">Sign up for an account here!</a>
+                <a href="/members/signup.php" class="btn btn-default btn-wide">Sign up for an account here!</a>
             </h3>
             <hr/>
 
-            <?php if (isset($msg))
-                echo $msg; ?>
+            <?php if (isset($msg)) echo $msg; ?>
 
             <div class="form-group">
                 <input type="email" class="form-control" placeholder="Email address" name="email" required/>
@@ -77,8 +74,7 @@ if (isset($_POST['btn-login'])) {
             <hr/>
 
             <div class="form-group">
-                <button type="submit" name="btn-login" id="btn-login"
-                        style="display:block; margin-left: auto; margin-right: auto;">
+                <button type="submit" name="btn-login" id="btn-login" style="display:block; margin-left: auto; margin-right: auto;">
                     <span class="fa fa-sign-in-alt"></span>
                     &nbsp;
                     <span>Sign In</span>

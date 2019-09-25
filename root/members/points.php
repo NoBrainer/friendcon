@@ -2,48 +2,48 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/constants.php');
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-include_once('utils/sql_functions.php');
-
 // Get the user data
 $query = "SELECT u.email, u.name, u.uid, u.upoints, h.housename FROM users u JOIN house h ON u.houseid = h.houseid
         WHERE uid = ?";
-$userResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
-if (!$userResult) {
-    die("User query failed");
+$userResult = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+if (!hasRows($userResult)) {
+    http_response_code($HTTP_INTERNAL_SERVER_ERROR);
+    return;
 }
-$userRow = $userResult->fetch_array();
+$userRow = getNextRow($userResult);
 
 $email = $userRow['email'];
 $name = $userRow['name'];
 $uid = $userRow['uid'];
 $points = $userRow['upoints'];
 $housename = $userRow['housename'];
-$userResult->free_result();
 
 // Prevent users from accessing this until they are in a house
 if (!$isAdmin && $housename == "Unsorted") {
-    die("You are not worthy of points! GTFO.");
+    http_response_code($HTTP_FORBIDDEN);
+    return;
 }
 
 // Get the list of users
 $userListResult = $MySQLi_CON->query("SELECT u.name, u.uid FROM users u");
 if (!$userListResult) {
-    die("User list query failed");
+    http_response_code($HTTP_INTERNAL_SERVER_ERROR);
+    return;
 }
 $userList = [];
-while ($row = $userListResult->fetch_array()) {
+while ($row = getNextRow($userListResult)) {
     $userList[] = $row;
 }
-$userListResult->free_result();
 ?>
 
 <!DOCTYPE html>
@@ -333,12 +333,13 @@ $userListResult->free_result();
 <!-- JavaScript -->
 <script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
 <script type="text/javascript" src="/members/lib/typeahead/typeahead.jquery.min.js"></script>
-<script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
+<script type="text/javascript" src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
+<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js"></script>
 <script type="text/javascript">
     function typeAheadMatcher(list) {
         return function findMatches(query, callback) {
-            var matches = [],
-                substringRegex = new RegExp(query, 'i');
+            var matches = [];
+            var substringRegex = new RegExp(query, 'i');
             $.each(list, function(i, item) {
                 if (substringRegex.test(item)) {
                     matches.push(item);
@@ -379,14 +380,14 @@ $userListResult->free_result();
     }
 
     function formatDate(date) {
-        var dayArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-            dayOfWeek = dayArr[date.getDay()],
-            year = date.getFullYear().toString(),
-            month = (date.getMonth() + 101).toString().substring(1),
-            day = (date.getDate() + 100).toString().substring(1),
-            hours = (date.getHours() + 100).toString().substring(1),
-            minutes = (date.getMinutes() + 100).toString().substring(1),
-            suffix = "AM";
+        var dayArr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        var dayOfWeek = dayArr[date.getDay()];
+        var year = date.getFullYear().toString();
+        var month = (date.getMonth() + 101).toString().substring(1);
+        var day = (date.getDate() + 100).toString().substring(1);
+        var hours = (date.getHours() + 100).toString().substring(1);
+        var minutes = (date.getMinutes() + 100).toString().substring(1);
+        var suffix = "AM";
         if (date.getHours() > 12) {
             hours = (date.getHours() - 12 + 100).toString().substring(1);
             suffix = "PM";
@@ -398,39 +399,46 @@ $userListResult->free_result();
     }
 
     function updateMyPoints() {
-        return $.get("/members/utils/getpoints.php")
-            .done(function(resp) {
-                $('#my-points').text(resp);
-            });
+        return $.ajax({
+            type: 'GET',
+            url: '/members/api-v2/points/getPoints.php'
+            success: function(resp) {
+                $('#my-points').text(resp.data);
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                console.log(resp.error);
+            }
+        });
     }
 
     function updateMyHistory() {
-        var $tableBody = $('#point-history-table tbody'),
-            $tableHead = $('#point-history-table thead'),
-            $prevPage = $('#point-history-prev-page'),
-            $nextPage = $('#point-history-next-page'),
-            $pageLabel = $('#point-history-page-label'),
-            currentPage = 1,
-            rowsPerPage = 10,
-            numRows = 0,
-            numPages = 1;
+        var $tableBody = $('#point-history-table tbody');
+        var $tableHead = $('#point-history-table thead');
+        var $prevPage = $('#point-history-prev-page');
+        var $nextPage = $('#point-history-next-page');
+        var $pageLabel = $('#point-history-page-label');
+        var currentPage = 1;
+        var rowsPerPage = 10;
+        var numRows = 0;
+        var numPages = 1;
         $prevPage.hide();
         $nextPage.hide();
         $pageLabel.text("");
-        return $.get('/members/utils/gethistory.php')
-            .done(function(resp) {
+        return $.ajax({
+            type: 'GET',
+            url: '/members/api-v2/history/getHistory.php',
+            success: function(resp) {
+                var data = resp.data;
                 $tableBody.empty();
-                if (!(resp instanceof Array)) {
-                    return;
-                }
-                numRows = resp && resp.length ? resp.length : 0;
+                numRows = data && data.length ? data.length : 0;
                 numPages = Math.ceil(numRows / rowsPerPage);
                 $tableHead.show();
-                $.each(resp, function(i, row) {
+                _.each(data, function(row, i) {
                     // Massage the data
                     row.timestamp = new Date(row.timestamp.replace(" ", "T"));
                     row.timestamp.setHours(row.timestamp.getHours() + 3); //adjust for server timezone
-                    row.isAdminAction = (row.isAdminAction ? true : false);
+                    row.isAdminAction = !!row.isAdminAction;
 
                     // Build the html
                     var dateCol = formatDate(row.timestamp);
@@ -452,46 +460,48 @@ $userListResult->free_result();
                     // Append it to the table
                     $tableBody.append(html);
                 });
-            }).always(function() {
+            },
+            complete: function() {
                 if ($tableBody.text().trim() === "") {
                     $tableHead.hide();
                     $tableBody.text("No history entries");
-                } else {
-                    var $rows = $($tableBody.find('tr'));
-                    if (numRows > rowsPerPage) {
-                        function updatePaging() {
-                            var firstShownRow = (currentPage - 1) * rowsPerPage,
-                                lastShownRow = (currentPage * rowsPerPage) - 1;
-                            $rows.hide();
-                            for (var i = firstShownRow; i <= lastShownRow; i++) {
-                                $($rows.get(i)).show();
-                            }
-                            if (firstShownRow > 0) {
-                                $prevPage.show();
-                            } else {
-                                $prevPage.hide();
-                            }
-                            if (lastShownRow < numRows) {
-                                $nextPage.show();
-                            } else {
-                                $nextPage.hide();
-                            }
-                            $pageLabel.text("Page " + currentPage + " of " + numPages);
-                        }
-
-                        // Paging is required
-                        updatePaging();
-                        $nextPage.click(function() {
-                            currentPage++;
-                            updatePaging();
-                        });
-                        $prevPage.click(function() {
-                            currentPage--;
-                            updatePaging();
-                        });
-                    }
+                    return;
                 }
-            });
+                var $rows = $($tableBody.find('tr'));
+                if (numRows > rowsPerPage) {
+                    function updatePaging() {
+                        var firstShownRow = (currentPage - 1) * rowsPerPage;
+                        var lastShownRow = (currentPage * rowsPerPage) - 1;
+                        $rows.hide();
+                        for(var i = firstShownRow; i <= lastShownRow; i++) {
+                            $($rows.get(i)).show();
+                        }
+                        if (firstShownRow > 0) {
+                            $prevPage.show();
+                        } else {
+                            $prevPage.hide();
+                        }
+                        if (lastShownRow < numRows) {
+                            $nextPage.show();
+                        } else {
+                            $nextPage.hide();
+                        }
+                        $pageLabel.text("Page " + currentPage + " of " + numPages);
+                    }
+
+                    // Paging is required
+                    updatePaging();
+                    $nextPage.click(function() {
+                        currentPage++;
+                        updatePaging();
+                    });
+                    $prevPage.click(function() {
+                        currentPage--;
+                        updatePaging();
+                    });
+                }
+            }
+        });
     }
 
     function clearSendForm() {
@@ -516,16 +526,16 @@ $userListResult->free_result();
     }
 
     function updateAdminUserTable() {
-        var $tableBody = $('#admin-user-table tbody'),
-            $tableHead = $('#admin-user-table thead');
-        return $.get('/members/utils/getusers.php?forAdmin')
-            .done(function(resp) {
+        var $tableBody = $('#admin-user-table tbody');
+        var $tableHead = $('#admin-user-table thead');
+        return $.ajax({
+            type: 'GET',
+            url: '/members/users/get.php?forAdmin',
+            success: function(resp) {
+                var data = resp.data;
                 $tableBody.empty();
-                if (!(resp instanceof Array)) {
-                    return;
-                }
                 $tableHead.show();
-                $.each(resp, function(i, row) {
+                _.each(data, function(row) {
                     // Build the html
                     var html = "<tr>";
                     html += "<td>" + row.uid + "</td>";
@@ -537,12 +547,18 @@ $userListResult->free_result();
                     // Append it to the table
                     $tableBody.append(html);
                 });
-            }).always(function() {
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                console.log(resp.error);
+            },
+            complete: function() {
                 if ($tableBody.text().trim() === "") {
                     $tableHead.hide();
                     $tableBody.text("No users?... Uh oh...");
                 }
-            });
+            }
+        });
     }
 
     var $pointBtnAll = $('#point-btn-all');
@@ -552,16 +568,16 @@ $userListResult->free_result();
     });
     <?php } ?>
     function updatePendingRequests() {
-        var $tableBody = $('#pending-requests-table tbody'),
-            $tableHead = $('#pending-requests-table thead');
-        $.get('/members/utils/pointsrequest_get.php')
-            .done(function(resp) {
+        var $tableBody = $('#pending-requests-table tbody');
+        var $tableHead = $('#pending-requests-table thead');
+        $.ajax({
+            type: 'GET',
+            url: '/members/api-v2/points/getPendingRequests.php',
+            success: function(resp) {
+                var data = resp.data;
                 $tableBody.empty();
-                if (!(resp instanceof Array)) {
-                    return;
-                }
                 $tableHead.show();
-                $.each(resp, function(i, row) {
+                _.each(data, function(row) {
                     // Massage the data
                     row.timestamp = new Date(row.timestamp.replace(" ", "T"));
                     row.timestamp.setHours(row.timestamp.getHours() + 3); //adjust for server timezone
@@ -579,25 +595,27 @@ $userListResult->free_result();
                     // Append it to the table
                     $tableBody.append(html);
                 });
-            }).always(function() {
-            if ($tableBody.text().trim() === "") {
-                $tableHead.hide();
-                $tableBody.text("No pending requests");
-            } else {
-                applyClickHandlersForAcceptReject();
+            },
+            complete: function() {
+                if ($tableBody.text().trim() === "") {
+                    $tableHead.hide();
+                    $tableBody.text("No pending requests");
+                } else {
+                    applyClickHandlersForAcceptReject();
+                }
             }
         });
     }
 
     function applyClickHandlersForAcceptReject() {
-        var $error = $('#pending-requests-error'),
-            $success = $('#pending-requests-success');
+        var $error = $('#pending-requests-error');
+        var $success = $('#pending-requests-success');
 
         // Click handler for accepting pending point requests
         $('.accept-request').off().on('click', function(e) {
-            var $target = $(e.target),
-                $row = $target.closest('tr'),
-                sourceUid = $target.attr('sourceuid');
+            var $target = $(e.target);
+            var $row = $target.closest('tr');
+            var sourceUid = $target.attr('sourceuid');
             $error.text("");
             $success.text("");
             if ($row.hasClass('disabled')) {
@@ -611,18 +629,20 @@ $userListResult->free_result();
             $success.text("Processing...");
             $row.addClass('disabled');
             $.ajax({
-                url: "/members/utils/pointsrequest_accept.php",
                 type: 'POST',
-                data: "source_uid=" + sourceUid
-            }).done(function(resp) {
-                if (resp === 'SUCCESS') {
+                url: '/members/api-v2/points/acceptRequest.php',
+                data: "source_uid=" + sourceUid,
+                success: function(resp) {
                     $success.text("Request accepted!");
                     setTimeout(function() { //after 2 seconds, update the data on the page
                         updateAllDataOnPage();
                         $success.text("");
                     }, 2000);
-                } else {
-                    $error.text(resp);
+                },
+                error: function(jqXHR) {
+                    var resp = jqXHR.responseJSON;
+                    console.log(resp.error);
+                    $error.text(resp.error);
                     $row.removeClass('disabled');
                 }
             });
@@ -630,9 +650,9 @@ $userListResult->free_result();
 
         // Click handler for rejecting pending point requests
         $('.reject-request').off().on('click', function(e) {
-            var $target = $(e.target),
-                $row = $target.closest('tr'),
-                sourceUid = $target.attr('sourceuid');
+            var $target = $(e.target);
+            var $row = $target.closest('tr');
+            var sourceUid = $target.attr('sourceuid');
             $error.text("");
             $success.text("");
             if ($row.hasClass('disabled')) {
@@ -646,17 +666,19 @@ $userListResult->free_result();
             $success.text("Processing...");
             $row.addClass('disabled');
             $.ajax({
-                url: "/members/utils/pointsrequest_reject.php",
                 type: 'POST',
-                data: "source_uid=" + sourceUid
-            }).done(function(resp) {
-                if (resp === 'SUCCESS') {
-                    $success.text("Request rejected!");
+                url: '/members/api-v2/points/rejectRequest.php',
+                data: "source_uid=" + sourceUid,
+                success: function(resp) {
+                    $success.text("Request successfully rejected!");
                     setTimeout(function() { //after 2 seconds, update the data on the page
                         updatePendingRequests();
                         $success.text("");
                     }, 2000);
-                } else {
+                },
+                error: function(jqXHR) {
+                    var resp = jqXHR.responseJSON;
+                    console.log(resp.error);
                     $error.text(resp);
                     $row.removeClass('disabled');
                 }
@@ -672,23 +694,23 @@ $userListResult->free_result();
     }
 
     // Get user name/uid mapping from PHP / database
-    var userMapping = <?php
-        $length = count($userList);
-        $i = 0;
-        $str = "[";
-        while ($i < $length) {
-            $user = $userList[$i];
-            $str = "{$str}{\"uid\":\"{$user['uid']}\",\"name\":\"{$user['name']}\"}";
-            if ($i + 1 < $length) {
-                $str = "{$str},";
+    var userMapping = <?php //TODO: move this to somewhere else
+            $length = count($userList);
+            $i = 0;
+            $str = "[";
+            while ($i < $length) {
+                $user = $userList[$i];
+                $str = "{$str}{\"uid\":\"{$user['uid']}\",\"name\":\"{$user['name']}\"}";
+                if ($i + 1 < $length) {
+                    $str = "{$str},";
+                }
+                $i = $i + 1;
             }
-            $i = $i + 1;
-        }
-        $str = "{$str}]";
-        echo $str;
-        ?>;
-    var userList = [],
-        templateParams = [];
+            $str = "{$str}]";
+            echo $str;
+            ?>;
+    var userList = [];
+    var templateParams = [];
     $.each(userMapping, function(i, item) {
         userList.push(item.name);
         templateParams.push({
@@ -698,7 +720,7 @@ $userListResult->free_result();
     });
 
     function getUserUidFromName(name) {//TODO: use email instead of names (since names are not unique)
-        for (var i = 0; i < userMapping.length; i++) {
+        for(var i = 0; i < userMapping.length; i++) {
             if (userMapping[i].name === name) {
                 return userMapping[i].uid;
             }
@@ -726,14 +748,14 @@ $userListResult->free_result();
     // Click handler for point buttons
     var maxPoints = parseInt(<?php echo $points; ?>);
     $('.point-btn').on('click', function(e) {
-        var $btn = $(e.target),
-            enforceMax = $btn.hasClass('enforce-max'),
-            enforceMin = !$btn.hasClass('point-btn-admin'),
-            $target = $($btn.attr('target')),
-            $inputTarget = $($btn.attr('input-target')),
-            value = parseInt($btn.attr('value'), 10),
-            prev = parseInt($target.text(), 10),
-            newValue = prev + value;
+        var $btn = $(e.target);
+        var enforceMax = $btn.hasClass('enforce-max');
+        var enforceMin = !$btn.hasClass('point-btn-admin');
+        var $target = $($btn.attr('target'));
+        var $inputTarget = $($btn.attr('input-target'));
+        var value = parseInt($btn.attr('value'), 10);
+        var prev = parseInt($target.text(), 10);
+        var newValue = prev + value;
         if (enforceMin && newValue < 0) {
             newValue = 0;
         } else if (enforceMax && newValue > maxPoints) {
@@ -750,11 +772,11 @@ $userListResult->free_result();
             alert("Sending won't work until the last send finishes processing.");
             return;
         }
-        var $error = $('#send-points-error'),
-            $success = $('#send-points-success'),
-            numPoints = parseInt($('#send-points-amount').text()),
-            toName = $('#send-typeahead').val(),
-            toUid = getUserUidFromName(toName);
+        var $error = $('#send-points-error');
+        var $success = $('#send-points-success');
+        var numPoints = parseInt($('#send-points-amount').text());
+        var toName = $('#send-typeahead').val();
+        var toUid = getUserUidFromName(toName);
 
         // Validation
         if (numPoints <= 0) {
@@ -768,22 +790,23 @@ $userListResult->free_result();
 
         // Send the points via a POST
         $.ajax({
-            url: "/members/utils/sendpoints.php",
             type: 'POST',
-            data: "num_points=" + numPoints + "&to_uid=" + toUid
-        }).done(function(resp) {
-            updateMyPoints();
-            clearSendForm();
-
-            // Update the message
-            if (resp === "SUCCESS") {
+            url: '/members/api-v2/points/sendPoints.php',
+            data: "num_points=" + numPoints + "&to_uid=" + toUid,
+            success: function(resp) {
                 $success.text("Sent " + numPoints + " points to " + toName + "!");
                 updateMyHistory();
-            } else {
-                $error.text(resp);
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                console.log(resp.error);
+                $error.text(resp.error);
+            },
+            complete: function() {
+                updateMyPoints();
+                clearSendForm();
+                preventingSendSpam = false;
             }
-        }).always(function() {
-            preventingSendSpam = false;
         });
     });
 
@@ -794,11 +817,11 @@ $userListResult->free_result();
             alert("Requesting won't work until the last request finishes processing.");
             return;
         }
-        var $error = $('#request-points-error'),
-            $success = $('#request-points-success'),
-            numPoints = parseInt($('#request-points-amount').text()),
-            toName = $('#request-typeahead').val(),
-            toUid = getUserUidFromName(toName);
+        var $error = $('#request-points-error');
+        var $success = $('#request-points-success');
+        var numPoints = parseInt($('#request-points-amount').text());
+        var toName = $('#request-typeahead').val();
+        var toUid = getUserUidFromName(toName);
 
         // Validation
         if (numPoints <= 0) {
@@ -812,22 +835,23 @@ $userListResult->free_result();
 
         // Request the points via a POST
         $.ajax({
-            url: "/members/utils/pointsrequest_send.php",
             type: 'POST',
-            data: "num_points=" + numPoints + "&target_uid=" + toUid
-        }).done(function(resp) {
-            updateMyPoints();
-            clearRequestForm();
-
-            // Update the message
-            if (resp === "SUCCESS") {
+            url: '/members/api-v2/points/sendRequest.php',
+            data: "num_points=" + numPoints + "&target_uid=" + toUid,
+            success: function(resp) {
                 $success.text("Requested " + numPoints + " from " + toName + "!");
                 updateMyHistory();
-            } else {
-                $error.text(resp);
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                console.log(resp.error);
+                $error.text(resp.error);
+            },
+            complete: function() {
+                updateMyPoints();
+                clearRequestForm();
+                preventingRequestSpam = false;
             }
-        }).always(function() {
-            preventingRequestSpam = false;
         });
     });
 
@@ -847,11 +871,11 @@ $userListResult->free_result();
     <?php if($isAdmin){ ?>
     // Click handler for admin points
     $('#admin-points-btn').on('click', function(e) {
-        var $error = $('#admin-points-error'),
-            $success = $('#admin-points-success'),
-            numPoints = parseInt($('#admin-points-amount').text()),
-            targetName = $('#admin-typeahead').val(),
-            targetUid = getUserUidFromName(targetName);
+        var $error = $('#admin-points-error');
+        var $success = $('#admin-points-success');
+        var numPoints = parseInt($('#admin-points-amount').text());
+        var targetName = $('#admin-typeahead').val();
+        var targetUid = getUserUidFromName(targetName);
 
         if (targetName === EVERYONE) {
             targetUid = -1;
@@ -871,16 +895,17 @@ $userListResult->free_result();
 
         // Change the points via a POST
         $.ajax({
-            url: "/members/utils/sendpoints_admin.php",
             type: 'POST',
-            data: "num_points=" + numPoints + "&target_uid=" + targetUid
-        }).done(function(resp) {
-            // Update the message
-            if (resp === "SUCCESS") {
+            url: '/members/api-v2/points/sendAdminPoints.php',
+            data: "num_points=" + numPoints + "&target_uid=" + targetUid,
+            success: function(resp) {
                 $success.text("Changed " + targetName + "'s points by " + numPoints);
                 updateMyHistory();
                 updateMyPoints();
-            } else {
+            },
+            error: function(jqXHR) {
+                var resp = jqXHR.responseJSON;
+                console.log(resp.error);
                 $error.text(resp);
             }
         });

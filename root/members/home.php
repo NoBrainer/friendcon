@@ -2,16 +2,14 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
-
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-include_once('utils/sql_functions.php');
 
 // Get the user data
 $query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze,
@@ -19,7 +17,7 @@ $query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.fav
         FROM users u
         JOIN house h ON h.houseid = u.houseid
         WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information

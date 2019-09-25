@@ -2,58 +2,58 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/functions.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-
-include('utils/dbconnect.php');
-include_once('utils/sql_functions.php');
 
 //on button submit action
 if (isset($_POST['btn-signup'])) {
     $email = trim($_POST['email']);
 
     //check to see if the email exists
-    $emailQuery = "SELECT email FROM users WHERE email=?";
-    $emailResult = prepareSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
+    $emailQuery = "SELECT email FROM users WHERE email = ?";
+    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
 
     //if that email address has an account associated with it and thus has a return row, do this
-    if (hasRows($emailResult)) {
-        $passwordQuery = "SELECT password FROM users WHERE email=?";
-        $passwordResult = prepareSqlForResult($MySQLi_CON, $passwordQuery, 's', $email);
+    if (hasRows($emailResult, 1)) {
+        $passwordQuery = "SELECT password FROM users WHERE email = ?";
+        $passwordResult = executeSqlForResult($MySQLi_CON, $passwordQuery, 's', $email);
 
         //if query to get the password is successful, do this
         if (hasRows($passwordResult, 1)) {
             $row = getNextRow($passwordResult);
-            $hash = $row[0];
-            $msg = "<div class='alert alert-success'>
-						<span class='fa fa-info-circle'></span>
-						<span>You'll get a token in your email!</span>
-					</div>";
+            $hash = $row['password'];
+            $msg = "<div class='alert alert-success'>" .
+                    "	<span class='fa fa-info-circle'></span>" .
+                    "	<span>You'll get a token in your email!</span>" .
+                    "</div>";
 
             //Send Email to the User
             $to = $email;
             $subject = "Your FriendCon Account Password Request";
-            $txt = "Thanks for reaching out to us about your FriendCon account. Your token is below and can be used " .
-                    "to reset your account at http://friendcon.com/members/passwordReset\nToken: {$hash}";
-            $headers = "From: admin@friendcon.com";
+            $txt = "<div>Thanks for reaching out to us about your FriendCon account. Your token is below and can be " .
+                    "used to reset your account at: https://friendcon.com/members/passwordReset</div>" .
+                    "<div>Token: <span>$hash</span></div>";
+            $headers = "From: admin@friendcon.com\r\nContent-type:text/html";
 
             mail($to, $subject, $txt, $headers);
         } else {
             //if the sql query failed or the count != 1
-            $msg = "<div class='alert alert-danger'>
-						<span class='fa fa-info-circle'></span>
-						<span>Something went wrong. Inexplicably.</span>
-					</div>";
+            $msg = "<div class='alert alert-danger'>" .
+                    "	<span class='fa fa-info-circle'></span>" .
+                    "	<span>Something went wrong. Inexplicably.</span>" .
+                    "</div>";
         }
     } else {
         //if there is no account record found, do this
-        $msg = "<div class='alert alert-danger'>
-					<span class='fa fa-info-circle'></span>
-					<span>Something went wrong! Contact us at admins@friendcon.com</span>
-				</div>";
+        $msg = "<div class='alert alert-danger'>" .
+                "	<span class='fa fa-info-circle'></span>" .
+                "	<span>Something went wrong! Contact us at admins@friendcon.com</span>" .
+                "</div>";
     }
 }
 ?>
@@ -80,7 +80,6 @@ if (isset($_POST['btn-signup'])) {
             <hr/>
             <?php if (isset($msg)) { ?>
                 <?php echo $msg; ?>
-            <?php } else { ?>
             <?php } ?>
 
             <div class="form-group">
@@ -91,7 +90,8 @@ if (isset($_POST['btn-signup'])) {
             <hr/>
 
             <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
-                <span class="fa fa-sign-in-alt"></span> &nbsp; Send Token
+                <span class="fa fa-sign-in-alt"></span>
+                <span>Send Token</span>
             </button>
 
             <a href="/members/passwordReset.php">Already have a token?</a>

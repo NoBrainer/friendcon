@@ -2,23 +2,24 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/constants.php');
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-
 if (!$isAdmin) {
-    die("You are not an admin! GTFO.");
+    http_response_code($HTTP_FORBIDDEN);
+    return;
 }
 
 // Get the user data
 $query = "SELECT * FROM users WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information
@@ -75,7 +76,7 @@ $emailAddress = $userRow['email'];
 <script type="text/javascript" src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script type="text/javascript" src="/members/lib/datatables/datatables-1.10.12.min.js"></script>
 <script type="text/javascript" src="/members/lib/datatables/datatables.dataSourcePlugins.js"></script>
-<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js""></script>
+<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -88,16 +89,20 @@ $emailAddress = $userRow['email'];
             $userTable.on('draw.dt', setupActionButtonClickHandlers);
             $userTable.on('order.dt', renumberRows);
 
-            return $.get('/members/utils/getusers.php?forTeamSort')
-                .done(function(resp) {
-                    if (!(resp instanceof Array)) {
+            $.ajax({
+                type: 'GET',
+                url: "/members/api-v2/user/getUsers.php",
+                data: "forTeamSort",
+                success: function(resp) {
+                    var users = resp.data;
+                    if (!(users instanceof Array)) {
                         $userTable.text("Error loading users");
                         return;
                     }
 
                     // Build up the data
                     var dataArr = [];
-                    $.each(resp, function(i, user) {
+                    $.each(users, function(i, user) {
                         var dataRow = {
                             uid: user.uid,
                             name: user.name,
@@ -166,7 +171,8 @@ $emailAddress = $userRow['email'];
                         var $dropdown = $(select);
                         $dropdown.val($dropdown.attr('value'));
                     });
-                });
+                }
+            });
         }
 
         function renumberRows() {
@@ -180,14 +186,19 @@ $emailAddress = $userRow['email'];
             renumberRows();
 
             $('#sort-the-unsorted').on('click', function() {
-                $.get('/members/utils/getusers.php?forTeamSort')
-                    .done(function(users) {
+                $.ajax({
+                    type: 'GET',
+                    url: "/members/api-v2/user/getUsers.php",
+                    data: "forTeamSort",
+                    success: function(resp) {
+                        var users = resp.data;
                         _.each(users, function(user) {
                             if (user.houseid === "0") {
                                 queueTeamSort(user.uid);
                             }
                         });
-                    });
+                    }
+                });
             });
 
             $('.team-dropdown').on('change', function(e) {
@@ -195,8 +206,9 @@ $emailAddress = $userRow['email'];
                 var uid = $dropdown.attr('uid');
                 var housename = $dropdown.val();
                 $.ajax({
-                    url: "/members/utils/sortuser.php?uid=" + uid + "&housename=" + housename,
-                    type: "GET"
+                    type: 'GET',
+                    url: "/members/api-v2/registration/sortUser.php",
+                    data: "uid=" + uid + "&housename=" + housename
                 });
             });
             //TODO: allow multi-edit and/or drag-and-drop
@@ -207,8 +219,12 @@ $emailAddress = $userRow['email'];
 
         function queueTeamSort(uid) {
             if (_.isNull(sortPromise)) {
-                sortPromise = $.get("/members/utils/sortuser.php?uid=" + uid)
-                    .always(nextTeamSort);
+                sortPromise = $.ajax({
+                    type: 'GET',
+                    url: "/members/api-v2/registration/sortUser.php",
+                    data: "uid=" + uid,
+                    complete: nextTeamSort
+                });
             } else {
                 uidQueue = _.union(uidQueue, [uid]);
             }
@@ -225,8 +241,12 @@ $emailAddress = $userRow['email'];
             uidQueue = _.without(uidQueue, uid);
 
             // Make an ajax call
-            sortPromise = $.get("/members/utils/sortuser.php?uid=" + uid)
-                .always(nextTeamSort);
+            sortPromise = $.ajax({
+                type: 'GET',
+                url: "/members/api-v2/registration/sortUser.php",
+                data: "uid=" + uid,
+                complete: nextTeamSort
+            });
         }
     });
 </script>

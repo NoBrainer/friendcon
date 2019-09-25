@@ -2,24 +2,24 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/constants.php');
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAppState.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include('utils/checkadmin.php');
-include('utils/check_app_state.php');
-include_once('utils/sql_functions.php');
-
 if (!$isAdmin) {
-    die("You are not an admin! GTFO.");
+    http_response_code($HTTP_FORBIDDEN);
+    return;
 }
 
 // Get the user data
 $query = "SELECT * FROM users WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information
@@ -74,11 +74,11 @@ $emailAddress = $userRow['email'];
 <!-- JavaScript -->
 <script type="text/javascript" src="/members/lib/jquery/jquery-3.4.0.min.js"></script>
 <script type="text/javascript" src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
-<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js""></script>
+<script type="text/javascript" src="/members/lib/underscore/underscore-1.9.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-
-        // TODO: make this stored in a database or something
+        //TODO: make this stored in a database or something
+        //TODO: or use a listserv instead
         var blacklist = ['hjguth@gmail.com'];
 
         setupEmailList();
@@ -91,15 +91,19 @@ $emailAddress = $userRow['email'];
                 this.select();
             });
 
-            $.get('/members/utils/getusers.php?forEmailList')
-                .done(function(resp) {
-                    if (!(resp instanceof Array)) {
+            $.ajax({
+                type: 'GET',
+                url: "/members/api-v2/user/getUsers.php",
+                data: "forEmailList",
+                success: function(resp) {
+                    var users = resp.data;
+                    if (!(users instanceof Array)) {
                         $emailList.text("Error loading emails");
                         return;
                     }
 
                     // Map the user objects into an array of email addresses
-                    var emailArr = _.chain(resp)
+                    var emailArr = _.chain(users)
                         .map(function(user) {
                             user = user || {};
                             return user.email;
@@ -113,7 +117,12 @@ $emailAddress = $userRow['email'];
                     // Build the string to display
                     var emailStr = emailArr.join("; ");
                     $emailList.text(emailStr);
-                });
+                },
+                error: function(jqXHR) {
+                    $emailList.text("Error loading emails");
+                    console.log(jqXHR.responseJSON);
+                }
+            });
         }
 
     });

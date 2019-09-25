@@ -2,20 +2,20 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/secrets/initDB.php');
+include('api-v2/internal/functions.php');
+
 // Short-circuit forwarding
-include('utils/reroute_functions.php');
 if (forwardHttps() || forwardIndexIfLoggedOut()) {
     exit;
 }
 
-include('utils/dbconnect.php');
-include_once('utils/sql_functions.php');
 
 // Get the user data
 $query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.favoriteBooze, u.favoriteNerdism, u.name, 
             u.phone, u.uid, u.upoints, uh.housename AS housename FROM users u JOIN house uh ON uh.houseid = u.houseid
         WHERE uid = ?";
-$result = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 ?>
 
@@ -140,16 +140,32 @@ $userRow = $result->fetch_array();
 
         // Click handler for the submit button
         $('#submit').click(function() {
+            var $alert = $('.alert');
+            $alert.hide();
+            $alert.removeClass('alert-danger alert-info alert-success');
             $.ajax({
                 type: 'POST',
-                url: '/members/utils/update_profile.php',
-                data: buildProfileParams()
-            })
-                .done(function(resp) {
-                    //TODO: detect error and add 'alert-danger' class to .alert
-                    $('.alert .message').text(resp);
-                    $('.alert').show();
-                });
+                url: '/members/api-v2/user/updateProfile.php',
+                data: buildProfileParams(),
+                statusCode: {
+                    200: function(resp) {
+                        $alert.addClass('alert-success');
+                        $('.alert .message').text(resp.data);
+                    },
+                    304: function() {
+                        $alert.addClass('alert-info');
+                        $('.alert .message').text("No changes.");
+                    }
+                },
+                error: function(jqXHR) {
+                    var resp = jqXHR.responseJSON;
+                    $alert.addClass('alert-danger');
+                    $('.alert .message').text(resp.error);
+                },
+                complete: function() {
+                    $alert.show();
+                }
+            });
         });
     })();
 </script>
