@@ -74,6 +74,7 @@ if (isset($_POST['btn-signup'])) {
     <title>Set Your New Friendcon Password</title>
     <link href="/members/lib/bootstrap/css/bootstrap-3.3.4.min.css" rel="stylesheet" media="screen">
     <link href="/members/lib/bootstrap/css/bootstrap-theme-3.3.5.min.css" rel="stylesheet" media="screen">
+    <link href="/members/lib/fontawesome/css/fontawesome-all.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="/members/css/style.css" type="text/css"/>
 </head>
 
