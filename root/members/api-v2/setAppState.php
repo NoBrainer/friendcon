@@ -70,17 +70,17 @@ $checkResult->free_result();
 
 if (!$checkResult || $numRows == 0) {
     // Insert a new row
-    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`,
-            `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
+    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`," .
+            " `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
     $insertResult = executeSqlForResult($MySQLi_CON, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
             $badgePrice, $isRegistrationEnabled, $isPointsEnabled);
     $response["data"] = "Added entry for {$conYear}!";
 } else {
     // Update an existing row
-    $updateQuery = "UPDATE app_state s
-            SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?,
-                s.pointsEnabled = ?
-            WHERE s.conYear = ?";
+    $updateQuery = "UPDATE app_state s" .
+            " SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?, " .
+            " s.pointsEnabled = ?" .
+            " WHERE s.conYear = ?";
     $stmt = prepareSqlStatement($MySQLi_CON, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear, $badgePrice,
             $isRegistrationEnabled, $isPointsEnabled, $conYear);
     $stmt->execute();

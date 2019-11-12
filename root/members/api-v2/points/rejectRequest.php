@@ -29,9 +29,9 @@ if (!$sourceUid) {
 }
 
 // Check if the request exists
-$query = "SELECT req.status_id
-        FROM points_request req
-        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$query = "SELECT req.status_id" .
+        " FROM points_request req" .
+        " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
 $result = executeSqlForResult($MySQLi_CON, $query, 'ii', $targetUid, $sourceUid);
 if (!hasRows($result)) {
     $response["error"] = "Rejecting request failed [DB-1]";
@@ -49,9 +49,9 @@ if (!isset($statusId)) {
 }
 
 // Update the status id to REJECTED(2)
-$updateQuery = "UPDATE points_request req
-        SET status_id = 2
-        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$updateQuery = "UPDATE points_request req" .
+        " SET status_id = 2" .
+        " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
 $info = executeSqlForInfo($MySQLi_CON, $updateQuery, 'ii', $targetUid, $sourceUid);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);

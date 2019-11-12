@@ -29,9 +29,9 @@ if (!$sourceUid) {
 }
 
 // Check if the request exists
-$query = "SELECT req.status_id, req.num_points
-        FROM points_request req
-        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$query = "SELECT req.status_id, req.num_points" .
+        " FROM points_request req" .
+        " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
 $requestResult = executeSqlForResult($MySQLi_CON, $query, 'ii', $targetUid, $sourceUid);
 if (!hasRows($requestResult)) {
     $response["error"] = "Accepting request failed [DB-1]";
@@ -79,9 +79,9 @@ if (!isset($targetPoints)) {
 }
 
 // Update the status id to ACCEPTED(1)
-$updateQuery = "UPDATE points_request req
-        SET status_id = 1
-        WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
+$updateQuery = "UPDATE points_request req" .
+        " SET status_id = 1" .
+        " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
 executeSql($MySQLi_CON, $updateQuery, 'ii', $targetUid, $sourceUid);
 
 // Add an entry in history
@@ -89,9 +89,9 @@ $historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points) VALUES
 executeSql($MySQLi_CON, $historyQuery, 'iii', $targetUid, $sourceUid, $numPoints);
 
 // Send the points
-$sendQuery = "UPDATE users from_u, users to_u
-        SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?
-        WHERE from_u.uid = ? AND to_u.uid = ?";
+$sendQuery = "UPDATE users from_u, users to_u" .
+        " SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?" .
+        " WHERE from_u.uid = ? AND to_u.uid = ?";
 $info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'iiii', $numPoints, $numPoints, $targetUid, $sourceUid);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);

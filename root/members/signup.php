@@ -32,9 +32,9 @@ if (isset($_POST['btn-signup'])) {
 				</div>";
     } else {
         // Try to register the user
-        $query = "INSERT INTO users(`name`, `email`, `phone`, `password`, `favoriteAnimal`, `favoriteBooze`, " .
-                "`favoriteNerdism`, `emergencyCN`, `emergencyCNP`, `agreeToTerms`) " .
-                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $query = "INSERT INTO users(`name`, `email`, `phone`, `password`, `favoriteAnimal`, `favoriteBooze`," .
+                " `favoriteNerdism`, `emergencyCN`, `emergencyCNP`, `agreeToTerms`)" .
+                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $affectedRows = executeSqlForAffectedRows($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone,
                 $hashedPassword, $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
 

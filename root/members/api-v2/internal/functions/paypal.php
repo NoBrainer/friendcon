@@ -136,9 +136,9 @@ function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
             $deleteResult = executeSqlForResult($MySQLi_CON, $deleteQuery, 'ii', $uid, $conYear);
         } else {
             // If there is an orderId, just update
-            $updateQuery = "UPDATE registration_stats s
-                    SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()
-                    WHERE s.uid = ? AND s.conYear = ?";
+            $updateQuery = "UPDATE registration_stats s" .
+                    " SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()" .
+                    " WHERE s.uid = ? AND s.conYear = ?";
             $updateResult = executeSqlForResult($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent,
                     $uid, $conYear);
         }
@@ -146,15 +146,15 @@ function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
         // Update the registration stats
 
         // Insert a new row for this year's registration stats for this user
-        $insertQuery = "INSERT INTO `registration_stats`(`uid`, `conYear`, `isRegistered`, `isPresent`, `orderId`)
-                VALUES (?, ?, ?, ?, ?)";
+        $insertQuery = "INSERT INTO `registration_stats`(`uid`, `conYear`, `isRegistered`, `isPresent`, `orderId`)" .
+                " VALUES (?, ?, ?, ?, ?)";
         $insertResult = executeSqlForResult($MySQLi_CON, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered,
                 $isPresent, $orderId);
     } else {
         // Update this year's registration stats for this user
-        $updateQuery = "UPDATE registration_stats s
-                SET s.isRegistered = ?, s.isPresent = ?, s.orderId = ?, s.modified = CURRENT_TIMESTAMP()
-                WHERE s.uid = ? AND s.conYear = ?";
+        $updateQuery = "UPDATE registration_stats s" .
+                " SET s.isRegistered = ?, s.isPresent = ?, s.orderId = ?, s.modified = CURRENT_TIMESTAMP()" .
+                " WHERE s.uid = ? AND s.conYear = ?";
         $updateResult = executeSqlForResult($MySQLi_CON, $updateQuery, 'iisii', $isRegistered, $isPresent,
                 $orderId, $uid, $conYear);
     }

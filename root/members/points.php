@@ -13,8 +13,8 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 }
 
 // Get the user data
-$query = "SELECT u.email, u.name, u.uid, u.upoints, h.housename FROM users u JOIN house h ON u.houseid = h.houseid
-        WHERE uid = ?";
+$query = "SELECT u.email, u.name, u.uid, u.upoints, h.housename FROM users u JOIN house h ON u.houseid = h.houseid" .
+        " WHERE uid = ?";
 $userResult = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
 if (!hasRows($userResult)) {
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);

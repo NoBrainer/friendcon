@@ -54,9 +54,9 @@ $historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points) VALUES
 executeSql($MySQLi_CON, $historyQuery, 'iii', $fromUid, $toUid, $sendNumPoints);
 
 // Send the points
-$sendQuery = "UPDATE users from_u, users to_u
-        SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?
-        WHERE from_u.uid = ? AND to_u.uid = ?";
+$sendQuery = "UPDATE users from_u, users to_u" .
+        " SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?" .
+        " WHERE from_u.uid = ? AND to_u.uid = ?";
 $info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'iiii', $sendNumPoints, $sendNumPoints, $fromUid, $toUid);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);
