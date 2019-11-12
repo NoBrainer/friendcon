@@ -6,8 +6,6 @@
 // 1. Sets $isAdmin - a boolean whether or not the current user is an admin
 // 2. Sets $isSuperAdmin - a boolean whether or not the current user is one of the super users
 
-include('functions.php');
-
 // Array of super admins
 // 23 = Fil
 // 24 = Kristen

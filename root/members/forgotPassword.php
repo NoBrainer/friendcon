@@ -2,8 +2,8 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-include('api-v2/internal/secrets/initDB.php');
 include('api-v2/internal/functions.php');
+include('api-v2/internal/secrets/initDB.php');
 
 // Short-circuit forwarding
 if (forwardHttps() || forwardHomeIfLoggedIn()) {

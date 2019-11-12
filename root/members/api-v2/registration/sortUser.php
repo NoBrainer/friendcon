@@ -2,9 +2,10 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-include('../internal/secrets/initDB.php');
-include('../internal/checkAdmin.php'); //includes functions.php
 include('../internal/constants.php');
+include('../internal/functions.php');
+include('../internal/secrets/initDB.php');
+include('../internal/checkAdmin.php');
 
 // Setup the content-type and response template
 header($CONTENT_JSON);

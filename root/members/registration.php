@@ -2,9 +2,10 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
+include('api-v2/internal/functions.php');
 include('api-v2/internal/secrets/initDB.php');
 include('api-v2/internal/secrets/paypal.php');
-include('api-v2/internal/checkAdmin.php'); //includes functions.php
+include('api-v2/internal/checkAdmin.php');
 include('api-v2/internal/checkAppState.php');
 
 // Short-circuit forwarding
