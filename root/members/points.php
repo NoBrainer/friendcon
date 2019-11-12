@@ -342,7 +342,7 @@ while ($row = getNextRow($userListResult)) {
         return function findMatches(query, callback) {
             var matches = [];
             var substringRegex = new RegExp(query, 'i');
-            $.each(list, function(i, item) {
+            _.each(list, function(item) {
                 if (substringRegex.test(item)) {
                     matches.push(item);
                 }
@@ -713,7 +713,7 @@ while ($row = getNextRow($userListResult)) {
             ?>;
     var userList = [];
     var templateParams = [];
-    $.each(userMapping, function(i, item) {
+    _.each(userMapping, function(item) {
         userList.push(item.name);
         templateParams.push({
             name: item.name,

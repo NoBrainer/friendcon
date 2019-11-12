@@ -104,7 +104,7 @@ $emailAddress = $userRow['email'];
 
                     // Build up the data
                     var dataArr = [];
-                    $.each(users, function(i, user) {
+                    _.each(users, function(user) {
                         var dataRow = {
                             uid: user.uid,
                             name: user.name,
@@ -179,7 +179,7 @@ $emailAddress = $userRow['email'];
 
         function renumberRows() {
             // Go through each row and re-number them
-            $.each($('td.row-num'), function(i, row) {
+            _.each($('td.row-num'), function(row, i) {
                 $(row).text(i + 1);
             });
         }
