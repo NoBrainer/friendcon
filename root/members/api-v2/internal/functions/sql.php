@@ -1,10 +1,8 @@
 <?php
-//TODO: update documentation
-
 /**
  * Convert $mysqli->info string format ("Rows matched: x Changed: y Warnings: z") into an array to make it more useful.
  *
- * @param $mysqli
+ * @param mysqli $mysqli - mysqli connection
  * @return array
  */
 function mysqliInfoArray($mysqli) {
@@ -12,6 +10,17 @@ function mysqliInfoArray($mysqli) {
     return array_combine($matches[1], $matches[2]);
 }
 
+/**
+ * Execute MySQL query with prepared statement to prevent SQL injection.
+ * Return the number of affected rows.
+ *
+ * @param mysqli $mysqli
+ * @param string $query
+ * @param string $types
+ * @param mixed ...$params
+ * @return integer
+ * @see prepareSqlStatement()
+ */
 function executeSqlForAffectedRows($mysqli, $query, $types = '', ...$params) {
     $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
@@ -20,6 +29,18 @@ function executeSqlForAffectedRows($mysqli, $query, $types = '', ...$params) {
     return $affectedRows;
 }
 
+/**
+ * Execute MySQL query with prepared statement to prevent SQL injection.
+ * Return the info array.
+ *
+ * @param mysqli $mysqli
+ * @param string $query
+ * @param string $types
+ * @param mixed ...$params
+ * @return array
+ * @see mysqliInfoArray()
+ * @see prepareSqlStatement()
+ */
 function executeSqlForInfo($mysqli, $query, $types = '', ...$params) {
     $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
@@ -32,6 +53,17 @@ function executeSqlForInfo($mysqli, $query, $types = '', ...$params) {
     ];
 }
 
+/**
+ * Execute MySQL query with prepared statement to prevent SQL injection.
+ * Return the result.
+ *
+ * @param mysqli $mysqli
+ * @param string $query
+ * @param string $types
+ * @param mixed ...$params
+ * @return mysqli_result
+ * @see prepareSqlStatement()
+ */
 function executeSqlForResult($mysqli, $query, $types = '', ...$params) {
     $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
@@ -40,6 +72,15 @@ function executeSqlForResult($mysqli, $query, $types = '', ...$params) {
     return $result;
 }
 
+/**
+ * Execute MySQL query with prepared statement to prevent SQL injection.
+ *
+ * @param mysqli $mysqli
+ * @param string $query
+ * @param string $types
+ * @param mixed ...$params
+ * @see prepareSqlStatement()
+ */
 function executeSql($mysqli, $query, $types = '', ...$params) {
     $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
@@ -49,13 +90,14 @@ function executeSql($mysqli, $query, $types = '', ...$params) {
 /**
  * Create a prepared statement and bind parameters if they're provided.
  *
- * @param mysqli $mysqli - (REQUIRED) mysqli connection
- * @param string $query - (REQUIRED) mysql query string
- * @param string $types - (Default: '') A string that contains one or more characters which specify the types for the
- * corresponding bind variables: i=integer, d=double, s=string, b=blob.
+ * @param mysqli $mysqli - mysqli connection
+ * @param string $query - MySQL query string
+ * @param string $types - A string that contains one or more characters which specify the types for the corresponding
+ * bind variables: i=integer, d=double, s=string, b=blob. (Default: '')
  * For example: "iisd" is two integers followed by a string then a double.
  * @param mixed $params - The corresponding variables for each character in $types.
- * @return mixed
+ * @return mysqli_stmt
+ * @see mysqli::prepare()
  */
 function prepareSqlStatement($mysqli, $query, $types = '', ...$params) {
     $stmt = $mysqli->prepare($query);
@@ -64,9 +106,9 @@ function prepareSqlStatement($mysqli, $query, $types = '', ...$params) {
 }
 
 /**
- * Get the next row from a sql call's result.
+ * Get the next row from a MySQL call's result.
  *
- * @param mixed $result
+ * @param mysqli_result $result - mysqli result
  * @return array
  */
 function getNextRow($result = null) {
@@ -76,9 +118,9 @@ function getNextRow($result = null) {
 /**
  * Check if the result has 1+ rows. If a number is provided, check if the result has exactly that amount of rows.
  *
- * @param mixed $result
- * @param int $num
- * @return bool
+ * @param mysqli_result $result - mysqli result
+ * @param integer $num - number of rows we're checking for (Default: -1, meaning we only care about 1+ rows)
+ * @return boolean
  */
 function hasRows($result = null, $num = -1) {
     if ($result == null) return false;

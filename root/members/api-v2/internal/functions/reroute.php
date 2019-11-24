@@ -2,7 +2,7 @@
 /**
  * Check the current URL. If it is not https, forward to https.
  *
- * @return boolean - whether or not to exit
+ * @return boolean - whether or not to forward
  */
 function forwardHttps() {
     if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
@@ -15,7 +15,7 @@ function forwardHttps() {
 /**
  * Go to /members/home.php if the user is logged in.
  *
- * @return boolean - whether or not to exit
+ * @return boolean - whether or not to forward
  */
 function forwardHomeIfLoggedIn() {
     $userSession = $_SESSION['userSession'];
@@ -29,7 +29,7 @@ function forwardHomeIfLoggedIn() {
 /**
  * Go to /members/index.php if the user is logged out.
  *
- * @return boolean - whether or not to exit
+ * @return boolean - whether or not to forward
  */
 function forwardIndexIfLoggedOut() {
     $userSession = $_SESSION['userSession'];

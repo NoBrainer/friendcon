@@ -2,9 +2,9 @@
 /**
  * Get the PayPal API Access Token.
  *
- * @param $url string - PayPal API OAuth URL
- * @param $clientId string - PayPal API Client ID
- * @param $secret string - PayPal API Secret
+ * @param string $url - PayPal API OAuth URL
+ * @param string $clientId - PayPal API Client ID
+ * @param string $secret - PayPal API Secret
  * @return string - PayPal API Access Token
  */
 function getAccessToken($url, $clientId, $secret) {
@@ -45,10 +45,10 @@ function getAccessToken($url, $clientId, $secret) {
 /**
  * Complete the order via the PayPal API.
  *
- * @param $urlRoot string - PayPal API Order URL
- * @param $orderId string - PayPal API order ID
- * @param $accessToken string - PayPal API Access Token
- * @return bool|string - true on success, false on failure, message on invalid input
+ * @param string $urlRoot - PayPal API Order URL
+ * @param string $orderId - PayPal API order ID
+ * @param string $accessToken - PayPal API Access Token
+ * @return boolean|string - true on success, false on failure, message on invalid input
  */
 function isOrderComplete($urlRoot, $orderId, $accessToken) {
     if (!$urlRoot || !$orderId || !$accessToken) {
@@ -91,10 +91,10 @@ function isOrderComplete($urlRoot, $orderId, $accessToken) {
 /**
  * Save the PayPal order to MySQL.
  *
- * @param $mysqli mixed - MySQL connection
- * @param $uid integer - user id for the order
- * @param $conYear integer - convention year for the order
- * @param $orderId string - PayPal API Order ID (default: null)
+ * @param mysqli $mysqli - MySQL connection
+ * @param integer $uid - user id for the order
+ * @param integer $conYear - convention year for the order
+ * @param string $orderId - PayPal API Order ID (default: null)
  * @return string
  */
 function saveOrder($mysqli, $uid, $conYear, $orderId = null) {
