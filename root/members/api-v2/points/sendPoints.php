@@ -41,7 +41,7 @@ if (!$toUid) {
 
 // Check the 'from' points
 $query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
-$info = executeSqlForInfo($MySQLi_CON, $deleteQuery, 'i', $userSession);
+$info = executeSqlForInfo($mysqli, $deleteQuery, 'i', $userSession);
 if ($info["matched"] < 1) {
     $response["error"] = "Sending points failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -51,13 +51,13 @@ if ($info["matched"] < 1) {
 
 // Add an entry in history
 $historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points) VALUES (?, ?, ?)";
-executeSql($MySQLi_CON, $historyQuery, 'iii', $fromUid, $toUid, $sendNumPoints);
+executeSql($mysqli, $historyQuery, 'iii', $fromUid, $toUid, $sendNumPoints);
 
 // Send the points
 $sendQuery = "UPDATE users from_u, users to_u" .
         " SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?" .
         " WHERE from_u.uid = ? AND to_u.uid = ?";
-$info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'iiii', $sendNumPoints, $sendNumPoints, $fromUid, $toUid);
+$info = executeSqlForInfo($mysqli, $sendQuery, 'iiii', $sendNumPoints, $sendNumPoints, $fromUid, $toUid);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);
 } else {

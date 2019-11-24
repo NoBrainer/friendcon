@@ -22,7 +22,7 @@ if (isset($_POST['btn-signup'])) {
     $emergencyCNP = preg_replace('/\D+/', '', trim($_POST['emergencyCNP']));
 
     $emailQuery = "SELECT email FROM users WHERE email = ?";
-    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
+    $emailResult = executeSqlForResult($mysqli, $emailQuery, 's', $email);
 
     if (hasRows($emailResult)) {
         // Email is already registered
@@ -35,7 +35,7 @@ if (isset($_POST['btn-signup'])) {
         $query = "INSERT INTO users(`name`, `email`, `phone`, `password`, `favoriteAnimal`, `favoriteBooze`," .
                 " `favoriteNerdism`, `emergencyCN`, `emergencyCNP`, `agreeToTerms`)" .
                 " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-        $affectedRows = executeSqlForAffectedRows($MySQLi_CON, $query, 'sssssssss', $name, $email, $phone,
+        $affectedRows = executeSqlForAffectedRows($mysqli, $query, 'sssssssss', $name, $email, $phone,
                 $hashedPassword, $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
 
         if ($affectedRows === 1) {

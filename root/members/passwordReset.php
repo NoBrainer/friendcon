@@ -17,12 +17,12 @@ if (isset($_POST['btn-signup'])) {
 
     //get the pass hash from the db if it matches the token input
     $hashQuery = "SELECT password FROM users WHERE password = ?";
-    $hashResult = executeSqlForResult($MySQLi_CON, $hashQuery, 's', $hash);
+    $hashResult = executeSqlForResult($mysqli, $hashQuery, 's', $hash);
     $hashRow = getNextRow($hashResult);
 
     //get the email addresses from the db if it matches the token input
     $emailQuery = "SELECT email FROM users WHERE password = ? AND email = ?";
-    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 'ss', $hash, $email);
+    $emailResult = executeSqlForResult($mysqli, $emailQuery, 'ss', $hash, $email);
     $emailRow = getNextRow($emailResult);
 
     //if emails match and hashes match, do this
@@ -31,7 +31,7 @@ if (isset($_POST['btn-signup'])) {
         //hash the new password and update
         $hashedPassword = md5($password);
         $query = "UPDATE users SET password = ? WHERE email = ?";
-        $info = executeSqlForInfo($MySQLi_CON, $query, 'ss', $hashedPassword, $email);
+        $info = executeSqlForInfo($mysqli, $query, 'ss', $hashedPassword, $email);
 
         //if update query is successful, do this
         if ($info["matched"] > 0) {

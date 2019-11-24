@@ -22,7 +22,7 @@ if (!$isRegistrationEnabled) {
 
 // Get the user data
 $query = "SELECT * FROM users WHERE uid = ?";
-$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($mysqli, $query, 'i', $userSession);
 $userRow = getNextRow($result);
 
 // User Information

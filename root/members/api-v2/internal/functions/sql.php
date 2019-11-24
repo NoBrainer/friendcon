@@ -4,27 +4,27 @@
 /**
  * Convert $mysqli->info string format ("Rows matched: x Changed: y Warnings: z") into an array to make it more useful.
  *
- * @param $MySQLi_CON
+ * @param $mysqli
  * @return array
  */
-function mysqliInfoArray($MySQLi_CON) {
-    preg_match_all('/(\S[^:]+): (\d+)/', $MySQLi_CON->info, $matches);
+function mysqliInfoArray($mysqli) {
+    preg_match_all('/(\S[^:]+): (\d+)/', $mysqli->info, $matches);
     return array_combine($matches[1], $matches[2]);
 }
 
-function executeSqlForAffectedRows($MySQLi_CON, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$params);
+function executeSqlForAffectedRows($mysqli, $query, $types = '', ...$params) {
+    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
     $affectedRows = $stmt->affected_rows;
     $stmt->close();
     return $affectedRows;
 }
 
-function executeSqlForInfo($MySQLi_CON, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$params);
+function executeSqlForInfo($mysqli, $query, $types = '', ...$params) {
+    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
     $stmt->close();
-    $info = mysqliInfoArray($MySQLi_CON);
+    $info = mysqliInfoArray($mysqli);
     return [
             "matched"  => intval($info["Rows matched"]),
             "changed"  => intval($info["Changed"]),
@@ -32,16 +32,16 @@ function executeSqlForInfo($MySQLi_CON, $query, $types = '', ...$params) {
     ];
 }
 
-function executeSqlForResult($MySQLi_CON, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$params);
+function executeSqlForResult($mysqli, $query, $types = '', ...$params) {
+    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
     return $result;
 }
 
-function executeSql($MySQLi_CON, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$params);
+function executeSql($mysqli, $query, $types = '', ...$params) {
+    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
     $stmt->execute();
     $stmt->close();
 }
@@ -49,7 +49,7 @@ function executeSql($MySQLi_CON, $query, $types = '', ...$params) {
 /**
  * Create a prepared statement and bind parameters if they're provided.
  *
- * @param mysqli $MySQLi_CON - (REQUIRED) mysqli connection
+ * @param mysqli $mysqli - (REQUIRED) mysqli connection
  * @param string $query - (REQUIRED) mysql query string
  * @param string $types - (Default: '') A string that contains one or more characters which specify the types for the
  * corresponding bind variables: i=integer, d=double, s=string, b=blob.
@@ -57,8 +57,8 @@ function executeSql($MySQLi_CON, $query, $types = '', ...$params) {
  * @param mixed $params - The corresponding variables for each character in $types.
  * @return mixed
  */
-function prepareSqlStatement($MySQLi_CON, $query, $types = '', ...$params) {
-    $stmt = $MySQLi_CON->prepare($query);
+function prepareSqlStatement($mysqli, $query, $types = '', ...$params) {
+    $stmt = $mysqli->prepare($query);
     $stmt->bind_param($types, ...$params);
     return $stmt;
 }

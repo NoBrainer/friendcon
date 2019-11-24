@@ -62,7 +62,7 @@ if (isset($_POST['enablePoints'])) {
 // Count the rows with the provided year
 $numRows = 0;
 $checkQuery = "SELECT s.conYear FROM app_state s WHERE s.conYear = ?";
-$checkResult = executeSqlForResult($MySQLi_CON, $checkQuery, 'i', $conYear);
+$checkResult = executeSqlForResult($mysqli, $checkQuery, 'i', $conYear);
 while ($checkResult->fetch_array()) {
     $numRows++;
 }
@@ -72,7 +72,7 @@ if (!$checkResult || $numRows == 0) {
     // Insert a new row
     $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`," .
             " `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
-    $insertResult = executeSqlForResult($MySQLi_CON, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
+    $insertResult = executeSqlForResult($mysqli, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
             $badgePrice, $isRegistrationEnabled, $isPointsEnabled);
     $response["data"] = "Added entry for {$conYear}!";
 } else {
@@ -81,7 +81,7 @@ if (!$checkResult || $numRows == 0) {
             " SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?, " .
             " s.pointsEnabled = ?" .
             " WHERE s.conYear = ?";
-    $stmt = prepareSqlStatement($MySQLi_CON, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear, $badgePrice,
+    $stmt = prepareSqlStatement($mysqli, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear, $badgePrice,
             $isRegistrationEnabled, $isPointsEnabled, $conYear);
     $stmt->execute();
 

@@ -17,7 +17,7 @@ $query = "SELECT h.*, u1.name AS from_name, u2.name AS to_name, u1.uid AS from_u
         " JOIN `users` u2 ON u2.uid = h.to_uid" .
         " WHERE h.from_uid != h.to_uid" .
         " ORDER BY h.timestamp DESC";
-$pointsHistoryResult = $MySQLi_CON->query($query);
+$pointsHistoryResult = $mysqli->query($query);
 if (!$pointsHistoryResult) {
     $response["error"] = "Points history query failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);

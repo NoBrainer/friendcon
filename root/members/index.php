@@ -14,7 +14,7 @@ if (isset($_POST['btn-login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $query = "SELECT uid, email, password FROM users WHERE email = ?";
-    $result = executeSqlForResult($MySQLi_CON, $query, 's', $email);
+    $result = executeSqlForResult($mysqli, $query, 's', $email);
 
     if (hasRows($result, 1)) {
         $row = getNextRow($result);

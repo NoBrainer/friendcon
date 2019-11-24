@@ -15,7 +15,7 @@ $query = "SELECT r.*, u.name AS source_name" .
         " FROM `points_request` r" .
         " JOIN `users` u ON u.uid = r.source_uid" .
         " WHERE r.target_uid = ? AND r.status_id = 0"; //target=me AND status=PENDING
-$pointsRequestResult = prepareSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$pointsRequestResult = prepareSqlForResult($mysqli, $query, 'i', $userSession);
 if (!hasRows($pointsRequestResult)) {
     $response["data"] = [];
     http_response_code($HTTP_OK);

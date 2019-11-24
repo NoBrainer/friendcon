@@ -21,7 +21,7 @@ $isSuperAdmin = in_array($userSession, $superAdminArray);
 
 // Check if the user is an admin
 $query = "SELECT u.isAdmin FROM users u WHERE u.uid = ?";
-$userResult = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$userResult = executeSqlForResult($mysqli, $query, 'i', $userSession);
 if (!$userResult) {
     $isAdmin = 0;
 } else {

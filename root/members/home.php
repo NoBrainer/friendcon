@@ -18,7 +18,7 @@ $query = "SELECT u.email, u.emergencyCn, u.emergencyCNP, u.favoriteAnimal, u.fav
         " FROM users u" .
         " JOIN house h ON h.houseid = u.houseid" .
         " WHERE uid = ?";
-$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($mysqli, $query, 'i', $userSession);
 $userRow = $result->fetch_array();
 
 // User Information

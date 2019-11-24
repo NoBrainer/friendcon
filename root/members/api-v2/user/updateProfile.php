@@ -76,7 +76,7 @@ $types .= "i";
 
 // Update the user
 $query = "UPDATE users SET $setStr WHERE uid = ?";
-$stmt = prepareSqlStatement($MySQLi_CON, $query, $types, ...$values);
+$stmt = prepareSqlStatement($mysqli, $query, $types, ...$values);
 $stmt->execute();
 
 if ($stmt->affected_rows === 1) {

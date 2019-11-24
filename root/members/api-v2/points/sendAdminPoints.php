@@ -42,16 +42,16 @@ if (!$toUid) {
 
 // Add an entry in history
 $historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points, is_admin_action) VALUES (?, ?, ?, ?)";
-executeSql($MySQLi_CON, $historyQuery, 'iiii', $fromUid, $toUid, $sendNumPoints, $isAdmin);
+executeSql($mysqli, $historyQuery, 'iiii', $fromUid, $toUid, $sendNumPoints, $isAdmin);
 
 if ($toUid == -1) {
     // Send the points to everyone (without affecting the admin's points)
     $sendQuery = "UPDATE users u SET u.upoints = u.upoints + {$sendNumPoints} WHERE u.isPresent = 1";
-    $info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'i', $sendNumPoints);
+    $info = executeSqlForInfo($mysqli, $sendQuery, 'i', $sendNumPoints);
 } else {
     // Send the points (without affecting the admin's points)
     $sendQuery = "UPDATE users u SET u.upoints = u.upoints + ? WHERE u.uid = ?";
-    $info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'ii', $sendNumPoints, $toUid);
+    $info = executeSqlForInfo($mysqli, $sendQuery, 'ii', $sendNumPoints, $toUid);
 }
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);

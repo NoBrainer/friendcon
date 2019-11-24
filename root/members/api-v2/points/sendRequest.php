@@ -41,7 +41,7 @@ if (!$targetUid) {
 
 // Check the 'target' points
 $query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
-$info = executeSqlForInfo($MySQLi_CON, $query, 'i', $targetUid);
+$info = executeSqlForInfo($mysqli, $query, 'i', $targetUid);
 if ($info["matched"] < 1) {
     $response["error"] = "Requesting points failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -51,11 +51,11 @@ if ($info["matched"] < 1) {
 
 // Remove any pending requests from source to target (so there's at most 1 request from each person)
 $deleteQuery = "DELETE FROM points_request req WHERE req.source_uid = ? AND req.target_uid = ? AND status_id = 0";
-executeSql($MySQLi_CON, $deleteQuery, 'ii', $sourceUid, $targetUid);
+executeSql($mysqli, $deleteQuery, 'ii', $sourceUid, $targetUid);
 
 // Send the request
 $requestQuery = "INSERT INTO points_request(source_uid, target_uid, num_points) VALUES (?, ?, ?)";
-$info = executeSqlForInfo($MySQLi_CON, $requestQuery, 'iii', $sourceUid, $targetUid, $requestNumPoints);
+$info = executeSqlForInfo($mysqli, $requestQuery, 'iii', $sourceUid, $targetUid, $requestNumPoints);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);
 } else {

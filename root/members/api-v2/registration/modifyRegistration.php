@@ -53,7 +53,7 @@ if ($hasParamAgreeToTerms || $hasParamToggleRegistered || $hasParamTogglePresent
 }
 
 // Get the user
-$result = executeSqlForResult($MySQLi_CON, $userQuery, 'i', $uid);
+$result = executeSqlForResult($mysqli, $userQuery, 'i', $uid);
 if (hasRows($result)) {
     $user = getNextRow($result);
 } else {
@@ -82,7 +82,7 @@ if (!!$hasParamAgreeToTerms) {
 $updateQuery = $updateQuery . " WHERE u.uid = ?";
 
 // Update the database with the changes
-$affectedRows = executeSqlForAffectedRows($MySQLi_CON, $updateQuery, 'iii', $isPresent, $isRegistered, $uid);
+$affectedRows = executeSqlForAffectedRows($mysqli, $updateQuery, 'iii', $isPresent, $isRegistered, $uid);
 if ($affectedRows == null || $affectedRows === 0) {
     $response["error"] = "User registration change failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -91,7 +91,7 @@ if ($affectedRows == null || $affectedRows === 0) {
 }
 
 // Get the user's updated information
-$userResult = executeSqlForResult($MySQLi_CON, $userQuery, 'i', $uid);
+$userResult = executeSqlForResult($mysqli, $userQuery, 'i', $uid);
 if (hasRows($userResult)) {
     $user = getNextRow($userResult);
 } else {
@@ -109,7 +109,7 @@ $agreeToTerms = $user['agreeToTerms'];
 // Count the `registration_stats` rows for this user that are for this year
 $numRows = 0;
 $checkQuery = "SELECT * FROM registration_stats s WHERE s.conYear = ? AND s.uid = ?";
-$checkResult = executeSqlForResult($MySQLi_CON, $checkQuery, 'ii', $conYear, $uid);
+$checkResult = executeSqlForResult($mysqli, $checkQuery, 'ii', $conYear, $uid);
 while ($result = getNextRow($result)) {
     $prevOrderId = $result['orderId'];
     $numRows++;
@@ -119,7 +119,7 @@ if ($isRegistered == 0) {
     if ($prevOrderId == null) {
         // Delete registration stats when users unregister (if there's no orderId)
         $deleteQuery = "DELETE FROM registration_stats WHERE uid = ? AND conYear = ?";
-        executeSql($MySQLi_CON, $deleteQuery, 'ii', $uid, $conYear);
+        executeSql($mysqli, $deleteQuery, 'ii', $uid, $conYear);
         $statsOperation = "DELETE";
         $statsQuery = $deleteQuery;
     } else {
@@ -127,7 +127,7 @@ if ($isRegistered == 0) {
         $updateQuery = "UPDATE registration_stats s" .
                 " SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()" .
                 " WHERE s.uid = ? AND s.conYear = ?";
-        executeSql($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
+        executeSql($mysqli, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
         $statsOperation = "UPDATE";
         $statsQuery = $updateQuery;
     }
@@ -137,7 +137,7 @@ if ($isRegistered == 0) {
     // Insert a new row for this year's registration stats for this user
     $insertQuery = "INSERT INTO `registration_stats`(`uid`, `conYear`, `isRegistered`, `isPresent`, `orderId`)" .
             " VALUES (?, ?, ?, ?, ?)";
-    executeSql($MySQLi_CON, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered, $isPresent, $orderId);
+    executeSql($mysqli, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered, $isPresent, $orderId);
     $statsOperation = "INSERT";
     $statsQuery = $insertQuery;
 } else {
@@ -145,7 +145,7 @@ if ($isRegistered == 0) {
     $updateQuery = "UPDATE registration_stats s" .
             " SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()" .
             " WHERE s.uid = ? AND s.conYear = ?";
-    executeSql($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
+    executeSql($mysqli, $updateQuery, 'iiii', $isRegistered, $isPresent, $uid, $conYear);
     $statsOperation = "UPDATE";
     $statsQuery = $updateQuery;
 }
@@ -165,7 +165,7 @@ if ($isRegistrationEnabled) {
     if ($setRegistered || ($hasParamToggleRegistered && $isRegistered)) {
         $startingPoints = 20;
         $updatePointsQuery = "UPDATE users u SET u.upoints = ? WHERE u.uid = ? AND u.upoints = 0";
-        executeSql($MySQLi_CON, $updatePointsQuery, 'ii', $startingPoints, $uid);
+        executeSql($mysqli, $updatePointsQuery, 'ii', $startingPoints, $uid);
     }
 }
 

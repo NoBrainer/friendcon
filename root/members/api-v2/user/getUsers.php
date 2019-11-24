@@ -49,7 +49,7 @@ if (isset($forAdmin) && $isAdmin) {
 }
 
 // Get the list of users
-$userListResult = $MySQLi_CON->query($userListQuery);
+$userListResult = $mysqli->query($userListQuery);
 if (!$userListQuery) {
     $response["error"] = "User list query failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);

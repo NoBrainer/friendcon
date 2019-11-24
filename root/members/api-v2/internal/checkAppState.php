@@ -9,7 +9,7 @@
 
 // Check if app state
 $query = "SELECT * FROM app_state ORDER BY conYear DESC LIMIT 1";
-$result = $MySQLi_CON->query($query);
+$result = $mysqli->query($query);
 if (!$result) {
     $conDay = 26;
     $conMonth = 5;

@@ -91,25 +91,25 @@ function isOrderComplete($urlRoot, $orderId, $accessToken) {
 /**
  * Save the PayPal order to MySQL.
  *
- * @param $MySQLi_CON mixed - MySQL connection
+ * @param $mysqli mixed - MySQL connection
  * @param $uid integer - user id for the order
  * @param $conYear integer - convention year for the order
  * @param $orderId string - PayPal API Order ID (default: null)
  * @return string
  */
-function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
+function saveOrder($mysqli, $uid, $conYear, $orderId = null) {
     include_once('sql.php');
 
     // Update registration
     $query = "UPDATE users u SET u.isRegistered = 1 WHERE u.uid = ?";
-    $result = executeSqlForResult($MySQLi_CON, $query, 'i', $uid);
+    $result = executeSqlForResult($mysqli, $query, 'i', $uid);
     if (!$result) {
         return "User registration change failed [DB-P1]";
     }
 
     // Check if the user is registered
     $query = "SELECT u.isRegistered, u.isPresent FROM users u WHERE u.uid = ?";
-    $result = executeSqlForResult($MySQLi_CON, $query, 'i', $uid);
+    $result = executeSqlForResult($mysqli, $query, 'i', $uid);
     $user = $result->fetch_array();
     $result->free_result();
     $isRegistered = $user['isRegistered'];
@@ -122,7 +122,7 @@ function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
     // Count the `registration_stats` rows for this user that are for this year
     $numRows = 0;
     $query = "SELECT * FROM registration_stats s WHERE s.conYear = ? AND s.uid = ?";
-    $checkResult = executeSqlForResult($MySQLi_CON, $query, 'ii', $conYear, $uid);
+    $checkResult = executeSqlForResult($mysqli, $query, 'ii', $conYear, $uid);
     while ($result = $checkResult->fetch_array()) {
         $prevOrderId = $result['orderId'];
         $numRows++;
@@ -133,13 +133,13 @@ function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
         if ($prevOrderId == null) {
             // Delete registration stats when users unregister (if there's no orderId)
             $deleteQuery = "DELETE FROM registration_stats WHERE uid = ? AND conYear = ?";
-            $deleteResult = executeSqlForResult($MySQLi_CON, $deleteQuery, 'ii', $uid, $conYear);
+            $deleteResult = executeSqlForResult($mysqli, $deleteQuery, 'ii', $uid, $conYear);
         } else {
             // If there is an orderId, just update
             $updateQuery = "UPDATE registration_stats s" .
                     " SET s.isRegistered = ?, s.isPresent = ?, s.modified = CURRENT_TIMESTAMP()" .
                     " WHERE s.uid = ? AND s.conYear = ?";
-            $updateResult = executeSqlForResult($MySQLi_CON, $updateQuery, 'iiii', $isRegistered, $isPresent,
+            $updateResult = executeSqlForResult($mysqli, $updateQuery, 'iiii', $isRegistered, $isPresent,
                     $uid, $conYear);
         }
     } else if (!$checkResult || $numRows == 0) {
@@ -148,14 +148,14 @@ function saveOrder($MySQLi_CON, $uid, $conYear, $orderId = null) {
         // Insert a new row for this year's registration stats for this user
         $insertQuery = "INSERT INTO `registration_stats`(`uid`, `conYear`, `isRegistered`, `isPresent`, `orderId`)" .
                 " VALUES (?, ?, ?, ?, ?)";
-        $insertResult = executeSqlForResult($MySQLi_CON, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered,
+        $insertResult = executeSqlForResult($mysqli, $insertQuery, 'iiiis', $uid, $conYear, $isRegistered,
                 $isPresent, $orderId);
     } else {
         // Update this year's registration stats for this user
         $updateQuery = "UPDATE registration_stats s" .
                 " SET s.isRegistered = ?, s.isPresent = ?, s.orderId = ?, s.modified = CURRENT_TIMESTAMP()" .
                 " WHERE s.uid = ? AND s.conYear = ?";
-        $updateResult = executeSqlForResult($MySQLi_CON, $updateQuery, 'iisii', $isRegistered, $isPresent,
+        $updateResult = executeSqlForResult($mysqli, $updateQuery, 'iisii', $isRegistered, $isPresent,
                 $orderId, $uid, $conYear);
     }
 }

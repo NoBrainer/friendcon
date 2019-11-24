@@ -43,7 +43,7 @@ if (is_string($complete)) {
     $response["error"] = $complete;
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
 } else if ($complete) {
-    $errorMessage = saveOrder($MySQLi_CON, $userSession, $conYear, $orderId);
+    $errorMessage = saveOrder($mysqli, $userSession, $conYear, $orderId);
     if ($errorMessage) {
         $response["error"] = $errorMessage;
         http_response_code($HTTP_INTERNAL_SERVER_ERROR);

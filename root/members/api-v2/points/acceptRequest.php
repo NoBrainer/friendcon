@@ -32,7 +32,7 @@ if (!$sourceUid) {
 $query = "SELECT req.status_id, req.num_points" .
         " FROM points_request req" .
         " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
-$requestResult = executeSqlForResult($MySQLi_CON, $query, 'ii', $targetUid, $sourceUid);
+$requestResult = executeSqlForResult($mysqli, $query, 'ii', $targetUid, $sourceUid);
 if (!hasRows($requestResult)) {
     $response["error"] = "Accepting request failed [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -57,7 +57,7 @@ if (!isset($statusId)) {
 
 // Check if the source has enough points
 $query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
-$pointsResult = executeSqlForResult($MySQLi_CON, $query, 'i', $targetUid);
+$pointsResult = executeSqlForResult($mysqli, $query, 'i', $targetUid);
 if (!hasRows($pointsResult)) {
     $response["error"] = "Checking points for request failed [DB-2]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -82,17 +82,17 @@ if (!isset($targetPoints)) {
 $updateQuery = "UPDATE points_request req" .
         " SET status_id = 1" .
         " WHERE req.target_uid = ? AND req.source_uid = ? AND req.status_id = 0";
-executeSql($MySQLi_CON, $updateQuery, 'ii', $targetUid, $sourceUid);
+executeSql($mysqli, $updateQuery, 'ii', $targetUid, $sourceUid);
 
 // Add an entry in history
 $historyQuery = "INSERT INTO points_history(from_uid, to_uid, num_points) VALUES (?, ?, ?)";
-executeSql($MySQLi_CON, $historyQuery, 'iii', $targetUid, $sourceUid, $numPoints);
+executeSql($mysqli, $historyQuery, 'iii', $targetUid, $sourceUid, $numPoints);
 
 // Send the points
 $sendQuery = "UPDATE users from_u, users to_u" .
         " SET from_u.upoints = from_u.upoints - ?, to_u.upoints = to_u.upoints + ?" .
         " WHERE from_u.uid = ? AND to_u.uid = ?";
-$info = executeSqlForInfo($MySQLi_CON, $sendQuery, 'iiii', $numPoints, $numPoints, $targetUid, $sourceUid);
+$info = executeSqlForInfo($mysqli, $sendQuery, 'iiii', $numPoints, $numPoints, $targetUid, $sourceUid);
 if ($info["matched"] > 0) {
     http_response_code($HTTP_OK);
 } else {

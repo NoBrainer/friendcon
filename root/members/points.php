@@ -16,7 +16,7 @@ if (forwardHttps() || forwardIndexIfLoggedOut()) {
 // Get the user data
 $query = "SELECT u.email, u.name, u.uid, u.upoints, h.housename FROM users u JOIN house h ON u.houseid = h.houseid" .
         " WHERE uid = ?";
-$userResult = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$userResult = executeSqlForResult($mysqli, $query, 'i', $userSession);
 if (!hasRows($userResult)) {
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
     return;
@@ -36,7 +36,7 @@ if (!$isAdmin && $housename == "Unsorted") {
 }
 
 // Get the list of users
-$userListResult = $MySQLi_CON->query("SELECT u.name, u.uid FROM users u");
+$userListResult = $mysqli->query("SELECT u.name, u.uid FROM users u");
 if (!$userListResult) {
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
     return;

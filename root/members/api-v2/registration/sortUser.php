@@ -33,7 +33,7 @@ if (isset($_GET['housename'])) {
 
     // Get the house id from the house name
     $houseQuery = "SELECT h.houseid FROM house h WHERE h.housename = ?";
-    $houseResult = executeSqlForResult($MySQLi_CON, $houseQuery, 's', $housename);
+    $houseResult = executeSqlForResult($mysqli, $houseQuery, 's', $housename);
     if (hasRows($houseResult)) {
         $row = getNextRow($houseResult);
     } else {
@@ -46,7 +46,7 @@ if (isset($_GET['housename'])) {
 
     // Make the update call
     $updateQuery = "UPDATE users u SET u.houseid = ? WHERE u.uid = ?";
-    $info = executeSqlForInfo($MySQLi_CON, $updateQuery, 'ii', $houseid, $uid);
+    $info = executeSqlForInfo($mysqli, $updateQuery, 'ii', $houseid, $uid);
     if ($info["matched"] == 0) {
         $response["error"] = "Failed to set house [DB-1]";
         http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -62,7 +62,7 @@ if (isset($_GET['housename'])) {
 
 // See if the user already has a house
 $userHouseQuery = "SELECT u.houseid, h.housename FROM users u JOIN house h ON u.houseid = h.houseid WHERE u.uid = ?";
-$userHouseResult = executeSqlForResult($MySQLi_CON, $userHouseQuery, 'i', $uid);
+$userHouseResult = executeSqlForResult($mysqli, $userHouseQuery, 'i', $uid);
 if (hasRows($userHouseResult)) {
     $row = getNextRow($userHouseResult);
 } else {
@@ -83,7 +83,7 @@ if ($houseid != $UNSORTED) {
 
 // Get the total counts for each house
 $houseQuery = "SELECT u.houseid, COUNT(*) AS `count` FROM users u WHERE u.houseid != 0 GROUP BY u.houseid";
-$houseResult = $MySQLi_CON->query($houseQuery);
+$houseResult = $mysqli->query($houseQuery);
 if (!$houseResult) {
     $response["error"] = "House query failed [SORT-3]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -188,7 +188,7 @@ if ($numCandidates == 1) {
 $updateQuery = "UPDATE users u SET u.houseid = ? WHERE u.uid = ? AND u.houseid = 0 AND u.isPresent = 1";
 
 // Make the update call
-$info = executeSqlForInfo($MySQLi_CON, $updateQuery, 'ii', $pickedHouseId, $uid);
+$info = executeSqlForInfo($mysqli, $updateQuery, 'ii', $pickedHouseId, $uid);
 if ($info["matched"] === 0) {
     $response["error"] = "Sorting user failed [SORT-4]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
@@ -198,7 +198,7 @@ if ($info["matched"] === 0) {
 
 // Get the house name
 $houseNameQuery = "SELECT h.housename FROM house h WHERE h.houseid = ?";
-$houseNameResult = executeSqlForResult($MySQLi_CON, $houseNameQuery, 'i', $pickedHouseId);
+$houseNameResult = executeSqlForResult($mysqli, $houseNameQuery, 'i', $pickedHouseId);
 
 if (hasRows($houseNameResult)) {
     // Success

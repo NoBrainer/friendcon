@@ -16,12 +16,12 @@ if (isset($_POST['btn-signup'])) {
 
     //check to see if the email exists
     $emailQuery = "SELECT email FROM users WHERE email = ?";
-    $emailResult = executeSqlForResult($MySQLi_CON, $emailQuery, 's', $email);
+    $emailResult = executeSqlForResult($mysqli, $emailQuery, 's', $email);
 
     //if that email address has an account associated with it and thus has a return row, do this
     if (hasRows($emailResult, 1)) {
         $passwordQuery = "SELECT password FROM users WHERE email = ?";
-        $passwordResult = executeSqlForResult($MySQLi_CON, $passwordQuery, 's', $email);
+        $passwordResult = executeSqlForResult($mysqli, $passwordQuery, 's', $email);
 
         //if query to get the password is successful, do this
         if (hasRows($passwordResult, 1)) {

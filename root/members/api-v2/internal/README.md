@@ -12,9 +12,9 @@ $DB_user = "[REDACTED]";
 $DB_pass = "[REDACTED]";
 $DB_name = "[REDACTED]";
 
-$MySQLi_CON = new MySQLi($DB_host, $DB_user, $DB_pass, $DB_name);
+$mysqli = new MySQLi($DB_host, $DB_user, $DB_pass, $DB_name);
 
-if ($MySQLi_CON->connect_error) {
+if ($mysqli->connect_error) {
     die("Error connecting to the database");
 }
 
@@ -23,7 +23,7 @@ if ($MySQLi_CON->connect_error) {
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // Set the specific UTF8 character set
-$MySQLi_CON->set_charset("utf8mb4");
+$mysqli->set_charset("utf8mb4");
 ```
 
 ## `secrets/paypal.php`

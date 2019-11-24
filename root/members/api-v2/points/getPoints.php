@@ -12,7 +12,7 @@ $response = [];
 
 // Check the user points
 $query = "SELECT u.upoints FROM users u WHERE u.uid = ?";
-$result = executeSqlForResult($MySQLi_CON, $query, 'i', $userSession);
+$result = executeSqlForResult($mysqli, $query, 'i', $userSession);
 if (!hasRows($result)) {
     $response["error"] = "Error getting points [DB-1]";
     http_response_code($HTTP_INTERNAL_SERVER_ERROR);
