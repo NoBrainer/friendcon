@@ -10,6 +10,7 @@ if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
 
+//TODO: move this to the backend
 //on button submit action
 if (isset($_POST['btn-signup'])) {
     $email = trim($_POST['email']);

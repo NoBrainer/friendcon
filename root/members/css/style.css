@@ -125,6 +125,10 @@ button, .btn, a, .pointer, select {
     padding: 7px 9px;
 }
 
+.form-control.invalid {
+    border-color: #ff6666;
+}
+
 .code-of-conduct-content {
     border: 1px solid #ccc;
     color: #34365a;
@@ -143,7 +147,7 @@ button, .btn, a, .pointer, select {
     text-decoration: underline;
 }
 
-.confirm-message {
+.password-validation {
     margin: 0;
     padding: 0;
     font-size: .8em;

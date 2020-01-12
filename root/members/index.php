@@ -10,6 +10,7 @@ if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
 
+//TODO: move this to the backend
 if (isset($_POST['btn-login'])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);

@@ -10,6 +10,7 @@ if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
 
+//TODO: move this to the backend
 if (isset($_POST['btn-signup'])) {
     $hash = trim($_POST['checkDatHash']);
     $password = trim($_POST['uPass']);

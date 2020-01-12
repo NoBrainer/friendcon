@@ -9,73 +9,6 @@ include('api-v2/internal/functions.php');
 if (forwardHttps() || forwardHomeIfLoggedIn()) {
     exit;
 }
-
-if (isset($_POST['btn-signup'])) {
-    $name = trim($_POST['name']);
-    $phone = preg_replace('/\D+/', '', trim($_POST['phone']));
-    $favoriteBooze = trim($_POST['favoriteBooze']);
-    $favoriteNerdism = trim($_POST['favoriteNerdism']);
-    $favoriteAnimal = trim($_POST['favoriteAnimal']);
-    $email = trim($_POST['email']);
-    $hashedPassword = md5(trim($_POST['password']));
-    $emergencyCN = trim($_POST['emergencyCN']);
-    $emergencyCNP = preg_replace('/\D+/', '', trim($_POST['emergencyCNP']));
-
-    $emailQuery = "SELECT email FROM users WHERE email = ?";
-    $emailResult = executeSqlForResult($mysqli, $emailQuery, 's', $email);
-
-    if (hasRows($emailResult)) {
-        // Email is already registered
-        $msg = "<div class='alert alert-danger'>
-					<span class='fa fa-info-circle'></span>
-					<span>This email has previously registered!</span>
-				</div>";
-    } else {
-        // Try to register the user
-        $query = "INSERT INTO users(`name`, `email`, `phone`, `password`, `favoriteAnimal`, `favoriteBooze`," .
-                " `favoriteNerdism`, `emergencyCN`, `emergencyCNP`, `agreeToTerms`)" .
-                " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-        $affectedRows = executeSqlForAffectedRows($mysqli, $query, 'sssssssss', $name, $email, $phone,
-                $hashedPassword, $favoriteAnimal, $favoriteBooze, $favoriteNerdism, $emergencyCN, $emergencyCNP);
-
-        if ($affectedRows === 1) {
-            $shouldSendEmailToAdmin = true;
-            $shouldSendEmailToUser = true;
-            $msg = "<div class='alert alert-success'>
-						<span class='fa fa-info-circle'></span>
-						<span>Registration Successful!</span>
-					</div>";
-        } else {
-            $shouldSendEmailToAdmin = true;
-            $shouldSendEmailToUser = false;
-            $msg = "<div class='alert alert-danger'>
-						<span class='fa fa-info-circle'></span>
-						<span>You gotta try again! Sorry.</span>
-					</div>";
-        }
-
-        // Email settings
-        $headers = "From: admin@friendcon.com";
-        $toAdmin = "admin@friendcon.com";
-        $subjectAdmin = "New Friend Registered! Welcome, {$name}!";
-        $bodyAdmin = "Name: {$name}\nEmail: {$email}";
-        $toUser = $email;
-        $subjectUser = "Your FriendCon Account Has Been Created!";
-        $txtUser = "Hey there, {$name}!\n\nWe're so happy you decided to create an account and hopefully join us at " .
-                "the next FriendCon! We look forward to seeing you there!\n\nAll the best from your friends at " .
-                "FriendCon!\n";
-
-        if ($shouldSendEmailToAdmin) {
-            // Send ourselves an email on new user registration
-            mail($toAdmin, $subjectAdmin, $bodyAdmin, $headers);
-        }
-
-        if ($shouldSendEmailToUser) {
-            // Send an email to the user saying it was successful
-            mail($toUser, $subjectUser, $txtUser, $headers);
-        }
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -96,69 +29,60 @@ if (isset($_POST['btn-signup'])) {
 
 <div class="container content">
     <div class="container content-card">
-        <form method="post" id="register-form" onsubmit="return checkCheckBox(this)">
+        <form method="post" id="register-form" onsubmit="return false">
             <h2 class="form-signin-heading center">Sign Up</h2>
             <hr/>
-            <?php if (isset($msg)) { ?>
-                <?php echo $msg; ?>
-            <?php } else { ?>
-                <div class='alert alert-info'>
-                    <span class='fa fa-asterisk'></span> &nbsp; Everything is required. EVERYTHING!
-                </div>
-            <?php } ?>
-
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Full name" name="name" required/>
+            <div class="alert alert-info">
+                <span class="fa fa-asterisk"></span>
+                <span>Everything is required. EVERYTHING!</span>
             </div>
 
             <div class="form-group">
-                <input type="tel" class="form-control" placeholder="Phone Number" name="phone" required/>
+                <input type="text" class="form-control" placeholder="Full name" id="name" required/>
             </div>
 
             <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email address" name="email" required/>
-                <span id="check-e"></span>
+                <input type="tel" class="form-control" placeholder="Phone Number" id="phone" required/>
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Password" name="password" id="pass1" required/>
+                <input type="email" class="form-control" placeholder="Email address" id="email" required/>
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" placeholder="Confirm Password" name="Confirmpassword" id="pass2" onkeyup="checkPass(); return false;" required/>
+                <input type="password" class="form-control" placeholder="Password" id="pass1" onkeyup="checkThatPasswordsMatch(true)" required/>
             </div>
-            <span id="confirm-message" class="confirm-message"></span>
+
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Confirm Password" id="pass2" onkeyup="checkThatPasswordsMatch(); return false;" required/>
+            </div>
+            <span id="password-validation" class="error password-validation"></span>
             <hr/>
 
             <h4 class="form-signin-heading center">FriendCon Information</h4>
             <h5 class="form-signin-heading center">*This section is used to make you a custom/premium badge.</h5>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Animal" name="favoriteAnimal" required="required"/>
-                <span id="check-e"></span>
+                <input type="text" class="form-control" placeholder="Favorite Animal" id="animal" required="required"/>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Nerdy Thing (Game, Book, Topic, etc.)" name="favoriteNerdism" required="required"/>
-                <span id="check-e"></span>
+                <input type="text" class="form-control" placeholder="Favorite Nerdy Thing (Game, Book, Topic, etc.)" id="nerdism" required="required"/>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Favorite Food/Beverage" name="favoriteBooze" required="required"/>
-                <span id="check-e"></span>
+                <input type="text" class="form-control" placeholder="Favorite Food/Beverage" id="booze" required="required"/>
             </div>
             <hr/>
 
             <h4 class="form-signin-heading center">Emergency Contact Information</h4>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Emergency Contact Name" name="emergencyCN" required="required"/>
-                <span id="check-e"></span>
+                <input type="text" class="form-control" placeholder="Emergency Contact Name" id="contactName" required="required"/>
             </div>
 
             <div class="form-group">
-                <input type="tel" class="form-control" placeholder="Emergency Contact Phone Number" name="emergencyCNP" required/>
-                <span id="check-e"></span>
+                <input type="tel" class="form-control" placeholder="Emergency Contact Phone Number" id="contactPhone" required/>
             </div>
             <hr/>
 
@@ -169,14 +93,19 @@ if (isset($_POST['btn-signup'])) {
                     <i class="fa fa-external-link-alt"></i></a>.
             </div>
             <div class="acknowledge-color">
-                <input id="acknowledge-code-of-conduct" type="checkbox" value="0" name="agree">
+                <input id="code-of-conduct-checkbox" type="checkbox" value="0">
                 <b>I Acknowledge and Agree to the FriendCon Code of Conduct</b>
             </div>
             <hr/>
 
+            <div id="message-wrapper" class="alert" style="display:none">
+                <span class="fa fa-info-circle"></span>
+                <span id="message-text"></span>
+            </div>
+
             <div class="form-group">
                 <a href="/members/index.php" class="btn btn-default">Already Signed Up?</a>
-                <button type="submit" class="btn btn-default pull-right" id="submit" name="btn-signup">
+                <button type="button" class="btn btn-default pull-right" id="submit" onclick="submitForm()">
                     <span class="fa fa-sign-in-alt"></span>
                     <span>Create Account</span>
                 </button>
@@ -190,52 +119,116 @@ if (isset($_POST['btn-signup'])) {
 <script src="/members/lib/bootstrap/js/bootstrap-3.3.4.min.js"></script>
 <script src="/members/js/formatter.js"></script>
 <script type="text/javascript">
-    function checkCheckBox(form) {
-        if (form.agree.checked == false) {
-            alert('Please agree to the Code of Conduct to continue.');
-            return false;
+    var $name = $('#name');
+    var $phone = $('#phone');
+    var $email = $('#email');
+    var $pass1 = $('#pass1');
+    var $pass2 = $('#pass2');
+    var $animal = $('#animal');
+    var $booze = $('#booze');
+    var $nerdism = $('#nerdism');
+    var $contactName = $('#contactName');
+    var $contactPhone = $('#contactPhone');
+    var $codeOfConduct = $('#code-of-conduct-checkbox');
+    var $passValidation = $('#password-validation');
+    var $messageWrapper = $('#message-wrapper');
+    var $messageText = $('#message-text');
+
+    function isAcknowledged() {
+        return $codeOfConduct.is(':checked');
+    }
+
+    function isValidPassword() {
+        var text1 = $pass1.val();
+        var text2 = $pass2.val();
+        return text1 === text2 && text1 !== "";
+    }
+
+    function checkThatPasswordsMatch(isFirstTextbox) {
+        if (isFirstTextbox && $pass2.val() === "") {
+            return; //short-circuit if it's the first password textbox and the second is blank
+        }
+
+        if (isValidPassword()) {
+            $pass1.removeClass('invalid');
+            $pass2.removeClass('invalid');
+            $passValidation.html("");
+            return;
+        }
+
+        $pass1.addClass('invalid');
+        $pass2.addClass('invalid');
+        if ($pass1.val() === "" || $pass2.val() === "") {
+            $passValidation.html("Password is required!");
         } else {
-            return true;
+            $passValidation.html("Passwords do not match!");
         }
     }
 
-    function checkPass() {
-        //Store the password field objects into variables ...
-        var $pass1 = $('#pass1');
-        var text1 = $pass1.val();
-        var $pass2 = $('#pass2');
-        var text2 = $pass2.val();
-        var $message = $('#confirm-message');
-        var goodColor = "#66cc66";
-        var badColor = "#ff6666";
-        var neutralColor = "#fff";
+    function successMessage(text) {
+        updateMessage(text, "alert-success");
+    }
 
-        if (text1 === text2) {
-            if (text1 === "") {
-                // Passwords are blank
-                $pass1.css('backgroundColor', neutralColor);
-                $pass2.css('backgroundColor', neutralColor);
-                $message.css('color', badColor);
-                $message.html("Password is required!");
-            } else {
-                // Passwords match
-                $pass1.css('backgroundColor', neutralColor);
-                $pass2.css('backgroundColor', neutralColor);
-                $message.css('color', goodColor);
-                $message.html("");
-            }
+    function errorMessage(text) {
+        updateMessage(text, "alert-danger");
+    }
+
+    function infoMessage(text) {
+        updateMessage(text, "alert-info");
+    }
+
+    function updateMessage(text, wrapperClass) {
+        clearMessage();
+        $messageText.text(text);
+        $messageWrapper.addClass(wrapperClass);
+        $messageWrapper.show();
+    }
+
+    function clearMessage() {
+        $messageWrapper.hide();
+        $messageWrapper.removeClass("alert-info alert-danger alert-success");
+        $messageText.empty();
+    }
+
+    function buildFormData() {
+        var params = [];
+        params.push("name=" + $name.val());
+        params.push("phone=" + $phone.val());
+        params.push("email=" + $email.val());
+        params.push("password=" + $pass1.val());
+        params.push("favoriteAnimal=" + $animal.val());
+        params.push("favoriteBooze=" + $booze.val());
+        params.push("favoriteNerdism=" + $nerdism.val());
+        params.push("emergencyCN=" + $contactName.val());
+        params.push("emergencyCNP=" + $contactPhone.val());
+        return params.join("&");
+    }
+
+    function submitForm() {
+        clearMessage();
+        if (!isAcknowledged()) {
+            errorMessage("You must agree to the Code of Conduct before proceeding.");
+        } else if (!isValidPassword()) {
+            errorMessage("Passwords must match!");
         } else {
-            // Passwords do not match
-            $pass1.css('backgroundColor', badColor);
-            $pass2.css('backgroundColor', badColor);
-            $message.css('color', badColor);
-            $message.html("Passwords Do Not Match!");
+            $.ajax({
+                type: 'POST',
+                url: "/members/api-v2/user/signup.php",
+                data: buildFormData(),
+                success: function(resp) {
+                    successMessage("Successfully signed up!");
+                },
+                error: function(jqXHR) {
+                    var error = jqXHR.responseJSON.error;
+                    errorMessage(error);
+                }
+            });
         }
     }
 
     (function() {
         // When the phone number input loses focus, format the phone number, if possible
-        formatPhoneNumberOnBlur($('.form-control[name=phone], .form-control[name=emergencyCNP]'));
+        formatPhoneNumberOnBlur($('#phone, #contactPhone'));
     })();
 </script>
 </body>
