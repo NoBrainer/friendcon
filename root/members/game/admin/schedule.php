@@ -243,7 +243,7 @@ $requireAdmin = true;
 				trackStats("DELETE/members/game/admin/schedule");
 				$.ajax({
 					type: 'POST',
-					url: '/members/api-v2/challenges/delete.php',
+					url: '/members/api/challenges/delete.php',
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -316,7 +316,7 @@ $requireAdmin = true;
 				trackStats((isNew ? 'CREATE' : 'EDIT') + "/members/game/admin/schedule");
 				$.ajax({
 					type: 'POST',
-					url: (isNew ? "/members/api-v2/challenges/create.php" : "/members/api-v2/challenges/update.php"),
+					url: (isNew ? "/members/api/challenges/create.php" : "/members/api/challenges/update.php"),
 					data: formData,
 					cache: false,
 					contentType: false,

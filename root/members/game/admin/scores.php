@@ -198,7 +198,7 @@ $requireAdmin = true;
 				trackStats("MODIFY_SCORE/members/game/admin/scores");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api-v2/score/update.php",
+					url: "/members/api/score/update.php",
 					data: formData,
 					cache: false,
 					contentType: false,

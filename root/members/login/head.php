@@ -3,10 +3,10 @@ session_start();
 $userSession = $_SESSION['userSession'];
 $isLoggedIn = isset($userSession) && $userSession !== "";
 
-include($_SERVER['DOCUMENT_ROOT'] . '/members/api-v2/internal/constants.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/members/api-v2/internal/functions.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/members/api-v2/internal/initDB.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/members/api-v2/internal/initCaptcha.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/members/api/internal/constants.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/members/api/internal/functions.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/members/api/internal/initDB.php');
+include($_SERVER['DOCUMENT_ROOT'] . '/members/api/internal/initCaptcha.php');
 
 // Remove sensitive info from memory
 unset($CAPTCHA_SECRET_V2_KEY);

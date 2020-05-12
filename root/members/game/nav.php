@@ -164,7 +164,7 @@
 			trackStats("LOGIN/members/game");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api-v2/users/login.php',
+				url: '/members/api/users/login.php',
 				data: formData,
 				async: false,
 				cache: false,
@@ -184,7 +184,7 @@
 			trackStats("LOGOUT/members/game");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api-v2/users/logout.php',
+				url: '/members/api/users/logout.php',
 				async: false,
 				cache: false,
 				success: (resp) => {

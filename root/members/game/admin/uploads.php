@@ -291,7 +291,7 @@ $requireAdmin = true;
 			trackStats("ROTATE_UPLOAD/members/game/admin/uploads");
 			$.ajax({
 				type: 'POST',
-				url: "/members/api-v2/uploads/rotate.php",
+				url: "/members/api/uploads/rotate.php",
 				data: formData,
 				cache: false,
 				contentType: false,
@@ -336,7 +336,7 @@ $requireAdmin = true;
 				trackStats((isPublished ? '' : 'UN') + "PUBLISH/members/game/admin/uploads");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api-v2/challenges/publish.php",
+					url: "/members/api/challenges/publish.php",
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -397,7 +397,7 @@ $requireAdmin = true;
 			trackStats(state + "_UPLOAD/members/game/admin/uploads");
 			return $.ajax({
 				type: 'POST',
-				url: "/members/api-v2/uploads/update.php",
+				url: "/members/api/uploads/update.php",
 				data: formData,
 				cache: false,
 				contentType: false,

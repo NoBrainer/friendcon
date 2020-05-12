@@ -309,7 +309,7 @@ $requireAdmin = true;
 				trackStats("ADD_MEMBER/members/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api-v2/teams/members/create.php",
+					url: "/members/api/teams/members/create.php",
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -358,7 +358,7 @@ $requireAdmin = true;
 				trackStats("DELETE/members/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: '/members/api-v2/teams/delete.php',
+					url: '/members/api/teams/delete.php',
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -430,7 +430,7 @@ $requireAdmin = true;
 				trackStats((isNew ? 'CREATE' : 'EDIT') + "/members/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: (isNew ? "/members/api-v2/teams/create.php" : "/members/api-v2/teams/update.php"),
+					url: (isNew ? "/members/api/teams/create.php" : "/members/api/teams/update.php"),
 					data: formData,
 					cache: false,
 					contentType: false,
