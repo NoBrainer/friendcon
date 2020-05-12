@@ -89,7 +89,7 @@ $pageTitle = "Forgot Password";
 			trackStats("SUBMIT/fun/login/forgotPassword");
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/password/sendResetEmail.php',
+				url: '/fun/api/admin/sendResetEmail.php',
 				data: formData,
 				async: false,
 				cache: false,

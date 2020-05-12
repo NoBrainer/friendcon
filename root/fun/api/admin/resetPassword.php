@@ -24,50 +24,41 @@ $password = $_POST['password'];
 
 // Validate input
 if (!isset($email) || !is_string($email) || empty(trim($email))) {
-	$response['error'] = "Missing required field 'email'";
+	$response['error'] = "Missing required field 'email'.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
 } else if (!isset($token) || !is_string($token) || empty(trim($token))) {
-	$response['error'] = "Missing required field 'token'";
+	$response['error'] = "Missing required field 'token'.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
 } else if (!isset($password) || !is_string($password) || empty(trim($password))) {
-	$response['error'] = "Missing required field 'password'";
+	$response['error'] = "Missing required field 'password'.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
 }
 
-// Make sure a user exists with email and token
-$query = "SELECT * FROM users WHERE email = ? AND password = ?";
+// Make sure an admin exists with email and token
+$query = "SELECT * FROM admins WHERE email = ? AND hash = ?";
 $result = executeSqlForResult($mysqli, $query, 'ss', $email, $token);
 if (!hasRows($result, 1)) {
-	$response['error'] = "Invalid email/token pair";
-	http_response_code(HTTP['BAD_REQUEST']);
-	echo json_encode($response);
-	return;
-}
-
-// Make sure the token matches
-$row = getNextRow($result);
-if ($token !== $row['password']) {
-	$response['error'] = "Invalid email/token pair";
+	$response['error'] = "Invalid email/token pair.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
 }
 
 // Set the new password hash
-$query = "UPDATE users SET password = ? WHERE email = ?";
+$query = "UPDATE admins SET hash = ? WHERE email = ?";
 $affectedRows = executeSqlForAffectedRows($mysqli, $query, 'ss', md5($password), $email);
 
 if ($affectedRows === 1) {
-	$response['message'] = "Password successfully updated";
+	$response['message'] = "Password successfully updated.";
 	http_response_code(HTTP['OK']);
 
-	// Send an email to the user
+	// Send an email to the admin
 	$to = $email;
 	$subject = "FriendCon Password Reset";
 	$txt = "<div>Your password has been reset. If you did not do this, please contact us at: admin@friendcon.com</div>" .
@@ -75,7 +66,7 @@ if ($affectedRows === 1) {
 	$headers = "From: admin@friendcon.com\r\nContent-type:text/html";
 	mail($to, $subject, $txt, $headers);
 } else {
-	$response['error'] = "Password not updated";
+	$response['error'] = "Password not updated.";
 	http_response_code(HTTP['BAD_REQUEST']);
 }
 

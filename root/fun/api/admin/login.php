@@ -25,7 +25,7 @@ if (isset($userSession) && $userSession != "") {
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
-} else if (!isset($password) || !is_string($password) || empty($password)) {
+} else if (!isset($password) || !is_string($password) || empty($password) || empty(trim($password))) {
 	$response['error'] = "Missing password";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
@@ -33,11 +33,11 @@ if (isset($userSession) && $userSession != "") {
 }
 $password = trim($password);
 
-// Check for the user
-$query = "SELECT uid, email, password FROM users WHERE email = ?";
+// Check for the admin
+$query = "SELECT * FROM admins WHERE email = ?";
 $result = executeSqlForResult($mysqli, $query, 's', trim($email));
 if (!hasRows($result, 1)) {
-	$response['error'] = "No registration entry with this email";
+	$response['error'] = "No admin with this email";
 	http_response_code(HTTP['NOT_FOUND']);
 	echo json_encode($response);
 	return;
@@ -45,7 +45,7 @@ if (!hasRows($result, 1)) {
 
 // Make sure the password hashes match
 $row = getNextRow($result);
-if (md5($password) === $row['password']) {
+if (md5($password) === $row['hash']) {
 	$response['data'] = $row['uid'];
 	$_SESSION['userSession'] = $row['uid'];
 	http_response_code(HTTP['OK']);

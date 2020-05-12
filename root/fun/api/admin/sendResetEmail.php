@@ -29,8 +29,8 @@ if (!isset($email) || !is_string($email) || empty(trim($email))) {
 }
 $email = trim($email);
 
-// Make sure the email exists
-$query = "SELECT * FROM users WHERE email = ?";
+// Make sure an admin exists with email
+$query = "SELECT * FROM admins WHERE email = ?";
 $result = executeSqlForResult($mysqli, $query, 's', $email);
 if (!hasRows($result, 1)) {
 	$response['error'] = "Invalid email address [$email]";
@@ -41,7 +41,9 @@ if (!hasRows($result, 1)) {
 
 // Use the password hash as the token
 $row = getNextRow($result);
-$token = $row['password']; //TODO: instead generate a token in the database
+$token = $row['hash'];
+//TODO: instead generate a token in the database
+//TODO: keep track of attempts and throttle 3 times per 5 minutes (or something like that)
 
 // Setup the email
 $to = $email;

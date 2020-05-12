@@ -127,7 +127,7 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 			trackStats("SUBMIT/fun/login/resetPassword");
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/password/reset.php',
+				url: '/fun/api/admin/resetPassword.php',
 				data: formData,
 				async: false,
 				cache: false,
