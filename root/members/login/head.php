@@ -24,13 +24,13 @@ if (forwardHttps()) {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title><?php echo $pageTitle; ?></title>
 	<link rel="stylesheet" media="screen" href="/members/login/login.css">
-	<link rel="icon" href="/members/images/favicon.png">
+	<link rel="icon" href="/members/static/images/favicon.png">
 
 	<!-- JavaScript required before rendering -->
-	<script type="text/javascript" src="/members/lib/jquery/jquery.min.js"></script>
-	<script type="text/javascript" src="/members/lib/popper/popper.min.js"></script>
-	<script type="text/javascript" src="/members/lib/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/members/lib/underscore/underscore.min.js"></script>
+	<script type="text/javascript" src="/members/static/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/members/static/lib/popper/popper.min.js"></script>
+	<script type="text/javascript" src="/members/static/lib/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/members/static/lib/underscore/underscore.min.js"></script>
 	<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=<?php echo CAPTCHA_SITE_V3_KEY; ?>"></script>
 	<script type="text/javascript" src="/members/js/utils.js"></script>
 </head>
