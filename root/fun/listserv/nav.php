@@ -1,32 +1,32 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
 	<!-- Branding -->
-	<a class="navbar-brand" href="/fun/game">FriendCon Game</a>
+	<a class="navbar-brand">FriendCon Listserv</a>
 
 	<!-- Navbar toggler when collapsed -->
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#gameNav" aria-controls="gameNav" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#listservNav" aria-controls="listservNav" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 
 	<!-- Navbar contents -->
-	<div class="collapse navbar-collapse" id="gameNav">
+	<div class="collapse navbar-collapse" id="listservNav">
 		<div class="navbar-nav mr-auto">
-			<a class="nav-item nav-link<?php echo($navTab === "UPLOAD" ? ' active' : '') ?>" href="/fun/game/upload">
-				<span>Upload</span>
-				<?php if ($navTab === "UPLOAD") { ?>
+			<a class="nav-item nav-link<?php echo($navTab === "JOIN" ? ' active' : '') ?>" href="/fun/listserv/join">
+				<span>Join</span>
+				<?php if ($navTab === "JOIN") { ?>
 					<span class="sr-only">(current)</span>
 				<?php } ?>
 			</a>
-			<a class="nav-item nav-link<?php echo($navTab === "ALBUM" ? ' active' : '') ?>" href="/fun/game/album">
-				<span>Album</span>
-				<?php if ($navTab === "ALBUM") { ?>
+			<a class="nav-item nav-link<?php echo($navTab === "QUIT" ? ' active' : '') ?>" href="/fun/listserv/quit">
+				<span>Quit</span>
+				<?php if ($navTab === "QUIT") { ?>
 					<span class="sr-only">(current)</span>
 				<?php } ?>
 			</a>
-			<?php if ($isGameAdmin) { ?>
-				<a class="nav-item nav-link<?php echo($navTab === "ADMIN" ? ' active' : '') ?>" href="/fun/game/admin">
-					<span>Admin</span>
-					<?php if ($navTab === "ADMIN") { ?>
+			<?php if ($isAdmin) { ?>
+				<a class="nav-item nav-link<?php echo($navTab === "SHOW" ? ' active' : '') ?>" href="/fun/listserv/show">
+					<span>Show</span>
+					<?php if ($navTab === "SHOW") { ?>
 						<span class="sr-only">(current)</span>
 					<?php } ?>
 				</a>
@@ -40,9 +40,9 @@
 						<span>User</span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-						<a class="dropdown-item" href="/fun/listserv/show">
-							<span class="fa fa-envelope"></span>
-							<span>Listserv</span>
+						<a class="dropdown-item" href="/fun/game">
+							<span class="fa fa-gamepad"></span>
+							<span>Game</span>
 						</a>
 						<a class="dropdown-item" id="navLogoutBtn" href="#">
 							<span class="fa fa-sign-out-alt"></span>
@@ -59,36 +59,6 @@
 		</div>
 	</div>
 </nav>
-
-<?php if ($isGameAdmin && $navTab === "ADMIN") { ?>
-	<div class="container-sm card mb-3 maxWidth-sm">
-		<div class="card-body">
-			<h5 class="card-title">Admin Pages</h5>
-			<div class="btn-group col-12 p-0 mb-1" role="group" aria-label="Admin Management Pages">
-				<span class="col-4 p-1 pl-2 pr-2 rounded-left border border-right-0">Manage:</span>
-				<a href="/fun/game/admin/scores" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCORES' ? ' active' : '') ?>">
-					<span class="fa fa-coins"></span>
-					<span>Scores</span>
-				</a>
-				<a href="/fun/game/admin/uploads" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'UPLOADS' ? ' active' : '') ?>">
-					<span class="fa fa-file-image"></span>
-					<span>Uploads</span>
-				</a>
-			</div>
-			<div class="btn-group col-12 p-0" role="group" aria-label="Admin Setup Pages">
-				<span class="col-4 p-1 pl-2 pr-2 rounded-left border border-right-0">Setup:</span>
-				<a href="/fun/game/admin/schedule" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCHEDULE' ? ' active' : '') ?>">
-					<span class="fa fa-calendar"></span>
-					<span>Schedule</span>
-				</a>
-				<a href="/fun/game/admin/teams" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'TEAMS' ? ' active' : '') ?>">
-					<span class="fa fa-users"></span>
-					<span>Teams</span>
-				</a>
-			</div>
-		</div>
-	</div>
-<?php } ?>
 
 <!-- Navbar login modal -->
 <div class="modal fade" id="navLoginModal" tabindex="-1" role="dialog" aria-labelledby="navLoginModalTitle">
