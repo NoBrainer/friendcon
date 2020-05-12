@@ -91,6 +91,17 @@ while ($row = getNextRow($userListResult)) {
 	$users[] = $user;
 }
 
-$response['data'] = $users;
+// For the email list, return a string of emails
+if ($forEmailList) {
+	$data = "";
+	foreach($users as $user) {
+		if (!empty($data)) $data .= ", ";
+		$data .= $user['email'];
+	}
+	$response['data'] = $data;
+} else {
+	$response['data'] = $users;
+}
+
 http_response_code(HTTP['OK']);
 echo json_encode($response);
