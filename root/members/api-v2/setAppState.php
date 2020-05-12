@@ -19,44 +19,44 @@
 session_start();
 $userSession = $_SESSION['userSession'];
 
-include('internal/secrets/initDB.php');
+include('internal/initDB.php');
 include('internal/checkAdmin.php');
 include('internal/checkAppState.php');
 include('internal/constants.php');
 
 // Setup the content-type and response template
-header($CONTENT_JSON);
+header(CONTENT['JSON']);
 $response = [];
 
 if (!$isAdmin) {
-    $response["error"] = "Must be admin to set app state";
-    http_response_code($HTTP_FORBIDDEN);
-    echo json_encode($response);
-    return;
+	$response['error'] = "Must be admin to set app state.";
+	http_response_code(HTTP['FORBIDDEN']);
+	echo json_encode($response);
+	return;
 }
 
 // Get parameters from the url
 if (isset($_POST['conDay']) && $_POST['conDay'] > 0 && $_POST['conDay'] < 32) {
-    $conDay = $_POST['conDay'];
+	$conDay = $_POST['conDay'];
 }
 if (isset($_POST['conMonth']) && $_POST['conMonth'] > 0 && $_POST['conMonth'] < 13) {
-    $conMonth = $_POST['conMonth'];
+	$conMonth = $_POST['conMonth'];
 }
 if (isset($_POST['conYear']) && $_POST['conYear'] > 1000) {
-    $conYear = $_POST['conYear'];
+	$conYear = $_POST['conYear'];
 }
 if (isset($_POST['badgePrice'])) {
-    $badgePrice = $_POST['badgePrice'];
+	$badgePrice = $_POST['badgePrice'];
 }
 if (isset($_POST['enableRegistration'])) {
-    $isRegistrationEnabled = 1;
+	$isRegistrationEnabled = 1;
 } else if (isset($_POST['disableRegistration'])) {
-    $isRegistrationEnabled = 0;
+	$isRegistrationEnabled = 0;
 }
 if (isset($_POST['enablePoints'])) {
-    $isPointsEnabled = 1;
+	$isPointsEnabled = 1;
 } else if (isset($_POST['disablePoints'])) {
-    $isPointsEnabled = 0;
+	$isPointsEnabled = 0;
 }
 
 // Count the rows with the provided year
@@ -64,39 +64,39 @@ $numRows = 0;
 $checkQuery = "SELECT s.conYear FROM app_state s WHERE s.conYear = ?";
 $checkResult = executeSqlForResult($mysqli, $checkQuery, 'i', $conYear);
 while ($checkResult->fetch_array()) {
-    $numRows++;
+	$numRows++;
 }
 $checkResult->free_result();
 
 if (!$checkResult || $numRows == 0) {
-    // Insert a new row
-    $insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`," .
-            " `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
-    $insertResult = executeSqlForResult($mysqli, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
-            $badgePrice, $isRegistrationEnabled, $isPointsEnabled);
-    $response["data"] = "Added entry for {$conYear}!";
+	// Insert a new row
+	$insertQuery = "INSERT INTO `app_state`(`conMonth`, `conDay`, `conYear`, `badgePrice`, `registrationEnabled`," .
+			" `pointsEnabled`) VALUES (?, ?, ?, ?, ?, ?)";
+	$insertResult = executeSqlForResult($mysqli, $insertQuery, 'iiisii', $conMonth, $conDay, $conYear,
+			$badgePrice, $isRegistrationEnabled, $isPointsEnabled);
+	$response['data'] = "Added entry for {$conYear}!";
 } else {
-    // Update an existing row
-    $updateQuery = "UPDATE app_state s" .
-            " SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?, " .
-            " s.pointsEnabled = ?" .
-            " WHERE s.conYear = ?";
-    $stmt = prepareSqlStatement($mysqli, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear, $badgePrice,
-            $isRegistrationEnabled, $isPointsEnabled, $conYear);
-    $stmt->execute();
+	// Update an existing row
+	$updateQuery = "UPDATE app_state s" .
+			" SET s.conDay = ?, s.conMonth = ?, s.conYear = ?, s.badgePrice = ?, s.registrationEnabled = ?, " .
+			" s.pointsEnabled = ?" .
+			" WHERE s.conYear = ?";
+	$stmt = prepareSqlStatement($mysqli, $updateQuery, 'iiisiii', $conDay, $conMonth, $conYear, $badgePrice,
+			$isRegistrationEnabled, $isPointsEnabled, $conYear);
+	$stmt->execute();
 
-    if ($stmt->affected_rows == null) {
-        http_response_code($HTTP_NOT_MODIFIED);
-        return;
-    } else if ($stmt->affected_rows === 1) {
-        $response["data"] = "Updated entry for {$conYear}!";
-    } else {
-        $response["error"] = "App state change failed [DB-2]";
-        http_response_code($HTTP_INTERNAL_SERVER_ERROR);
-        echo json_encode($response);
-        return;
-    }
+	if ($stmt->affected_rows == null) {
+		http_response_code(HTTP['NOT_MODIFIED']);
+		return;
+	} else if ($stmt->affected_rows === 1) {
+		$response['data'] = "Updated entry for {$conYear}.";
+	} else {
+		$response['error'] = "App state change failed [DB-2].";
+		http_response_code(HTTP['INTERNAL_SERVER_ERROR']);
+		echo json_encode($response);
+		return;
+	}
 }
 
-http_response_code($HTTP_OK);
+http_response_code(HTTP['OK']);
 echo json_encode($response);

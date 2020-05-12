@@ -5,11 +5,11 @@
  * @return boolean - whether or not to forward
  */
 function forwardHttps() {
-    if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
-        header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 308);
-        return true;
-    }
-    return false;
+	if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != "on") {
+		header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 308);
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -18,12 +18,22 @@ function forwardHttps() {
  * @return boolean - whether or not to forward
  */
 function forwardHomeIfLoggedIn() {
-    $userSession = $_SESSION['userSession'];
-    if (isset($userSession) && $userSession != "") {
-        header("Location: /members/home.php", true);
-        return true;
-    }
-    return false;
+	return forwardIfLoggedIn('/members/home.php');
+}
+
+/**
+ * Go to a path if the user is logged in. Example path: "/members/home.php"
+ *
+ * @param string path - where to forward
+ * @return boolean - whether or not to forward
+ */
+function forwardIfLoggedIn($path) {
+	$userSession = $_SESSION['userSession'];
+	if (isset($userSession) && $userSession != "") {
+		header("Location: " . $path, true);
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -32,10 +42,20 @@ function forwardHomeIfLoggedIn() {
  * @return boolean - whether or not to forward
  */
 function forwardIndexIfLoggedOut() {
-    $userSession = $_SESSION['userSession'];
-    if (!isset($userSession) || $userSession == "") {
-        header("Location: /members/index.php", true);
-        return true;
-    }
-    return false;
+	return forwardIfLoggedOut('/members/index.php');
+}
+
+/**
+ * Go to a path if the user is logged out. Example path: "/members/index.php"
+ *
+ * @param string path - where to forward
+ * @return boolean - whether or not to exit
+ */
+function forwardIfLoggedOut($path) {
+	$userSession = $_SESSION['userSession'];
+	if (!isset($userSession) || $userSession == "") {
+		header("Location: " . $path, true);
+		return true;
+	}
+	return false;
 }

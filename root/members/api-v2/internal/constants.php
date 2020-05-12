@@ -1,16 +1,28 @@
 <?php
 
+// Include the private config file
+include($_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/config.php');
+
 // Header for Content-Type
-$CONTENT_JSON = "Content-Type: application/json";
+const CONTENT = [
+		'JSON'   => 'Content-Type: application/json',
+		'STREAM' => 'Content-Type: application/octet-stream',
+		'TEXT'   => 'Content-Type: text/plain; charset=utf-8'
+];
 
 // HTTP Response Codes
-$HTTP_OK = 200;
-$HTTP_NOT_MODIFIED = 304;
-$HTTP_BAD_REQUEST = 400;
-$HTTP_NOT_AUTHORIZED = 401;
-$HTTP_FORBIDDEN = 403;
-$HTTP_NOT_FOUND = 404;
-$HTTP_INTERNAL_SERVER_ERROR = 500;
+const HTTP = [
+		'OK'                    => 200,
+		'NOT_MODIFIED'          => 304,
+		'PERMANENT_REDIRECT'    => 308,
+		'BAD_REQUEST'           => 400,
+		'NOT_AUTHORIZED'        => 401,
+		'FORBIDDEN'             => 403,
+		'NOT_FOUND'             => 404,
+		'INTERNAL_SERVER_ERROR' => 500
+];
 
 // Team/house constants
-$UNSORTED = 0;
+const TEAM = [
+		'UNSORTED' => 0
+];

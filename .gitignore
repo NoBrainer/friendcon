@@ -3,4 +3,5 @@
 .idea/workspace.xml
 
 # Sensitive files
+friendcon-private
 **/secrets/

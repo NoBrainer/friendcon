@@ -19,15 +19,18 @@
 $superAdminArray = array(23, 31, 32, 43); //TODO: get this from the database instead
 $isSuperAdmin = in_array($userSession, $superAdminArray);
 
+$gameAdminArray = array(29, 43); //TODO: get from database instead
+$isGameAdmin = in_array($userSession, $gameAdminArray);
+
 // Check if the user is an admin
 $query = "SELECT u.isAdmin FROM users u WHERE u.uid = ?";
 $userResult = executeSqlForResult($mysqli, $query, 'i', $userSession);
 if (!$userResult) {
-    $isAdmin = 0;
+	$isAdmin = 0;
 } else {
-    $userRow = $userResult->fetch_array();
-    $userResult->free_result();
-    $isAdmin = $userRow['isAdmin'];
+	$userRow = $userResult->fetch_array();
+	$userResult->free_result();
+	$isAdmin = $userRow['isAdmin'];
 }
 
 // Super Admins are always Admins

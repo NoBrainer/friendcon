@@ -6,8 +6,8 @@
  * @return array
  */
 function mysqliInfoArray($mysqli) {
-    preg_match_all('/(\S[^:]+): (\d+)/', $mysqli->info, $matches);
-    return array_combine($matches[1], $matches[2]);
+	preg_match_all('/(\S[^:]+): (\d+)/', $mysqli->info, $matches);
+	return array_combine($matches[1], $matches[2]);
 }
 
 /**
@@ -22,11 +22,11 @@ function mysqliInfoArray($mysqli) {
  * @see prepareSqlStatement()
  */
 function executeSqlForAffectedRows($mysqli, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
-    $stmt->execute();
-    $affectedRows = $stmt->affected_rows;
-    $stmt->close();
-    return $affectedRows;
+	$stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
+	$stmt->execute();
+	$affectedRows = $stmt->affected_rows;
+	$stmt->close();
+	return $affectedRows;
 }
 
 /**
@@ -42,15 +42,15 @@ function executeSqlForAffectedRows($mysqli, $query, $types = '', ...$params) {
  * @see prepareSqlStatement()
  */
 function executeSqlForInfo($mysqli, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
-    $stmt->execute();
-    $stmt->close();
-    $info = mysqliInfoArray($mysqli);
-    return [
-            "matched"  => intval($info["Rows matched"]),
-            "changed"  => intval($info["Changed"]),
-            "warnings" => intval($info["Warnings"])
-    ];
+	$stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
+	$stmt->execute();
+	$stmt->close();
+	$info = mysqliInfoArray($mysqli);
+	return [
+			"matched"  => intval($info["Rows matched"]),
+			"changed"  => intval($info["Changed"]),
+			"warnings" => intval($info["Warnings"])
+	];
 }
 
 /**
@@ -65,11 +65,11 @@ function executeSqlForInfo($mysqli, $query, $types = '', ...$params) {
  * @see prepareSqlStatement()
  */
 function executeSqlForResult($mysqli, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-    return $result;
+	$stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$stmt->close();
+	return $result;
 }
 
 /**
@@ -82,9 +82,10 @@ function executeSqlForResult($mysqli, $query, $types = '', ...$params) {
  * @see prepareSqlStatement()
  */
 function executeSql($mysqli, $query, $types = '', ...$params) {
-    $stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
-    $stmt->execute();
-    $stmt->close();
+	$stmt = prepareSqlStatement($mysqli, $query, $types, ...$params);
+	$successful = $stmt->execute();
+	$stmt->close();
+	return $successful;
 }
 
 /**
@@ -100,9 +101,9 @@ function executeSql($mysqli, $query, $types = '', ...$params) {
  * @see mysqli::prepare()
  */
 function prepareSqlStatement($mysqli, $query, $types = '', ...$params) {
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param($types, ...$params);
-    return $stmt;
+	$stmt = $mysqli->prepare($query);
+	$stmt->bind_param($types, ...$params);
+	return $stmt;
 }
 
 /**
@@ -112,7 +113,7 @@ function prepareSqlStatement($mysqli, $query, $types = '', ...$params) {
  * @return array
  */
 function getNextRow($result = null) {
-    return $result == null ? null : $result->fetch_assoc();
+	return $result == null ? null : $result->fetch_assoc();
 }
 
 /**
@@ -123,6 +124,6 @@ function getNextRow($result = null) {
  * @return boolean
  */
 function hasRows($result = null, $num = -1) {
-    if ($result == null) return false;
-    return $num < 0 ? $result->num_rows > 0 : $result->num_rows == $num;
+	if ($result == null) return false;
+	return $num < 0 ? $result->num_rows > 0 : $result->num_rows == $num;
 }
