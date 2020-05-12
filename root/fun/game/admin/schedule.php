@@ -17,7 +17,7 @@ $requireAdmin = true;
 			<ul>
 				<li>
 					<span>Players can submit</span>
-					<a href="/members/game/admin/uploads">uploads</a>
+					<a href="/fun/game/admin/uploads">uploads</a>
 					<span>for challenges within the scheduled time range.</span>
 				</li>
 				<li>Challenges without a start are immediately available.</li>
@@ -150,7 +150,7 @@ $requireAdmin = true;
 		const $modalConfirmDelete = $('#confirmDelete');
 		const $modalSubmitBtn = $('#modalSubmitBtn');
 
-		trackStats("LOAD/members/game/admin/schedule");
+		trackStats("LOAD/fun/game/admin/schedule");
 		loadData({asAdmin: true}).done(render);
 		setupDatePicker($modalStartPicker);
 		setupDatePicker($modalEndPicker);
@@ -240,10 +240,10 @@ $requireAdmin = true;
 				formData.append('challengeIndex', challengeIndex);
 
 				// Make the change
-				trackStats("DELETE/members/game/admin/schedule");
+				trackStats("DELETE/fun/game/admin/schedule");
 				$.ajax({
 					type: 'POST',
-					url: '/members/api/challenges/delete.php',
+					url: '/fun/api/challenges/delete.php',
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -313,10 +313,10 @@ $requireAdmin = true;
 				formData.append('endTime', endTime);
 
 				// Make the change
-				trackStats((isNew ? 'CREATE' : 'EDIT') + "/members/game/admin/schedule");
+				trackStats((isNew ? 'CREATE' : 'EDIT') + "/fun/game/admin/schedule");
 				$.ajax({
 					type: 'POST',
-					url: (isNew ? "/members/api/challenges/create.php" : "/members/api/challenges/update.php"),
+					url: (isNew ? "/fun/api/challenges/create.php" : "/fun/api/challenges/update.php"),
 					data: formData,
 					cache: false,
 					contentType: false,

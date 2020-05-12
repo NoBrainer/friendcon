@@ -39,7 +39,7 @@ $pageTitle = "Forgot Password";
 		const $submitButton = $('#sendResetEmail');
 		const $message = $('#message');
 
-		trackStats("LOAD/members/login/forgotPassword");
+		trackStats("LOAD/fun/login/forgotPassword");
 		render();
 
 		function render() {
@@ -86,10 +86,10 @@ $pageTitle = "Forgot Password";
 			$email.val("");
 
 			// Make the server call
-			trackStats("SUBMIT/members/login/forgotPassword");
+			trackStats("SUBMIT/fun/login/forgotPassword");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api/password/sendResetEmail.php',
+				url: '/fun/api/password/sendResetEmail.php',
 				data: formData,
 				async: false,
 				cache: false,

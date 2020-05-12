@@ -19,9 +19,9 @@ $requireAdmin = true;
 				<li>Rotate any images as necessary.</li>
 				<li>
 					<span>Use the "Publish to Album" checkbox for each challenge card to publish its approved uploads to the</span>
-					<a href="/members/game/album">album</a><span>.</span>
+					<a href="/fun/game/album">album</a><span>.</span>
 				</li>
-				<li>Award teams with points in the <a href="/members/game/admin/scores">Manage Scores</a> page.</li>
+				<li>Award teams with points in the <a href="/fun/game/admin/scores">Manage Scores</a> page.</li>
 			</ul>
 		</div>
 	</div>
@@ -143,7 +143,7 @@ $requireAdmin = true;
 		const pendingCarouselId = 'pendingCarousel';
 		const pendingActionBarId = 'pendingActionBar';
 
-		trackStats("LOAD/members/game/admin/uploads");
+		trackStats("LOAD/fun/game/admin/uploads");
 		loadData({asAdmin: true}).done(render);
 
 		function render() {
@@ -288,10 +288,10 @@ $requireAdmin = true;
 			const formData = new FormData();
 			formData.append('file', upload.file);
 
-			trackStats("ROTATE_UPLOAD/members/game/admin/uploads");
+			trackStats("ROTATE_UPLOAD/fun/game/admin/uploads");
 			$.ajax({
 				type: 'POST',
-				url: "/members/api/uploads/rotate.php",
+				url: "/fun/api/uploads/rotate.php",
 				data: formData,
 				cache: false,
 				contentType: false,
@@ -333,10 +333,10 @@ $requireAdmin = true;
 				formData.append('published', isPublished);
 
 				// Make the change
-				trackStats((isPublished ? '' : 'UN') + "PUBLISH/members/game/admin/uploads");
+				trackStats((isPublished ? '' : 'UN') + "PUBLISH/fun/game/admin/uploads");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api/challenges/publish.php",
+					url: "/fun/api/challenges/publish.php",
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -394,10 +394,10 @@ $requireAdmin = true;
 			formData.append('file', upload.file);
 			formData.append('state', upload.state);
 
-			trackStats(state + "_UPLOAD/members/game/admin/uploads");
+			trackStats(state + "_UPLOAD/fun/game/admin/uploads");
 			return $.ajax({
 				type: 'POST',
-				url: "/members/api/uploads/update.php",
+				url: "/fun/api/uploads/update.php",
 				data: formData,
 				cache: false,
 				contentType: false,

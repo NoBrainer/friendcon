@@ -17,9 +17,9 @@ $requireAdmin = true;
 			<ul>
 				<li>
 					<span>All teams shown here can be</span>
-					<a href="/members/game/admin/scores">given points</a>
+					<a href="/fun/game/admin/scores">given points</a>
 					<span>and be used to submit</span>
-					<a href="/members/game/admin/uploads">uploads</a><span>.</span>
+					<a href="/fun/game/admin/uploads">uploads</a><span>.</span>
 				</li>
 				<li>You can only delete a team if it has no approved uploads and no members.</li>
 			</ul>
@@ -165,7 +165,7 @@ $requireAdmin = true;
 		const $modalSubmitBtn = $('#modalSubmitBtn');
 		let lastTeamDropdownValue = -1;
 
-		trackStats("LOAD/members/game/admin/teams");
+		trackStats("LOAD/fun/game/admin/teams");
 		loadData({asAdmin: true}).done(render);
 
 		function render() {
@@ -306,10 +306,10 @@ $requireAdmin = true;
 				formData.append('name', name);
 
 				// Make the change
-				trackStats("ADD_MEMBER/members/game/admin/teams");
+				trackStats("ADD_MEMBER/fun/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api/teams/members/create.php",
+					url: "/fun/api/teams/members/create.php",
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -355,10 +355,10 @@ $requireAdmin = true;
 				formData.append('teamIndex', teamIndex);
 
 				// Make the change
-				trackStats("DELETE/members/game/admin/teams");
+				trackStats("DELETE/fun/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: '/members/api/teams/delete.php',
+					url: '/fun/api/teams/delete.php',
 					data: formData,
 					cache: false,
 					contentType: false,
@@ -427,10 +427,10 @@ $requireAdmin = true;
 				formData.append('name', name);
 
 				// Make the change
-				trackStats((isNew ? 'CREATE' : 'EDIT') + "/members/game/admin/teams");
+				trackStats((isNew ? 'CREATE' : 'EDIT') + "/fun/game/admin/teams");
 				$.ajax({
 					type: 'POST',
-					url: (isNew ? "/members/api/teams/create.php" : "/members/api/teams/update.php"),
+					url: (isNew ? "/fun/api/teams/create.php" : "/fun/api/teams/update.php"),
 					data: formData,
 					cache: false,
 					contentType: false,

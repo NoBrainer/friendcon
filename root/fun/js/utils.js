@@ -8,7 +8,7 @@ function trackStats(action, onError) {
 			// Verify the token with our API
 			$.ajax({
 				type: 'POST',
-				url: '/members/api/captcha/verify.php',
+				url: '/fun/api/captcha/verify.php',
 				data: ["token=" + token, "action=" + action].join('&'),
 				statusCode: {
 					200: (resp) => {

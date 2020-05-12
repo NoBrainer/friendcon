@@ -122,7 +122,7 @@ $requireAdmin = false;
 		let uploadsByChallenge;
 		let slideIndex = {};
 
-		trackStats("LOAD/members/game/album");
+		trackStats("LOAD/fun/game/album");
 		loadData().done(render);
 
 		function render() {

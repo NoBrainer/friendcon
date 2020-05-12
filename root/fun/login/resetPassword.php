@@ -43,7 +43,7 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 					</button>
 				</div>
 				<div class="form-group row">
-					<a class="col" href="/members/login/forgotPassword" style="text-align:right">
+					<a class="col" href="/fun/login/forgotPassword" style="text-align:right">
 						<span>Need another password reset email?</span>
 					</a>
 				</div>
@@ -67,7 +67,7 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 		const $submitButton = $('#resetPassword');
 		const $message = $('#message');
 
-		trackStats("LOAD/members/login/resetPassword");
+		trackStats("LOAD/fun/login/resetPassword");
 		render();
 
 		function render() {
@@ -124,10 +124,10 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 			formData.append('password', $password.val().trim());
 
 			// Make the server call
-			trackStats("SUBMIT/members/login/resetPassword");
+			trackStats("SUBMIT/fun/login/resetPassword");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api/password/reset.php',
+				url: '/fun/api/password/reset.php',
 				data: formData,
 				async: false,
 				cache: false,

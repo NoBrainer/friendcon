@@ -19,7 +19,7 @@ $requireAdmin = false;
 	<div class="container-sm card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title">Submit Photos</h5>
-			<form action="/members/api/uploads/create.php" method="post" enctype="multipart/form-data" id="uploadForm">
+			<form action="/fun/api/uploads/create.php" method="post" enctype="multipart/form-data" id="uploadForm">
 				<div class="form-group ">
 					<div class="input-group" id="teamDropdownWrapper">
 						<div class="input-group-prepend">
@@ -96,7 +96,7 @@ $requireAdmin = false;
 		const $submitButton = $('#submitButton');
 		const $message = $('#message');
 
-		trackStats("LOAD/members/game/upload");
+		trackStats("LOAD/fun/game/upload");
 		loadData().done(render);
 
 		function render() {
@@ -212,10 +212,10 @@ $requireAdmin = false;
 				formData.append('MAX_FILE_SIZE', MAX_FILE_SIZE);
 
 				// Make the server call
-				trackStats("SUBMIT/members/game/index");
+				trackStats("SUBMIT/fun/game/index");
 				$.ajax({
 					type: 'POST',
-					url: '/members/api/uploads/create.php',
+					url: '/fun/api/uploads/create.php',
 					data: formData,
 					async: false,
 					cache: false,

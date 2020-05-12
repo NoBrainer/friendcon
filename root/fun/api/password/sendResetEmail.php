@@ -46,7 +46,7 @@ $token = $row['password']; //TODO: instead generate a token in the database
 // Setup the email
 $to = $email;
 $subject = "FriendCon Password Reset";
-$message = "<div>Click <a href='https://friendcon.com/members/login/resetPassword?token=$token&email=$email' target='_blank'>this link</a> to reset your password.</div>" .
+$message = "<div>Click <a href='https://friendcon.com/fun/login/resetPassword?token=$token&email=$email' target='_blank'>this link</a> to reset your password.</div>" .
 		"<div>If you did not request a password reset, ignore this email.</div>" .
 		"<br/>" .
 		"<div>&lt;3 FriendCon Bot (BEEP. BOOP)</div>";

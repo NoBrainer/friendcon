@@ -115,7 +115,7 @@ $requireAdmin = true;
 		let lastChallengeDropdownValue = -1;
 		let showChangeLog = false;
 
-		trackStats("LOAD/members/game/admin/scores");
+		trackStats("LOAD/fun/game/admin/scores");
 		loadData({asAdmin: true, withScoreChanges: true}).done(render);
 
 		function render() {
@@ -195,10 +195,10 @@ $requireAdmin = true;
 				if (challengeIndex !== -1) formData.append('challengeIndex', challengeIndex);
 
 				// Make the change
-				trackStats("MODIFY_SCORE/members/game/admin/scores");
+				trackStats("MODIFY_SCORE/fun/game/admin/scores");
 				$.ajax({
 					type: 'POST',
-					url: "/members/api/score/update.php",
+					url: "/fun/api/score/update.php",
 					data: formData,
 					cache: false,
 					contentType: false,

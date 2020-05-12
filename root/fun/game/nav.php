@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
 	<!-- Branding -->
-	<a class="navbar-brand" href="/game">FriendCon Game</a>
+	<a class="navbar-brand" href="/fun/game">FriendCon Game</a>
 
 	<!-- Navbar toggler when collapsed -->
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#gameNav" aria-controls="gameNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,20 +11,20 @@
 	<!-- Navbar contents -->
 	<div class="collapse navbar-collapse" id="gameNav">
 		<div class="navbar-nav mr-auto">
-			<a class="nav-item nav-link<?php echo($navTab === "UPLOAD" ? ' active' : '') ?>" href="/members/game/upload">
+			<a class="nav-item nav-link<?php echo($navTab === "UPLOAD" ? ' active' : '') ?>" href="/fun/game/upload">
 				<span>Upload</span>
 				<?php if ($navTab === "UPLOAD") { ?>
 					<span class="sr-only">(current)</span>
 				<?php } ?>
 			</a>
-			<a class="nav-item nav-link<?php echo($navTab === "ALBUM" ? ' active' : '') ?>" href="/members/game/album">
+			<a class="nav-item nav-link<?php echo($navTab === "ALBUM" ? ' active' : '') ?>" href="/fun/game/album">
 				<span>Album</span>
 				<?php if ($navTab === "ALBUM") { ?>
 					<span class="sr-only">(current)</span>
 				<?php } ?>
 			</a>
 			<?php if ($isGameAdmin) { ?>
-				<a class="nav-item nav-link<?php echo($navTab === "ADMIN" ? ' active' : '') ?>" href="/members/game/admin">
+				<a class="nav-item nav-link<?php echo($navTab === "ADMIN" ? ' active' : '') ?>" href="/fun/game/admin">
 					<span>Admin</span>
 					<?php if ($navTab === "ADMIN") { ?>
 						<span class="sr-only">(current)</span>
@@ -62,22 +62,22 @@
 			<h5 class="card-title">Admin Pages</h5>
 			<div class="btn-group col-12 p-0 mb-1" role="group" aria-label="Admin Management Pages">
 				<span class="col-4 p-1 pl-2 pr-2 rounded-left border border-right-0">Manage:</span>
-				<a href="/members/game/admin/scores" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCORES' ? ' active' : '') ?>">
+				<a href="/fun/game/admin/scores" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCORES' ? ' active' : '') ?>">
 					<span class="fa fa-coins"></span>
 					<span>Scores</span>
 				</a>
-				<a href="/members/game/admin/uploads" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'UPLOADS' ? ' active' : '') ?>">
+				<a href="/fun/game/admin/uploads" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'UPLOADS' ? ' active' : '') ?>">
 					<span class="fa fa-file-image"></span>
 					<span>Uploads</span>
 				</a>
 			</div>
 			<div class="btn-group col-12 p-0" role="group" aria-label="Admin Setup Pages">
 				<span class="col-4 p-1 pl-2 pr-2 rounded-left border border-right-0">Setup:</span>
-				<a class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCHEDULE' ? ' active' : '') ?>" href="/members/game/admin/schedule">
+				<a href="/fun/game/admin/schedule" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'SCHEDULE' ? ' active' : '') ?>">
 					<span class="fa fa-calendar"></span>
 					<span>Schedule</span>
 				</a>
-				<a class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'TEAMS' ? ' active' : '') ?>" href="/members/game/admin/teams">
+				<a href="/fun/game/admin/teams" class="btn btn-secondary col-4 p-1 pl-2 pr-2<?php echo($subNavPage === 'TEAMS' ? ' active' : '') ?>">
 					<span class="fa fa-users"></span>
 					<span>Teams</span>
 				</a>
@@ -105,7 +105,7 @@
 						<input type="password" class="form-control" placeholder="Password" id="navPassword" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col" href="/members/login/forgotPassword" target="_blank" style="text-align:right">Forgot Your Password?</a>
+						<a class="col" href="/fun/login/forgotPassword" target="_blank" style="text-align:right">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>
@@ -161,10 +161,10 @@
 			formData.append('email', getEmailFromForm());
 			formData.append('password', getPasswordFromForm());
 
-			trackStats("LOGIN/members/game");
+			trackStats("LOGIN/fun/game");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api/users/login.php',
+				url: '/fun/api/users/login.php',
 				data: formData,
 				async: false,
 				cache: false,
@@ -181,10 +181,10 @@
 		}
 
 		function handleLogoutClick(e) {
-			trackStats("LOGOUT/members/game");
+			trackStats("LOGOUT/fun/game");
 			$.ajax({
 				type: 'POST',
-				url: '/members/api/users/logout.php',
+				url: '/fun/api/users/logout.php',
 				async: false,
 				cache: false,
 				success: (resp) => {

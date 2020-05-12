@@ -13,16 +13,16 @@ function forwardHttps() {
 }
 
 /**
- * Go to /members/home.php if the user is logged in.
+ * Go to /fun/home.php if the user is logged in.
  *
  * @return boolean - whether or not to forward
  */
 function forwardHomeIfLoggedIn() {
-	return forwardIfLoggedIn('/members/home.php');
+	return forwardIfLoggedIn('/fun/home.php');
 }
 
 /**
- * Go to a path if the user is logged in. Example path: "/members/home.php"
+ * Go to a path if the user is logged in. Example path: "/fun/home.php"
  *
  * @param string path - where to forward
  * @return boolean - whether or not to forward
@@ -37,16 +37,16 @@ function forwardIfLoggedIn($path) {
 }
 
 /**
- * Go to /members/index.php if the user is logged out.
+ * Go to /fun/index.php if the user is logged out.
  *
  * @return boolean - whether or not to forward
  */
 function forwardIndexIfLoggedOut() {
-	return forwardIfLoggedOut('/members/index.php');
+	return forwardIfLoggedOut('/fun/index.php');
 }
 
 /**
- * Go to a path if the user is logged out. Example path: "/members/index.php"
+ * Go to a path if the user is logged out. Example path: "/fun/index.php"
  *
  * @param string path - where to forward
  * @return boolean - whether or not to exit
