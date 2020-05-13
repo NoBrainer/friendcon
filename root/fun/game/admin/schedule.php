@@ -256,8 +256,7 @@ $requireAdmin = true;
 					},
 					error: (jqXHR) => {
 						enableSubmitButton(true);
-						const resp = jqXHR.responseJSON;
-						errorMessage($modalMessage, resp.error);
+						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
 						addChallenge(challenge);
@@ -344,8 +343,7 @@ $requireAdmin = true;
 					},
 					error: (jqXHR) => {
 						enableSubmitButton(true);
-						const resp = jqXHR.responseJSON;
-						errorMessage($modalMessage, resp.error);
+						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
 						if (isNew) {

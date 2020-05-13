@@ -48,14 +48,14 @@ $token = $row['hash'];
 // Setup the email
 $to = $email;
 $subject = "FriendCon Password Reset";
-$message = "<div>Click <a href='https://friendcon.com/fun/login/resetPassword?token=$token&email=$email' target='_blank'>this link</a> to reset your password.</div>" .
-		"<div>If you did not request a password reset, ignore this email.</div>" .
-		"<br/>" .
-		"<div>&lt;3 FriendCon Bot (BEEP. BOOP)</div>";
-$headers = "From: admin@friendcon.com\r\nContent-type:text/html";
+$link = linkHtml('link', "https://friendcon.com/fun/login/resetPassword?token=$token&email=$email");
+$lines = [
+		"Click this $link to reset your password.",
+		"If you did not request a password reset, ignore this email."
+];
 
 // Send the email
-$successful = mail($to, $subject, $message, $headers);
+$successful = sendEmailFromBot($to, $subject, $lines);
 if (!$successful) {
 	$response['error'] = "Error sending the reset email";
 	http_response_code(HTTP['INTERNAL_SERVER_ERROR']);

@@ -70,6 +70,11 @@ function errorMessage($message, text) {
 	$message.addClass('alert alert-danger').text(text);
 }
 
+function getErrorMessageFromResponse(jqXHR) {
+	const resp = jqXHR.responseJSON;
+	return resp && _.isString(resp.error) ? resp.error : "HTTP " + jqXHR.status;
+}
+
 function infoMessage($message, text) {
 	$message.addClass('alert alert-info').text(text);
 }

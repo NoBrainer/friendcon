@@ -225,8 +225,7 @@ $requireAdmin = false;
 						successMessage($message, resp.message);
 					},
 					error: (jqXHR) => {
-						const resp = jqXHR.responseJSON;
-						errorMessage($message, resp.error);
+						errorMessage($message, getErrorMessageFromResponse(jqXHR));
 					},
 					complete: () => {
 						// Reset the CAPTCHA checkbox after each upload

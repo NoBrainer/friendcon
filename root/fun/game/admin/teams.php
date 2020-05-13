@@ -332,8 +332,7 @@ $requireAdmin = true;
 						}
 					},
 					error: (jqXHR) => {
-						const resp = jqXHR.responseJSON;
-						errorMessage($addMemberMessage, resp.error);
+						errorMessage($addMemberMessage, getErrorMessageFromResponse(jqXHR));
 					}
 				});
 			});
@@ -371,9 +370,7 @@ $requireAdmin = true;
 					},
 					error: (jqXHR) => {
 						enableSubmitButton(true);
-						const resp = jqXHR.responseJSON;
-						// errorMessage($modalMessage, resp.error);
-						errorMessage($modalMessage, "NOT SETUP YET");
+						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
 						addTeam(team);
@@ -446,8 +443,7 @@ $requireAdmin = true;
 					},
 					error: (jqXHR) => {
 						enableSubmitButton(true);
-						const resp = jqXHR.responseJSON;
-						errorMessage($modalMessage, resp.error);
+						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
 						if (isNew) {

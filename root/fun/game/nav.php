@@ -178,8 +178,7 @@
 					window.location.reload(true);
 				},
 				error: (jqXHR) => {
-					let resp = jqXHR.responseJSON;
-					errorMessage($navMessage, resp.error, $navMessage);
+					errorMessage($navMessage, getErrorMessageFromResponse(jqXHR));
 				}
 			});
 		}
@@ -195,8 +194,7 @@
 					window.location.reload(true);
 				},
 				error: (jqXHR) => {
-					let resp = jqXHR.responseJSON;
-					errorMessage($navMessage, resp.error);
+					errorMessage($navMessage, getErrorMessageFromResponse(jqXHR));
 				}
 			});
 		}

@@ -141,8 +141,7 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 					}, 3000);
 				},
 				error: (jqXHR) => {
-					const resp = jqXHR.responseJSON;
-					errorMessage($message, resp.error);
+					errorMessage($message, getErrorMessageFromResponse(jqXHR));
 				}
 			});
 		}

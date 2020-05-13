@@ -24,6 +24,56 @@ function isBooleanSet($val) {
 }
 
 /**
+ * Generate link HTML.
+ *
+ * @param string $text
+ * @param string $href
+ * @param string $target
+ * @return string
+ */
+function linkHtml($text, $href, $target = '_blank') {
+	if (is_null($target)) return "<a href='$href'>$text</a>";
+	return "<a href='$href' target='$target'>$text</a>";
+}
+
+/**
+ * Send an email from FriendCon Bot. This is an extension of the PHP mail() function with some useful features added.
+ *
+ * @param $to
+ * @param $subject
+ * @param array $lines
+ * @param null $headersObject
+ * @param null $parameters
+ * @return bool - whether or not the email was sent
+ */
+function sendEmailFromBot($to, $subject, $lines = [], $headersObject = null, $parameters = null) {
+	// Convert the array of lines into a message string, putting each line inside of a div
+	$message = "";
+	foreach($lines as $line) {
+		$message .= "<div>$line</div>";
+	}
+
+	// Append the FriendCon Bot signature to the message
+	$message .= "<br/><div>&lt;3 FriendCon Bot (BEEP. BOOP)</div>";
+
+	// Use these default headers
+	$headers = [
+			'From'         => 'FriendCon Bot <no-reply@friendcon.com>',
+			'Content-Type' => 'text/html; charset=utf-8'
+	];
+	if (!is_null($headersObject)) {
+		if (!is_object($headersObject)) {
+			throw new RuntimeException("Invalid input for sendMailFromBot function. The field 'headersObject' must be an object.");
+		}
+		// If we provide a headers object, override the default headers with its key-value pairs
+		foreach($headersObject as $key => $val) {
+			$headers[$key] = $val;
+		}
+	}
+	return mail($to, $subject, $message, $headers, $parameters);
+}
+
+/**
  * Check if a string starts with another string.
  *
  * @param string $string

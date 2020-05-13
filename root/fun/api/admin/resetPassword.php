@@ -61,10 +61,10 @@ if ($affectedRows === 1) {
 	// Send an email to the admin
 	$to = $email;
 	$subject = "FriendCon Password Reset";
-	$txt = "<div>Your password has been reset. If you did not do this, please contact us at: admin@friendcon.com</div>" .
-			"<br/><div>&lt;3 FriendCon Bot (BEEP. BOOP)</div>";
-	$headers = "From: admin@friendcon.com\r\nContent-type:text/html";
-	mail($to, $subject, $txt, $headers);
+	$lines = [
+			"Your password has been reset. If you did not do this, please contact us at: admin@friendcon.com"
+	];
+	sendEmailFromBot($to, $subject, $lines);
 } else {
 	$response['error'] = "Password not updated.";
 	http_response_code(HTTP['BAD_REQUEST']);

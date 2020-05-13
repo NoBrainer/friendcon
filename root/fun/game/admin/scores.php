@@ -212,8 +212,7 @@ $requireAdmin = true;
 						render();
 					},
 					error: (jqXHR) => {
-						const resp = jqXHR.responseJSON;
-						errorMessage($modifyMessage, resp.error);
+						errorMessage($modifyMessage, getErrorMessageFromResponse(jqXHR));
 					}
 				});
 			});
