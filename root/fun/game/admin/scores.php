@@ -128,9 +128,13 @@ $requireAdmin = true;
 
 		function renderScoreTable() {
 			$scoreTable.find('tbody').empty();
-			_.each(getTeamsSortedByScore(), (team) => {
-				$scoreTable.append(scoreRow(team));
-			});
+			if (teams.length === 0) {
+				$scoreTable.append("Teams need to be setup via the Teams admin page.");
+			} else {
+				_.each(getTeamsSortedByScore(), (team) => {
+					$scoreTable.append(scoreRow(team));
+				});
+			}
 		}
 
 		function renderTeamsDropdown() {

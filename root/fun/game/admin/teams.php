@@ -22,6 +22,7 @@ $requireAdmin = true;
 					<a href="/fun/game/admin/uploads">uploads</a><span>.</span>
 				</li>
 				<li>You can only delete a team if it has no approved uploads and no members.</li>
+				<li>Edit a team to remove members from it.</li>
 			</ul>
 		</div>
 	</div>
@@ -463,9 +464,13 @@ $requireAdmin = true;
 
 		function teamTable() {
 			const $table = $($('#tableScaffold').html());
-			_.each(teams, (team) => {
-				$table.append(teamRow(team));
-			});
+			if (teams.length === 0) {
+				$table.append("Add teams with the '+' button above.");
+			} else {
+				_.each(teams, (team) => {
+					$table.append(teamRow(team));
+				});
+			}
 			return $table;
 		}
 

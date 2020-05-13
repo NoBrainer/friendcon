@@ -135,9 +135,13 @@ $requireAdmin = false;
 
 		function renderScoreTable() {
 			$scoreTable.find('tbody').empty();
-			_.each(getTeamsSortedByScore(), (team) => {
-				$scoreTable.append(scoreRow(team));
-			});
+			if (teams.length === 0) {
+				$scoreTable.append("Teams have not been setup.");
+			} else {
+				_.each(getTeamsSortedByScore(), (team) => {
+					$scoreTable.append(scoreRow(team));
+				});
+			}
 		}
 
 		function renderAlbum() {

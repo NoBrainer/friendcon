@@ -109,11 +109,15 @@ $requireAdmin = false;
 
 		function renderCurrentChallenges() {
 			$currentChallenges.empty();
-			_.each(challenges, (challenge) => {
-				if (hasChallengeStarted(challenge) && !hasChallengeEnded(challenge)) {
-					$currentChallenges.append(challengeListItem(challenge));
-				}
-			});
+			if (challenges.length === 0) {
+				$currentChallenges.append('No current challenges.');
+			} else {
+				_.each(challenges, (challenge) => {
+					if (hasChallengeStarted(challenge) && !hasChallengeEnded(challenge)) {
+						$currentChallenges.append(challengeListItem(challenge));
+					}
+				});
+			}
 		}
 
 		function renderCaptchaCheckbox() {

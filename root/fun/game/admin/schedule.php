@@ -20,9 +20,9 @@ $requireAdmin = true;
 					<a href="/fun/game/admin/uploads">uploads</a>
 					<span>for challenges within the scheduled time range.</span>
 				</li>
-				<li>Challenges without a start are immediately available.</li>
+				<li>Challenges without a start are immediately available for submissions.</li>
 				<li>Challenges without an end do not automatically end.</li>
-				<li>You cannot delete a challenge if it has any pending/approved uploads.</li>
+				<li>You cannot delete a challenge if it has any approved uploads.</li>
 			</ul>
 		</div>
 	</div>
@@ -374,9 +374,13 @@ $requireAdmin = true;
 
 		function scheduleTable() {
 			const $table = $($('#tableScaffold').html());
-			_.each(challenges, (challenge) => {
-				$table.append(challengeRow(challenge));
-			});
+			if (challenges.length === 0) {
+				$table.append("Add challenges with the '+' button above.");
+			} else {
+				_.each(challenges, (challenge) => {
+					$table.append(challengeRow(challenge));
+				});
+			}
 			return $table;
 		}
 
