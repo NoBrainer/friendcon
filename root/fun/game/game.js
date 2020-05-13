@@ -51,10 +51,10 @@ function getChallenge(challengeIndex) {
 	});
 }
 
-function getChallengeDescription(challengeIndex, defaultStr) {
+function getChallengeName(challengeIndex, defaultStr) {
 	defaultStr = defaultStr || "CHALLENGE_NOT_FOUND";
-	const challenge = getChallenge(challengeIndex) || {description: defaultStr};
-	return challenge.description;
+	const challenge = getChallenge(challengeIndex) || {name: defaultStr};
+	return challenge.name;
 }
 
 function getChallengeStartMillis(challengeIndex) {
@@ -91,9 +91,9 @@ function getTeamsSortedByScore() {
 	});
 }
 
-function getTempChallenge(description, startTime, endTime) {
+function getTempChallenge(name, startTime, endTime) {
 	return {
-		description: description || "",
+		name: name || "",
 		challengeIndex: parseInt(_.uniqueId(-1)),
 		startTime: startTime || null,
 		endTime: endTime || null
@@ -263,8 +263,8 @@ function sortChallenges(a, b) {
 	if (startA < startB) return -1;
 	if (startA > startB) return 1;
 
-	// Secondary sort: Description (alphabetical)
-	return a.description.toLowerCase().localeCompare(b.description.toLowerCase());
+	// Secondary sort: Name (alphabetical)
+	return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 }
 
 function sortScoreChanges(a, b) {

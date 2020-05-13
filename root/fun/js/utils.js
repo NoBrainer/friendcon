@@ -143,7 +143,7 @@ function setupDropdownHandlers(optionsEle, onChange) {
 function option(text, value, selected) {
 	const $option = $(document.createElement('option'));
 	$option.text(text);
-	if (!!value || isNumber(value)) $option.prop('value', value);
+	if (!!value || _.isNumber(value)) $option.prop('value', value);
 	if (!!selected) $option.prop('selected', true);
 	return $option;
 }

@@ -21,7 +21,7 @@ if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
 $name = trim($_POST['name']);
 $teamIndex = $_POST['teamIndex'];
 
-$hasName = isset($name) && is_string($name) && !empty($name);
+$hasName = isset($name) && is_string($name) && !empty($name) && !empty(trim($name));
 $hasTeamIndex = isset($teamIndex) && is_numeric($teamIndex) && $teamIndex >= 0;
 
 if (!$hasName) {
@@ -44,6 +44,12 @@ if (!$hasTeamIndex) {
 	$teams = [];
 	$minMemberCount = 9001;
 	$result = $mysqli->query("SELECT *, (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
+	if ($result->num_rows === 0) {
+		$response['error'] = "Must setup teams before adding members.";
+		http_response_code(HTTP['BAD_REQUEST']);
+		echo json_encode($response);
+		return;
+	}
 	while ($row = getNextRow($result)) {
 		$memberCount = intval($row['memberCount']);
 		$minMemberCount = min($minMemberCount, $memberCount);

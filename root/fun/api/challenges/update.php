@@ -19,12 +19,12 @@ if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
 }
 
 $challengeIndex = $_POST['challengeIndex'];
-$description = $_POST['description'];
+$name = $_POST['name'];
 $startTime = $_POST['startTime'];
 $endTime = $_POST['endTime'];
 
 $hasChallengeIndex = isset($challengeIndex) && !is_nan($challengeIndex);
-$hasDescription = isset($description) && is_string($description) && !empty($description);
+$hasName = isset($name) && is_string($name) && !empty($name);
 $hasStartTime = isset($startTime) && (is_string($startTime) || is_null($startTime));
 $hasEndTime = isset($endTime) && (is_string($endTime) || is_null($endTime));
 
@@ -34,7 +34,7 @@ if (!$hasChallengeIndex) {
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
-} else if (!$hasDescription && !$hasStartTime && !$hasEndTime) {
+} else if (!$hasName && !$hasStartTime && !$hasEndTime) {
 	$response['error'] = "No change fields.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
@@ -45,10 +45,10 @@ if (!$hasChallengeIndex) {
 $changes = [];
 $types = '';
 $params = [];
-if ($hasDescription) {
-	$changes[] = "description = ?";
+if ($hasName) {
+	$changes[] = "name = ?";
 	$types .= 's';
-	$params[] = "$description";
+	$params[] = "$name";
 }
 if ($hasStartTime) {
 	$changes[] = "startTime = ?";
@@ -78,7 +78,7 @@ if ($affectedRows === 1) {
 			'challengeIndex' => intval($row['challengeIndex']),
 			'startTime'      => stringToDate($row['startTime']),
 			'endTime'        => stringToDate($row['endTime']),
-			'description'    => "" . $row['description'],
+			'name'           => "" . $row['name'],
 			'published'      => boolval($row['published'])
 	];
 } else if ($affectedRows === 0) {

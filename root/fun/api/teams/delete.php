@@ -43,7 +43,7 @@ if ($result->num_rows > 0) {
 $query = "SELECT * FROM teamMembers WHERE teamIndex = ?";
 $result = executeSqlForResult($mysqli, $query, 'i', $teamIndex);
 if ($result->num_rows > 0) {
-	$response['error'] = "Cannot delete a team with members.";
+	$response['error'] = "Cannot delete a team with members. Delete them first.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;

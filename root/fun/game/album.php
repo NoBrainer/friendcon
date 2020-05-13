@@ -193,17 +193,19 @@ $requireAdmin = false;
 				const $slide = $(e.relatedTarget);
 				const file = $slide.attr('file');
 				const upload = getUploadByFile(file);
-				$modalChallengeName.text(getChallengeDescription(upload.challengeIndex));
+				$modalChallengeName.text(getChallengeName(upload.challengeIndex));
 				$modalIcon.html(thumbnailIcon(upload));
 			});
 
-			// Trigger first transition to enable mobile swiping
-			$modalCarousel.carousel('next');
+			if ($album.find('.text').text().trim() !== 'No published albums.') {
+				// Trigger first transition to enable mobile swiping
+				$modalCarousel.carousel('next');
+			}
 		}
 
 		function challengeCard(uploads, challengeIndex) {
 			const $card = $($('#challengeCard').html());
-			$card.find('.challengeTitle').text(getChallengeDescription(challengeIndex));
+			$card.find('.challengeTitle').text(getChallengeName(challengeIndex));
 			const $thumbnails = $card.find('.thumbnails');
 			_.each(uploads, (upload) => {
 				$thumbnails.append(thumbnail(upload));

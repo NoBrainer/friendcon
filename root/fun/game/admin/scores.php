@@ -157,7 +157,7 @@ $requireAdmin = true;
 		function renderChallengeDropdown() {
 			const objArr = [{text: "Pick Challenge (optional)", value: "-1", selected: true}];
 			_.each(challenges, (challenge) => {
-				objArr.push({text: challenge.description, value: challenge.challengeIndex});
+				objArr.push({text: challenge.name, value: challenge.challengeIndex});
 			});
 			$pickChallengeDropdownWrapper.find('.custom-select').remove();
 			$pickChallengeDropdownWrapper.append(select(objArr, pickChallengeDropdownId));
@@ -251,7 +251,7 @@ $requireAdmin = true;
 				{className: 'updateTime', ele: dateDisplayFormat(scoreChange.updateTime)},
 				{className: 'delta', ele: scoreChange.delta > 0 ? "+" + scoreChange.delta : scoreChange.delta},
 				{className: 'team', ele: getTeamName(scoreChange.teamIndex)},
-				{className: 'challenge', ele: getChallengeDescription(scoreChange.challengeIndex, "-")}
+				{className: 'challenge', ele: getChallengeName(scoreChange.challengeIndex, "-")}
 			];
 			return tr(objArr);
 		}

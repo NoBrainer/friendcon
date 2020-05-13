@@ -163,7 +163,11 @@ $requireAdmin = true;
 			});
 			const slides = buildSlides(uploadsToRender);
 			if (slides.length === 0) {
-				$pendingWrapper.text("No pending uploads!");
+				if ($showRejectedCheckbox.is(':checked')) {
+					$pendingWrapper.text("No pending or rejected uploads!");
+				} else {
+					$pendingWrapper.text("No pending uploads!");
+				}
 			} else {
 				$pendingWrapper.html(carousel(pendingCarouselId, slides, {actionBar: '#' + pendingActionBarId}));
 				$pendingWrapper.append(actionBarForPending(pendingActionBarId));
@@ -274,7 +278,7 @@ $requireAdmin = true;
 
 				// Update the action bar state
 				const upload = getUploadByFile(file);
-				$actionTitle.text(getChallengeDescription(upload.challengeIndex));
+				$actionTitle.text(getChallengeName(upload.challengeIndex));
 				$actionAuthor.text(getTeamName(upload.teamIndex));
 				$rejectAction.toggleClass('active', isUploadRejected(upload));
 				$approveAction.toggleClass('active', isUploadApproved(upload));
@@ -369,7 +373,7 @@ $requireAdmin = true;
 			const actionBarId = 'challengeActionBar-' + challengeIndex;
 			const $publishCheckbox = $card.find('.publishToAlbum');
 			const $challengeContent = $card.find('.challengeContent');
-			$card.find('.challengeTitle').text(getChallengeDescription(challengeIndex));
+			$card.find('.challengeTitle').text(getChallengeName(challengeIndex));
 			$publishCheckbox.attr('challengeIndex', challengeIndex);
 			$publishCheckbox.prop('checked', isChallengePublished(challengeIndex));
 			if (slides.length === 0) {

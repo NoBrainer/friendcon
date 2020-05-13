@@ -26,7 +26,7 @@ $members = $_POST['members'];
 $hasTeamIndex = isset($teamIndex) && !is_nan($teamIndex);
 $hasName = isset($name) && is_string($name) && !empty($name);
 $hasScore = isset($score) && !is_nan($score);
-$hasMembers = isset($members) && is_string($members);
+$hasMembers = isset($members);
 
 // Input validation
 if (!$hasTeamIndex) {
@@ -44,11 +44,11 @@ if (!$hasTeamIndex) {
 try {
 	// Handle members updates
 	if ($hasMembers) {
-		$membersArr = explode(",", $members);
+		$membersArr = empty($members) ? [] : explode(",", $members);
 		if (sizeof($membersArr) === 0) {
-			// Delete the previous members
+			// Delete all members
 			executeSql($mysqli, "DELETE FROM teamMembers WHERE teamIndex = ?", 'i', $teamIndex);
-		} else if (sizeof($membersArr) > 0) {
+		} else {
 			// Build SQL pieces
 			$valuesStr = "";
 			$types = "";
@@ -66,7 +66,7 @@ try {
 				$params[] = $teamIndex;
 				$types .= 'si';
 				if (!empty($valuesStr)) $valuesStr .= ",";
-				$valuesStr .= "(?,?)";
+				$valuesStr .= "(?, ?)";
 			}
 
 			// Delete the previous members

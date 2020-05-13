@@ -31,7 +31,7 @@ while ($row = getNextRow($result)) {
 			'challengeIndex' => intval($row['challengeIndex']),
 			'startTime'      => stringToDate($row['startTime']),
 			'endTime'        => stringToDate($row['endTime']),
-			'description'    => "" . $row['description'],
+			'name'           => "" . $row['name'],
 			'published'      => boolval($row['published'])
 	];
 }

@@ -18,26 +18,26 @@ if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
 	return;
 }
 
-$description = $_POST['description'];
+$name = $_POST['name'];
 $startTime = $_POST['startTime'];
 $endTime = $_POST['endTime'];
 
-$hasDescription = isset($description) && is_string($description) && !empty($description);
+$hasName = isset($name) && is_string($name) && !empty($name);
 $hasStartTime = isset($startTime) && (is_string($startTime) || is_null($startTime));
 $hasEndTime = isset($endTime) && (is_string($endTime) || is_null($endTime));
 
 // Input validation
-if (!$hasDescription) {
-	$response['error'] = "Missing required field 'description'.";
+if (!$hasName) {
+	$response['error'] = "Missing required field 'name'.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
 }
 
-// Make sure the description is unique
-$result = executeSqlForResult($mysqli, "SELECT * FROM challenges WHERE description = ?", 's', $description);
+// Make sure the name is unique
+$result = executeSqlForResult($mysqli, "SELECT * FROM challenges WHERE name = ?", 's', $name);
 if ($result->num_rows > 0) {
-	$response['error'] = "There's already a challenge with that description.";
+	$response['error'] = "There's already a challenge with that name.";
 	http_response_code(HTTP['BAD_REQUEST']);
 	echo json_encode($response);
 	return;
@@ -48,11 +48,11 @@ $fields = [];
 $vals = [];
 $types = '';
 $params = [];
-if ($hasDescription) {
-	$fields[] = "description";
+if ($hasName) {
+	$fields[] = "name";
 	$vals[] = "?";
 	$types .= 's';
-	$params[] = "$description";
+	$params[] = "$name";
 }
 if ($hasStartTime) {
 	$fields[] = "startTime";
@@ -80,12 +80,12 @@ if ($affectedRows !== 1) {
 }
 
 // Get the new challenge
-$query = "SELECT * FROM challenges WHERE description = ?";
-$result = executeSqlForResult($mysqli, $query, 's', $description);
+$query = "SELECT * FROM challenges WHERE name = ?";
+$result = executeSqlForResult($mysqli, $query, 's', $name);
 $row = getNextRow($result);
 $response['data'] = [
 		'challengeIndex' => intval($row['challengeIndex']),
-		'description'    => "" . $row['description'],
+		'name'           => "" . $row['name'],
 		'startTime'      => stringToDate($row['startTime']),
 		'endTime'        => stringToDate($row['endTime']),
 		'published'      => boolval($row['published'])

@@ -48,9 +48,9 @@ $requireAdmin = true;
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Description:</span>
+								<span class="input-group-text">Name:</span>
 							</div>
-							<input type="text" class="form-control" placeholder="Description" aria-label="Edit Description" id="modalDescription" required>
+							<input type="text" class="form-control" placeholder="Name" aria-label="Edit Name" id="modalName" required>
 						</div>
 					</div>
 					<div class="form-group">
@@ -123,7 +123,7 @@ $requireAdmin = true;
 					<th class="border-0">
 						<a class="fa fa-plus-square" id="addNewChallenge" data-toggle="modal" data-target="#challengeModal" aria-label="Create Challenge"></a>
 					</th>
-					<th class="border-0">Description</th>
+					<th class="border-0">Name</th>
 					<th class="border-0">Start</th>
 					<th class="border-0">End</th>
 				</tr>
@@ -141,7 +141,7 @@ $requireAdmin = true;
 		const $modal = $('#challengeModal');
 		const $modalTitle = $modal.find('.modal-title');
 		const $modalForm = $('#modalForm');
-		const $modalDescription = $('#modalDescription');
+		const $modalName = $('#modalName');
 		const $modalStartPicker = $('#modalStartPicker');
 		const $modalEndPicker = $('#modalEndPicker');
 		const $modalMessage = $('#modalMessage');
@@ -165,7 +165,7 @@ $requireAdmin = true;
 		}
 
 		function setupHandlers() {
-			let prevDescription;
+			let prevName;
 			let prevStartTime;
 			let prevEndTime;
 
@@ -173,7 +173,7 @@ $requireAdmin = true;
 			$modal.off('show.bs.modal').on('show.bs.modal', (e) => enableSubmitButton(true));
 
 			// Focus on the first input once the modal is shown
-			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => $modalDescription.focus());
+			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => $modalName.focus());
 
 			// Keep the delete button disabled unless the confirm checkbox is checked
 			$modalConfirmDelete.off().change((e) => {
@@ -195,13 +195,13 @@ $requireAdmin = true;
 				$modalSubmitBtn.removeClass('new');
 
 				// Save the starting state
-				prevDescription = challenge.description;
+				prevName = challenge.name;
 				prevStartTime = challenge.startTime;
 				prevEndTime = challenge.endTime;
 
 				// Set the starting state
 				$modalForm.attr('challengeIndex', challenge.challengeIndex);
-				$modalDescription.val(prevDescription);
+				$modalName.val(prevName);
 				$modalStartPicker.datetimepicker('date', datePickerValue(prevStartTime));
 				$modalEndPicker.datetimepicker('date', datePickerValue(prevEndTime));
 			});
@@ -218,7 +218,7 @@ $requireAdmin = true;
 
 				// Set the starting state
 				$modalForm.attr('challengeIndex', null);
-				$modalDescription.val(null);
+				$modalName.val(null);
 				$modalStartPicker.datetimepicker('date', null);
 				$modalEndPicker.datetimepicker('date', null);
 			});
@@ -284,7 +284,7 @@ $requireAdmin = true;
 				let challengeIndex;
 				let challenge;
 
-				const description = $modalDescription.val().trim();
+				const name = $modalName.val().trim();
 				const startTime = getDateStringFromPicker($modalStartPicker);
 				const endTime = getDateStringFromPicker($modalEndPicker);
 
@@ -297,7 +297,7 @@ $requireAdmin = true;
 				}
 
 				// Optimistically make changes
-				challenge.description = description;
+				challenge.name = name;
 				challenge.startTime = startTime;
 				challenge.endTime = endTime;
 				if (isNew) addChallenge(challenge);
@@ -307,7 +307,7 @@ $requireAdmin = true;
 				// Build request data
 				const formData = new FormData();
 				if (!isNew) formData.append('challengeIndex', challengeIndex);
-				formData.append('description', description);
+				formData.append('name', name);
 				formData.append('startTime', startTime);
 				formData.append('endTime', endTime);
 
@@ -324,7 +324,7 @@ $requireAdmin = true;
 						200: (resp) => {
 							successMessage($modalMessage, resp.message);
 							challenge.challengeIndex = resp.data.challengeIndex;
-							challenge.description = resp.data.description;
+							challenge.name = resp.data.name;
 							challenge.startTime = resp.data.startTime;
 							challenge.endTime = resp.data.endTime;
 							challenge.published = resp.data.published;
@@ -349,7 +349,7 @@ $requireAdmin = true;
 						if (isNew) {
 							removeChallenge(challengeIndex);
 						} else {
-							challenge.description = prevDescription;
+							challenge.name = prevName;
 							challenge.startTime = prevStartTime;
 							challenge.endTime = prevEndTime;
 						}
@@ -387,7 +387,7 @@ $requireAdmin = true;
 		function challengeRow(challenge) {
 			const objArr = [
 				{ele: editRowButton(challenge)},
-				{ele: challenge.description, className: 'description'},
+				{ele: challenge.name, className: 'name'},
 				{ele: dateDisplayFormat(challenge.startTime), className: 'small startTime'},
 				{ele: dateDisplayFormat(challenge.endTime), className: 'small endTime'}
 			];

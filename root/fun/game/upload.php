@@ -150,7 +150,7 @@ $requireAdmin = false;
 			const objArr = [{text: "Pick challenge", value: "-1", selected: true}];
 			_.each(challenges, (challenge) => {
 				if (hasChallengeStarted(challenge) && !hasChallengeEnded(challenge)) {
-					objArr.push({text: challenge.description, value: challenge.challengeIndex});
+					objArr.push({text: challenge.name, value: challenge.challengeIndex});
 				}
 			});
 			$challengeDropdownWrapper.find('select').remove();
@@ -246,7 +246,7 @@ $requireAdmin = false;
 
 		function challengeListItem(challenge) {
 			const $item = $($('#challengeListItem').html());
-			$item.find('.name').text(challenge.description);
+			$item.find('.name').text(challenge.name);
 			$item.find('.startTime').text(dateDisplayFormat(challenge.startTime, 'whenever'));
 			$item.find('.endTime').text(dateDisplayFormat(challenge.endTime, 'whenever'));
 			return $item;
