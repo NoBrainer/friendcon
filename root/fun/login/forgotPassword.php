@@ -48,20 +48,14 @@ $pageTitle = "Forgot Password";
 		}
 
 		function renderCaptchaCheckbox() {
-			grecaptcha.ready(() => { //Ensure that reCAPTCHA is ready
-				grecaptcha.render('captchaWrapper', {
-					sitekey: captchaSiteV2Key,
-					callback: (e) => {
-						// Enable the submit button after user checks the box
-						enableSubmitButton(true);
-					},
-					'expired-callback': (e) => {
-						// Disable the submit button once the CAPTCHA expires
-						enableSubmitButton(false);
-						clearMessage($message);
-					}
+			renderCaptchaV2Checkbox(
+				function onClick(e) {
+					enableSubmitButton(true);
+				},
+				function onExpire(e) {
+					enableSubmitButton(false);
+					clearMessage($message);
 				});
-			});
 		}
 
 		function setupFormHandlers() {
@@ -86,7 +80,9 @@ $pageTitle = "Forgot Password";
 			$email.val("");
 
 			// Make the server call
+			infoMessage($message, "Sending token...");
 			trackStats("SUBMIT/fun/login/forgotPassword");
+			enableSubmitButton(false);
 			$.ajax({
 				type: 'POST',
 				url: '/fun/api/admin/sendResetEmail.php',
@@ -104,6 +100,10 @@ $pageTitle = "Forgot Password";
 				},
 				error: (jqXHR) => {
 					errorMessage($message, getErrorMessageFromResponse(jqXHR));
+				},
+				complete: () => {
+					// Reset the CAPTCHA checkbox after each submit
+					grecaptcha.reset();
 				}
 			});
 		}

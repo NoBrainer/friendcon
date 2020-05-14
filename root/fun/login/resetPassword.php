@@ -76,20 +76,14 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 		}
 
 		function renderCaptchaCheckbox() {
-			grecaptcha.ready(() => { //Ensure that reCAPTCHA is ready
-				grecaptcha.render('captchaWrapper', {
-					sitekey: captchaSiteV2Key,
-					callback: (e) => {
-						// Enable the submit button after user checks the box
-						enableSubmitButton(true);
-					},
-					'expired-callback': (e) => {
-						// Disable the submit button once the CAPTCHA expires
-						enableSubmitButton(false);
-						clearMessage($message);
-					}
+			renderCaptchaV2Checkbox(
+				function onClick(e) {
+					enableSubmitButton(true);
+				},
+				function onExpire(e) {
+					enableSubmitButton(false);
+					clearMessage($message);
 				});
-			});
 		}
 
 		function setupFormHandlers() {
@@ -124,7 +118,9 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 			formData.append('password', $password.val().trim());
 
 			// Make the server call
+			infoMessage($message, "Resetting...");
 			trackStats("SUBMIT/fun/login/resetPassword");
+			enableSubmitButton(false);
 			$.ajax({
 				type: 'POST',
 				url: '/fun/api/admin/resetPassword.php',
@@ -142,6 +138,10 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 				},
 				error: (jqXHR) => {
 					errorMessage($message, getErrorMessageFromResponse(jqXHR));
+				},
+				complete: () => {
+					// Reset the CAPTCHA checkbox after each submit
+					grecaptcha.reset();
 				}
 			});
 		}

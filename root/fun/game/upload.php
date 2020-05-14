@@ -121,20 +121,14 @@ $requireAdmin = false;
 		}
 
 		function renderCaptchaCheckbox() {
-			grecaptcha.ready(() => { //Ensure that reCAPTCHA is ready
-				grecaptcha.render('captchaWrapper', {
-					sitekey: captchaSiteV2Key,
-					callback: (e) => {
-						// Enable the submit button after user checks the box
-						enableSubmitButton(true);
-					},
-					'expired-callback': (e) => {
-						// Disable the submit button once the CAPTCHA expires
-						enableSubmitButton(false);
-						clearMessage($message);
-					}
+			renderCaptchaV2Checkbox(
+				function onClick(e) {
+					enableSubmitButton(true);
+				},
+				function onExpire(e) {
+					enableSubmitButton(false);
+					clearMessage($message);
 				});
-			});
 		}
 
 		function renderTeamsDropdown() {
@@ -172,7 +166,6 @@ $requireAdmin = false;
 
 			// Submit handler
 			$form.submit((e) => {
-				enableSubmitButton(false);
 				clearMessage($message);
 				e.preventDefault();
 				e.stopPropagation();
@@ -188,23 +181,18 @@ $requireAdmin = false;
 				const files = $file[0].files;
 				if (teamIndex < 0) {
 					errorMessage($message, "Must pick a team.");
-					enableSubmitButton(true);
 					return;
 				} else if (challengeIndex < 0) {
 					errorMessage($message, "Must pick a challenge.");
-					enableSubmitButton(true);
 					return;
 				} else if (files == null || files.length === 0) {
 					errorMessage($message, "No file provided.");
-					enableSubmitButton(true);
 					return;
 				} else if (files.length > 1) {
 					errorMessage($message, "Must only include one file.");
-					enableSubmitButton(true);
 					return;
 				} else if (files[0].size > MAX_FILE_SIZE) {
 					errorMessage($message, "File must be less than 5MB.");
-					enableSubmitButton(true);
 					return;
 				}
 
@@ -216,7 +204,9 @@ $requireAdmin = false;
 				formData.append('MAX_FILE_SIZE', MAX_FILE_SIZE);
 
 				// Make the server call
+				infoMessage($message, "Uploading...");
 				trackStats("SUBMIT/fun/game/index");
+				enableSubmitButton(false);
 				$.ajax({
 					type: 'POST',
 					url: '/fun/api/uploads/create.php',
@@ -232,9 +222,8 @@ $requireAdmin = false;
 						errorMessage($message, getErrorMessageFromResponse(jqXHR));
 					},
 					complete: () => {
-						// Reset the CAPTCHA checkbox after each upload
+						// Reset the CAPTCHA checkbox after each submit
 						grecaptcha.reset();
-						enableSubmitButton(false);
 					}
 				});
 			});

@@ -1,5 +1,15 @@
 //================================
-// CAPTCHA v3
+// CAPTCHA
+
+function renderCaptchaV2Checkbox(onClick, onExpire) {
+	grecaptcha.ready(() => { //Ensure that reCAPTCHA is ready
+		grecaptcha.render('captchaWrapper', {
+			sitekey: captchaSiteV2Key,
+			callback: onClick,
+			'expired-callback': onExpire
+		});
+	});
+}
 
 function trackStats(action, onError) {
 	onError = onError || console.log;

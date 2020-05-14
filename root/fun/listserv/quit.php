@@ -13,10 +13,11 @@ $requireAdmin = false;
 		<div class="card-body">
 			<h5 class="card-title">Unsubscribe from FriendCon Emails</h5>
 			<form id="unsubscribeForm">
+				<div class="form-group" id="captchaWrapper"></div>
 				<div class="input-group mb-3">
 					<input type="email" class="form-control" id="email" placeholder="Email address" aria-label="Email address" required>
 					<span class="input-group-append">
-						<button type="submit" class="btn btn-outline-primary">Unsubscribe</button>
+						<button type="submit" class="btn btn-outline-primary" id="submitButton" disabled>Unsubscribe</button>
 					</span>
 				</div>
 				<div class="form-group">
@@ -32,15 +33,29 @@ $requireAdmin = false;
 
 <!-- JavaScript -->
 <script type="text/javascript">
+	const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
 	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
 
 	$(document).ready(() => {
 		const $unsubscribeForm = $('#unsubscribeForm');
 		const $email = $('#email');
+		const $submitButton = $('#submitButton');
 		const $unsubscribeMessage = $('#unsubscribeMessage');
 
 		trackStats("LOAD/fun/listserv/quit");
+		renderCaptchaCheckbox();
 		setupHandlers();
+
+		function renderCaptchaCheckbox() {
+			renderCaptchaV2Checkbox(
+				function onClick(e) {
+					enableSubmitButton(true);
+				},
+				function onExpire(e) {
+					enableSubmitButton(false);
+					clearMessage($unsubscribeMessage);
+				});
+		}
 
 		function setupHandlers() {
 			$unsubscribeForm.off('submit').submit((e) => {
@@ -68,6 +83,7 @@ $requireAdmin = false;
 				// Make the change
 				infoMessage($unsubscribeMessage, "Unsubscribing...");
 				trackStats("UNSUBSCRIBE/fun/listserv/quit");
+				enableSubmitButton(false);
 				$.ajax({
 					type: 'POST',
 					url: "/fun/api/listserv/quit.php",
@@ -80,9 +96,17 @@ $requireAdmin = false;
 					},
 					error: (jqXHR) => {
 						errorMessage($unsubscribeMessage, getErrorMessageFromResponse(jqXHR));
+					},
+					complete: () => {
+						// Reset the CAPTCHA checkbox after each submit
+						grecaptcha.reset();
 					}
 				});
 			});
+		}
+
+		function enableSubmitButton(enabled) {
+			$submitButton.prop('disabled', !enabled);
 		}
 	});
 </script>
