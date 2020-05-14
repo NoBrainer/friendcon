@@ -1,23 +1,19 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
+use util\Http as Http;
+use util\Session as Session;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
-// Validate input
-if (isset($userSession) && $userSession !== "") {
-	session_destroy();
-	unset($userSession);
+if (Session::$isLoggedIn) {
+	Session::logout();
 	$response['data'] = "Successfully logged out";
-	http_response_code(HTTP['OK']);
+	Http::responseCode('OK');
 } else {
 	$response['error'] = "Not logged in";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 }
 echo json_encode($response);

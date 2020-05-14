@@ -1,19 +1,18 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../../internal/constants.php');
-include('../../internal/functions.php');
-include('../../internal/initDB.php');
-include('../../internal/checkAdmin.php');
+use util\General as General;
+use util\Http as Http;
+use util\Session as Session;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
-if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
+if (!Session::$isGameAdmin) {
 	$response['error'] = "You are not an admin! GTFO.";
-	http_response_code(HTTP['FORBIDDEN']);
+	Http::responseCode('FORBIDDEN');
 	echo json_encode($response);
 	return;
 }
@@ -26,14 +25,14 @@ $hasTeamIndex = isset($teamIndex) && is_numeric($teamIndex) && $teamIndex >= 0;
 
 if (!$hasName) {
 	$response['error'] = "Missing required field 'name'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 $name = trim($name);
 if (preg_match('/[,<>()]/', $name)) {
 	$response['error'] = "Field 'name' contains invalid special characters.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
@@ -43,21 +42,21 @@ if (!$hasTeamIndex) {
 	// Get the teams with member counts and figure out the least members on a single team
 	$teams = [];
 	$minMemberCount = 9001;
-	$result = $mysqli->query("SELECT *, (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
+	$result = Sql::executeSqlForResult("SELECT *, (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
 	if ($result->num_rows === 0) {
 		$response['error'] = "Must setup teams before adding members.";
-		http_response_code(HTTP['BAD_REQUEST']);
+		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	while ($row = getNextRow($result)) {
+	while ($row = Sql::getNextRow($result)) {
 		$memberCount = intval($row['memberCount']);
 		$minMemberCount = min($minMemberCount, $memberCount);
 		$teams[] = [
 				'teamIndex'   => intval($row['teamIndex']),
 				'name'        => "" . $row['name'],
 				'score'       => intval($row['score']),
-				'updateTime'  => stringToDate($row['updateTime']),
+				'updateTime'  => General::stringToDate($row['updateTime']),
 				'memberCount' => $memberCount
 		];
 	}
@@ -83,23 +82,23 @@ $member = [
 
 // Make the changes
 $query = "INSERT INTO teamMembers(name, teamIndex) VALUES (?, ?)";
-$affectedRows = executeSqlForAffectedRows($mysqli, $query, 'si', $name, $teamIndex);
+$affectedRows = Sql::executeSqlForAffectedRows($query, 'si', $name, $teamIndex);
 if ($affectedRows !== 1) {
 	$response['error'] = "Unable to create team member.";
-	http_response_code(HTTP['INTERNAL_SERVER_ERROR']);
+	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
 }
 
 // Get the updated teams
 $teams = [];
-$result = $mysqli->query("SELECT * FROM teams");
-while ($row = getNextRow($result)) {
+$result = Sql::executeSqlForResult("SELECT * FROM teams");
+while ($row = Sql::getNextRow($result)) {
 	$teams[] = [
 			'teamIndex'  => intval($row['teamIndex']),
 			'name'       => "" . $row['name'],
 			'score'      => intval($row['score']),
-			'updateTime' => stringToDate($row['updateTime']),
+			'updateTime' => General::stringToDate($row['updateTime']),
 			'members'    => []
 	];
 
@@ -110,8 +109,8 @@ while ($row = getNextRow($result)) {
 }
 
 // Add the members to the teams
-$result = $mysqli->query("SELECT * FROM teamMembers ORDER BY name ASC");
-while ($row = getNextRow($result)) {
+$result = Sql::executeSqlForResult("SELECT * FROM teamMembers ORDER BY name ASC");
+while ($row = Sql::getNextRow($result)) {
 	$memberName = "" . $row['name'];
 	$teamIndex = intval($row['teamIndex']);
 
@@ -126,5 +125,5 @@ $response['data'] = [
 		'teams'  => $teams
 ];
 $response['message'] = sprintf("%s added to %s.", $member['name'], $member['teamName']);
-http_response_code(HTTP['OK']);
+Http::responseCode('OK');
 echo json_encode($response);

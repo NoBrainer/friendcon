@@ -1,19 +1,18 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
-include('../internal/checkAdmin.php');
+use util\General as General;
+use util\Http as Http;
+use util\Session as Session;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
-if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
+if (!Session::$isGameAdmin) {
 	$response['error'] = "You are not an admin! GTFO.";
-	http_response_code(HTTP['FORBIDDEN']);
+	Http::responseCode('FORBIDDEN');
 	echo json_encode($response);
 	return;
 }
@@ -29,17 +28,17 @@ $hasDelta = isset($delta) && is_numeric($delta);
 // Input validation
 if (!$hasTeamIndex) {
 	$response['error'] = "Missing required field 'teamIndex'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 } else if (!$hasDelta) {
 	$response['error'] = "Missing required field 'delta'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 } else if (intval($delta) === 0) {
 	$response['error'] = "Invalid value for 'delta'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
@@ -60,24 +59,24 @@ $valStr = join(", ", $vals);
 
 // Make the changes
 $query = "INSERT INTO scoreChanges ($fieldStr) VALUES ($valStr)";
-$affectedRows = executeSqlForAffectedRows($mysqli, $query, $types, ...$params);
+$affectedRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
 if ($affectedRows !== 1) {
 	$response['error'] = "Unable to create change log entry for score.";
-	http_response_code(HTTP['INTERNAL_SERVER_ERROR']);
+	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
 }
 
 // Update the team score to reflect the change
 $query = "UPDATE teams SET score = score + ? WHERE teamIndex = ?";
-$result = executeSqlForResult($mysqli, $query, 'ii', $delta, $teamIndex);
+$result = Sql::executeSqlForResult($query, 'ii', $delta, $teamIndex);
 
 // Get the updated change log entries
-$result = $mysqli->query("SELECT * FROM scoreChanges");
+$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
 $entries = [];
-while ($row = getNextRow($result)) {
+while ($row = Sql::getNextRow($result)) {
 	$entry = [
-			'updateTime'     => stringToDate($row['updateTime']),
+			'updateTime'     => General::stringToDate($row['updateTime']),
 			'teamIndex'      => intval($row['teamIndex']),
 			'delta'          => intval($row['delta']),
 			'challengeIndex' => null
@@ -91,13 +90,13 @@ while ($row = getNextRow($result)) {
 
 // Get the updated teams
 $teams = [];
-$result = $mysqli->query("SELECT * FROM teams");
-while ($row = getNextRow($result)) {
+$result = Sql::executeSqlForResult("SELECT * FROM teams");
+while ($row = Sql::getNextRow($result)) {
 	$teams[] = [
 			'teamIndex'  => intval($row['teamIndex']),
 			'name'       => "" . $row['name'],
 			'score'      => intval($row['score']),
-			'updateTime' => stringToDate($row['updateTime']),
+			'updateTime' => General::stringToDate($row['updateTime']),
 			'members'    => []
 	];
 }
@@ -107,5 +106,5 @@ $response['data'] = [
 		'teams'        => $teams
 ];
 $response['message'] = "Updated score change log.";
-http_response_code(HTTP['OK']);
+Http::responseCode('OK');
 echo json_encode($response);

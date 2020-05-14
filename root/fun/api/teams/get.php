@@ -1,31 +1,30 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
+use util\General as General;
+use util\Http as Http;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
 // Get the teams
 $teams = [];
-$result = $mysqli->query("SELECT * FROM teams");
-while ($row = getNextRow($result)) {
+$result = Sql::executeSqlForResult("SELECT * FROM teams");
+while ($row = Sql::getNextRow($result)) {
 	$teams[] = [
 			'teamIndex'  => intval($row['teamIndex']),
 			'name'       => "" . $row['name'],
 			'score'      => intval($row['score']),
-			'updateTime' => stringToDate($row['updateTime']),
+			'updateTime' => General::stringToDate($row['updateTime']),
 			'members'    => []
 	];
 }
 
 // Add the members to the teams
-$result = $mysqli->query("SELECT * FROM teamMembers ORDER BY name ASC");
-while ($row = getNextRow($result)) {
+$result = Sql::executeSqlForResult("SELECT * FROM teamMembers ORDER BY name ASC");
+while ($row = Sql::getNextRow($result)) {
 	$memberName = "" . $row['name'];
 	$teamIndex = intval($row['teamIndex']);
 
@@ -35,5 +34,5 @@ while ($row = getNextRow($result)) {
 }
 
 $response['data'] = $teams;
-http_response_code(HTTP['OK']);
+Http::responseCode('OK');
 echo json_encode($response);

@@ -1,19 +1,18 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
-include('../internal/checkAdmin.php');
+use util\General as General;
+use util\Http as Http;
+use util\Session as Session;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
-if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
+if (!Session::$isGameAdmin) {
 	$response['error'] = "You are not an admin! GTFO.";
-	http_response_code(HTTP['FORBIDDEN']);
+	Http::responseCode('FORBIDDEN');
 	echo json_encode($response);
 	return;
 }
@@ -24,7 +23,7 @@ $hasFile = isset($file) && is_string($file) && !empty($file);
 // Validate input
 if (!$hasFile) {
 	$response['error'] = "Missing required field 'file'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
@@ -50,7 +49,7 @@ try {
 		$successful = imagejpeg($rotatedImage, $fullPath);
 	} else {
 		$response['error'] = "Unsupported image type.";
-		http_response_code(HTTP['BAD_REQUEST']);
+		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
@@ -61,41 +60,41 @@ try {
 
 	if ($successful) {
 		$response['message'] = "Image rotated.";
-		http_response_code(HTTP['OK']);
+		Http::responseCode('OK');
 
 		// Get the rotation index
-		$result = executeSqlForResult($mysqli, "SELECT * FROM uploads WHERE file = ?", 's', $file);
-		$row = getNextRow($result);
+		$result = Sql::executeSqlForResult("SELECT * FROM uploads WHERE file = ?", 's', $file);
+		$row = Sql::getNextRow($result);
 		$rotation = intval($row['rotation']);
 
 		// Rotate the rotation index 0->1->2->3->0
 		if (++$rotation > 3) $rotation = 0;
 
 		// Update the rotation index
-		executeSql($mysqli, "UPDATE uploads SET rotation = ? WHERE file = ?", 'is', $rotation, $file);
+		Sql::executeSql("UPDATE uploads SET rotation = ? WHERE file = ?", 'is', $rotation, $file);
 
 		// Add the updated uploads to the response
-		$result = $mysqli->query("SELECT * FROM uploads");
+		$result = Sql::executeSqlForResult("SELECT * FROM uploads");
 		$uploads = [];
-		while ($row = getNextRow($result)) {
+		while ($row = Sql::getNextRow($result)) {
 			$uploads[] = [
 					'file'           => "" . $row['file'],
 					'challengeIndex' => intval($row['challengeIndex']),
 					'teamIndex'      => intval($row['teamIndex']),
 					'state'          => "" . $row['state'],
 					'rotation'       => intval($row['rotation']),
-					'uploadTime'     => stringToDate($row['uploadTime']),
+					'uploadTime'     => General::stringToDate($row['uploadTime']),
 					'published'      => boolval($row['published'])
 			];
 		}
 		$response['uploads'] = $uploads;
 	} else {
 		$response['error'] = "Failed to rotate image [$file].";
-		http_response_code(HTTP['INTERNAL_SERVER_ERROR']);
+		Http::responseCode('INTERNAL_SERVER_ERROR');
 	}
 } catch(RuntimeException $e) {
 	$response['error'] = $e->getMessage();
-	http_response_code(HTTP['INTERNAL_SERVER_ERROR']);
+	Http::responseCode('INTERNAL_SERVER_ERROR');
 }
 
 echo json_encode($response);

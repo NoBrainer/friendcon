@@ -1,23 +1,19 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
-$isLoggedIn = isset($userSession) && $userSession !== "";
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include($_SERVER['DOCUMENT_ROOT'] . '/fun/api/internal/functions.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/fun/api/internal/initDB.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/fun/api/internal/checkAdmin.php');
-include($_SERVER['DOCUMENT_ROOT'] . '/fun/api/internal/initCaptcha.php');
+use util\Captcha as Captcha;
+use util\Http as Http;
+use util\Session as Session;
 
-// Remove sensitive info from memory
-unset($CAPTCHA_SECRET_V2_KEY);
-unset($CAPTCHA_SECRET_V3_KEY);
+Captcha::initialize(true);
+
+// Variables used in rendering
+$isLoggedIn = Session::$isLoggedIn;
+$isGameAdmin = Session::$isGameAdmin;
 
 // Short-circuit forwarding
-if (forwardHttps()) {
-	exit;
-}
 if ($requireAdmin && !$isGameAdmin) {
-	header("Location: /fun/game", true);
+	Http::forward("/fun/game", true);
 	exit;
 }
 ?>
@@ -40,4 +36,8 @@ if ($requireAdmin && !$isGameAdmin) {
 	<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=<?php echo CAPTCHA_SITE_V3_KEY; ?>"></script>
 	<script type="text/javascript" src="/fun/js/utils.js"></script>
 	<script type="text/javascript" src="/fun/game/game.js"></script>
+	<script type="text/javascript">
+		const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
+		const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
+	</script>
 </head>

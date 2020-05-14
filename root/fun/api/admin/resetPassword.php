@@ -1,19 +1,19 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
+use util\General as General;
+use util\Http as Http;
+use util\Session as Session;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
 // The user must be logged out
-if (isset($userSession) && $userSession !== "") {
+if (Session::$isLoggedIn) {
 	$response['error'] = "Must log out to reset password";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
@@ -25,38 +25,38 @@ $password = $_POST['password'];
 // Validate input
 if (!isset($email) || !is_string($email) || empty(trim($email))) {
 	$response['error'] = "Missing required field 'email'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 } else if (!isset($token) || !is_string($token) || empty(trim($token))) {
 	$response['error'] = "Missing required field 'token'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 } else if (!isset($password) || !is_string($password) || empty(trim($password))) {
 	$response['error'] = "Missing required field 'password'.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 
 // Make sure an admin exists with email and token
 $query = "SELECT * FROM admins WHERE email = ? AND hash = ?";
-$result = executeSqlForResult($mysqli, $query, 'ss', $email, $token);
-if (!hasRows($result, 1)) {
+$result = Sql::executeSqlForResult($query, 'ss', $email, $token);
+if (!Sql::hasRows($result, 1)) {
 	$response['error'] = "Invalid email/token pair.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 
 // Set the new password hash
 $query = "UPDATE admins SET hash = ? WHERE email = ?";
-$affectedRows = executeSqlForAffectedRows($mysqli, $query, 'ss', md5($password), $email);
+$affectedRows = Sql::executeSqlForAffectedRows($query, 'ss', md5($password), $email);
 
 if ($affectedRows === 1) {
 	$response['message'] = "Password successfully updated.";
-	http_response_code(HTTP['OK']);
+	Http::responseCode('OK');
 
 	// Send an email to the admin
 	$to = $email;
@@ -64,10 +64,10 @@ if ($affectedRows === 1) {
 	$lines = [
 			"Your password has been reset. If you did not do this, please contact us at: admin@friendcon.com"
 	];
-	sendEmailFromBot($to, $subject, $lines);
+	General::sendEmailFromBot($to, $subject, $lines);
 } else {
 	$response['error'] = "Password not updated.";
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::responseCode('BAD_REQUEST');
 }
 
 echo json_encode($response);

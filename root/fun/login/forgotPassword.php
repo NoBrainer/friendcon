@@ -30,9 +30,6 @@ $pageTitle = "Forgot Password";
 
 <!-- JavaScript -->
 <script type="text/javascript">
-	const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
-	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
-
 	$(document).ready(() => {
 		const $form = $('#forgotPasswordForm');
 		const $email = $('#email');

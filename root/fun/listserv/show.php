@@ -36,8 +36,6 @@ $requireAdmin = true;
 
 <!-- JavaScript -->
 <script type="text/javascript">
-	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
-
 	$(document).ready(() => {
 		const $copyEmails = $('#copyEmails');
 		const $emailList = $('#emailList');

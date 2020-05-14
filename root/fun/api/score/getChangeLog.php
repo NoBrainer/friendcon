@@ -1,29 +1,28 @@
 <?php
-session_start();
-$userSession = $_SESSION['userSession'];
+include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-include('../internal/constants.php');
-include('../internal/functions.php');
-include('../internal/initDB.php');
-include('../internal/checkAdmin.php');
+use util\General as General;
+use util\Http as Http;
+use util\Session as Session;
+use util\Sql as Sql;
 
 // Setup the content-type and response template
-header(CONTENT['JSON']);
+Http::contentType('JSON');
 $response = [];
 
-if (!isset($userSession) || $userSession == "" || !$isGameAdmin) {
+if (!Session::$isGameAdmin) {
 	$response['error'] = "You are not an admin! GTFO.";
-	http_response_code(HTTP['FORBIDDEN']);
+	Http::responseCode('FORBIDDEN');
 	echo json_encode($response);
 	return;
 }
 
 // Get the change log entries
-$result = $mysqli->query("SELECT * FROM scoreChanges");
+$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
 $entries = [];
-while ($row = getNextRow($result)) {
+while ($row = Sql::getNextRow($result)) {
 	$entry = [
-			'updateTime'     => stringToDate($row['updateTime']),
+			'updateTime'     => General::stringToDate($row['updateTime']),
 			'teamIndex'      => intval($row['teamIndex']),
 			'delta'          => intval($row['delta']),
 			'challengeIndex' => null
@@ -38,5 +37,5 @@ while ($row = getNextRow($result)) {
 	$entries[] = $entry;
 }
 $response['data'] = $entries;
-http_response_code(HTTP['OK']);
+Http::responseCode('OK');
 echo json_encode($response);

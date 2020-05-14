@@ -1,18 +1,22 @@
 <?php
+
+use util\Http as Http;
+
 $pageTitle = "Reset Password";
-?>
-<?php include('head.php'); ?>
-<?php
-// Require an email and token
+
+// Variables used in rendering
 $email = $_GET['email'];
 $token = $_GET['token'];
+
+// Require an email and token
 if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !is_string($token) || empty($token)) {
-	header(CONTENT['TEXT']);
-	http_response_code(HTTP['BAD_REQUEST']);
+	Http::contentType('TEXT');
+	Http::responseCode('BAD_REQUEST');
 	echo "BAD_REQUEST";
 	return;
 }
 ?>
+<?php include('head.php'); ?>
 <body>
 
 <!-- Content -->
@@ -55,9 +59,6 @@ if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !
 
 <!-- JavaScript -->
 <script type="text/javascript">
-	const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
-	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
-
 	$(document).ready(() => {
 		const $form = $('#resetPasswordForm');
 		const $email = $('#email');

@@ -33,9 +33,6 @@ $requireAdmin = false;
 
 <!-- JavaScript -->
 <script type="text/javascript">
-	const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
-	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
-
 	$(document).ready(() => {
 		const $unsubscribeForm = $('#unsubscribeForm');
 		const $email = $('#email');

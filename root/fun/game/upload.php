@@ -80,8 +80,6 @@ $requireAdmin = false;
 
 <!-- JavaScript -->
 <script type="text/javascript">
-	const captchaSiteV2Key = "<?php echo CAPTCHA_SITE_V2_KEY; ?>";
-	const captchaSiteV3Key = "<?php echo CAPTCHA_SITE_V3_KEY; ?>";
 	const MAX_FILE_SIZE = 5 * 1024 * 1024; //5MB
 	const pickTeamId = 'pickTeam';
 	const pickChallengeId = 'pickChallenge';
