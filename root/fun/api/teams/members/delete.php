@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Teams as Teams;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -35,33 +35,22 @@ if (!$hasTeamIndex) {
 	return;
 }
 
-// Delete the team members (one at a time to support duplicates)
+// Delete the team members
 $namesArr = explode(",", $names);
-$total = count($namesArr);
-$deleted = 0;
-$failedNames = [];
-foreach($namesArr as $name) {
-	$name = trim($name);
-	if (empty($name)) continue;
-
-	$query = "DELETE FROM teamMembers WHERE teamIndex = ? AND name = ? LIMIT 1";
-	$affectedRows = Sql::executeSqlForAffectedRows($query, 'is', $teamIndex, $name);
-	if ($affectedRows === 1) {
-		$deleted++;
-	} else {
-		$failedNames[] = $name;
-	}
-}
+$deleteResponse = Teams::deleteMembers($teamIndex, $namesArr);
+$deleteCount = $deleteResponse['deleteCount'];
+$failedNames = $deleteResponse['failedNames'];
+$total = $deleteResponse['total'];
 
 // Evaluate the status
-if ($deleted === $total) {
+if ($deleteCount === $total) {
 	$response['message'] = "Team members deleted.";
 	Http::responseCode('OK');
-} else if ($deleted === 0) {
+} else if ($deleteCount === 0) {
 	$response['error'] = "Unable to delete members";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 } else {
-	$response['message'] = "Team members deleted. [$deleted of $total]";
+	$response['message'] = "Team members deleted. [$deleteCount of $total]";
 	$response['data'] = [
 			'failedNames' => $failedNames
 	];

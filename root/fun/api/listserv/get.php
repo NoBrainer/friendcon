@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Listserv as Listserv;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -16,22 +16,8 @@ if (!Session::$isAdmin) {
 	return;
 }
 
-$emailStr = "";
-
 // Get the listserv emails
-$result = Sql::executeSqlForResult("SELECT * FROM listserv");
-if (!Sql::hasRows($result)) {
-	$emailStr = "Listserv is empty.";
-} else {
-	// Build the email string
-	while ($row = Sql::getNextRow($result)) {
-		if (!empty($emailStr)) $emailStr .= ", ";
-		$emailStr .= $row['email'];
-	}
-	if (empty($emailStr)) {
-		$emailStr = "Listserv is empty.";
-	}
-}
+$emailStr = Listserv::getListString();
 
 $response['data'] = $emailStr;
 Http::responseCode('OK');

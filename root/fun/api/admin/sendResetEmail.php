@@ -1,10 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Admins as Admins;
 use util\General as General;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -30,22 +30,17 @@ if (!isset($email) || !is_string($email) || empty(trim($email))) {
 $email = trim($email);
 
 // Make sure an admin exists with email
-$query = "SELECT * FROM admins WHERE email = ?";
-$result = Sql::executeSqlForResult($query, 's', $email);
-if (!Sql::hasRows($result, 1)) {
+$admin = Admins::getByEmail($email);
+if (is_null($admin)) {
 	$response['error'] = "Invalid email address [$email]";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 
-// Use the password hash as the token
-$row = Sql::getNextRow($result);
-$token = $row['hash'];
-//TODO: instead generate a token in the database
-//TODO: keep track of attempts and throttle 3 times per 5 minutes (or something like that)
 
 // Setup the email
+$token = Admins::getResetToken($admin);
 $to = $email;
 $subject = "FriendCon Password Reset";
 $link = General::linkHtml('link', "https://friendcon.com/fun/login/resetPassword?token=$token&email=$email");

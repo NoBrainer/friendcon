@@ -66,7 +66,7 @@ $requireAdmin = true;
 		}
 
 		function renderUnsubscribeTemplate() {
-			$footerTemplate.html("Don't want these emails? Unsubscribe: https://friendcon.com/unsubscribe");
+			$footerTemplate.html("Don't want these emails? Unsubscribe: <?php echo $unsubscribeUrl; ?>");
 		}
 
 		function setupHandlers() {

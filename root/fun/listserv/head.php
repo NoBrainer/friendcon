@@ -1,6 +1,7 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Listserv as Listserv;
 use util\Captcha as Captcha;
 use util\Http as Http;
 use util\Session as Session;
@@ -10,6 +11,7 @@ Captcha::initialize();
 // Variables used in rendering
 $isLoggedIn = Session::$isLoggedIn;
 $isAdmin = Session::$isAdmin;
+$unsubscribeUrl = Listserv::UNSUBSCRIBE_URL;
 
 // Short-circuit forwarding
 if ($requireAdmin && !$isAdmin) {

@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Teams as Teams;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -25,12 +25,15 @@ if (!$hasTeamIndex) {
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
+} else if (!Teams::exists($teamIndex)) {
+	$response['error'] = "No team found with teamIndex [$teamIndex].";
+	Http::responseCode('NOT_FOUND');
+	echo json_encode($response);
+	return;
 }
 
 // Prevent deleting teams with approved uploads
-$query = "SELECT * FROM uploads WHERE teamIndex = ? AND state > 0";
-$result = Sql::executeSqlForResult($query, 'i', $teamIndex);
-if ($result->num_rows > 0) {
+if (Teams::hasApprovedUploads($teamIndex)) {
 	$response['error'] = "Cannot delete a team with approved uploads.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -38,9 +41,7 @@ if ($result->num_rows > 0) {
 }
 
 // Prevent deleting teams with members
-$query = "SELECT * FROM teamMembers WHERE teamIndex = ?";
-$result = Sql::executeSqlForResult($query, 'i', $teamIndex);
-if ($result->num_rows > 0) {
+if (Teams::hasMembers($teamIndex)) {
 	$response['error'] = "Cannot delete a team with members. Delete them first.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -48,14 +49,10 @@ if ($result->num_rows > 0) {
 }
 
 // Delete the team
-$query = "DELETE FROM teams WHERE teamIndex = ?";
-$affectedRows = Sql::executeSqlForAffectedRows($query, 'i', $teamIndex);
-if ($affectedRows === 1) {
+$successful = Teams::delete($teamIndex);
+if ($successful) {
 	$response['message'] = "Team deleted.";
 	Http::responseCode('OK');
-} else if ($affectedRows === 0) {
-	$response['error'] = "No team found with teamIndex [$teamIndex].";
-	Http::responseCode('NOT_FOUND');
 } else {
 	$response['error'] = "Unable to delete team with teamIndex [$teamIndex].";
 	Http::responseCode('INTERNAL_SERVER_ERROR');

@@ -1,9 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Challenges as Challenges;
+use dao\Teams as Teams;
+use dao\Uploads as Uploads;
 use util\Http as Http;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -11,7 +12,7 @@ $response = [];
 
 try {
 	// Make sure the form was submitted with required fields
-	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+	if ($_SERVER["REQUEST_METHOD"] !== 'POST') {
 		$response['error'] = "Must send data with a POST.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
@@ -44,8 +45,7 @@ try {
 	}
 
 	// Check for undefined, multiple files, or a $_FILES corruption attack
-	if (!isset($_FILES["fileUpload"]) || !isset($_FILES['fileUpload']['error']) ||
-			is_array($_FILES['fileUpload']['error'])) {
+	if (!isset($_FILES["fileUpload"]) || !isset($_FILES['fileUpload']['error']) || is_array($_FILES['fileUpload']['error'])) {
 		$response['error'] = "Invalid parameters.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
@@ -82,7 +82,7 @@ try {
 		return;
 	}
 
-	// Check the MIME Type
+	// Check the MIME Type and file extension
 	$fileInfo = new finfo(FILEINFO_MIME_TYPE);
 	$allowedMimeTypes = [
 			"jpg"  => "image/jpg",
@@ -99,25 +99,23 @@ try {
 	}
 
 	// Make sure the challenge is still accepting submissions
-	$query = "SELECT * FROM challenges WHERE challengeIndex = ?";
-	$result = Sql::executeSqlForResult($query, 'i', $challengeIndex);
-	if (!Sql::hasRows($result)) {
+	$challenge = Challenges::get($challengeIndex);
+	if (is_null($challenge)) {
 		$response['error'] = "No challenge with challengeIndex [$challengeIndex].";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	$row = Sql::getNextRow($result);
 	$now = new DateTime();
-	$startTime = General::stringToDate($row['startTime']);
-	$endTime = General::stringToDate($row['endTime']);
-	if ($startTime && new DateTime($startTime) > $now) {
+	$startTime = $challenge['startTime'];
+	$endTime = $challenge['endTime'];
+	if (!is_null($startTime) && new DateTime($startTime) > $now) {
 		$response['error'] = "This challenge is not yet accepting submissions.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	if ($endTime && new DateTime($endTime) < $now) {
+	if (!is_null($endTime) && new DateTime($endTime) < $now) {
 		$response['error'] = "This challenge is no longer accepting submissions.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
@@ -125,9 +123,7 @@ try {
 	}
 
 	// Make sure the team exists
-	$query = "SELECT * FROM teams WHERE teamIndex = ?";
-	$result = Sql::executeSqlForResult($query, 'i', $teamIndex);
-	if (!Sql::hasRows($result)) {
+	if (!Teams::exists($teamIndex)) {
 		$response['error'] = "No team with teamIndex [$teamIndex].";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
@@ -145,8 +141,7 @@ try {
 	}
 
 	// Track the file in the database
-	$query = "INSERT INTO uploads(`teamIndex`, `challengeIndex`, `file`) VALUES (?, ?, ?)";
-	$successful = Sql::executeSql($query, 'iis', $teamIndex, $challengeIndex, $newFile);
+	$successful = Uploads::add($teamIndex, $challengeIndex, $newFile);
 	if ($successful) {
 		// Success
 		$response['message'] = "File is successfully uploaded!";

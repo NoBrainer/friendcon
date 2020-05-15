@@ -1,6 +1,7 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Teams as Teams;
 use util\General as General;
 use util\Http as Http;
 use util\Session as Session;
@@ -30,7 +31,7 @@ if (!$hasName) {
 	return;
 }
 $name = trim($name);
-if (preg_match('/[,<>()]/', $name)) {
+if (!Teams::isValidMemberName($name)) {
 	$response['error'] = "Field 'name' contains invalid special characters.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -39,38 +40,15 @@ if (preg_match('/[,<>()]/', $name)) {
 
 // Randomly pick a team if one is not set
 if (!$hasTeamIndex) {
-	// Get the teams with member counts and figure out the least members on a single team
-	$teams = [];
-	$minMemberCount = 9001;
-	$result = Sql::executeSqlForResult("SELECT *, (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
-	if ($result->num_rows === 0) {
+	if (!Teams::isSetup()) {
 		$response['error'] = "Must setup teams before adding members.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	while ($row = Sql::getNextRow($result)) {
-		$memberCount = intval($row['memberCount']);
-		$minMemberCount = min($minMemberCount, $memberCount);
-		$teams[] = [
-				'teamIndex'   => intval($row['teamIndex']),
-				'name'        => "" . $row['name'],
-				'score'       => intval($row['score']),
-				'updateTime'  => General::stringToDate($row['updateTime']),
-				'memberCount' => $memberCount
-		];
-	}
 
-	// Figure out which teams are candidates (less than 2 members more than the minimum)
-	$teamCandidates = [];
-	foreach($teams as $team) {
-		if ($team['memberCount'] < $minMemberCount + 2) {
-			$teamCandidates[] = $team;
-		}
-	}
-
-	// Randomly pick one of the candidates
-	$teamIndex = $teamCandidates[array_rand($teamCandidates)]['teamIndex'];
+	// Randomly pick a team (within a threshold based on team member count)
+	$teamIndex = Teams::getRandomTeamIndex();
 }
 $teamIndex = intval($teamIndex);
 
@@ -81,7 +59,7 @@ $member = [
 ];
 
 // Make the changes
-$query = "INSERT INTO teamMembers(name, teamIndex) VALUES (?, ?)";
+$query = "INSERT INTO teamMembers (name, teamIndex) VALUES (?, ?)";
 $affectedRows = Sql::executeSqlForAffectedRows($query, 'si', $name, $teamIndex);
 if ($affectedRows !== 1) {
 	$response['error'] = "Unable to create team member.";

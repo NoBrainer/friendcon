@@ -1,9 +1,8 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Listserv as Listserv;
 use util\Http as Http;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -18,7 +17,7 @@ if (!$hasEmail) {
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (preg_match('/[\s,<>()]/', $name)) {
+} else if (!Listserv::isValidEmail($email)) {
 	$response['error'] = "Field 'email' contains invalid special characters.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -27,8 +26,7 @@ if (!$hasEmail) {
 $email = trim($email);
 
 // If the email is already off the listserv, we're done
-$result = Sql::executeSqlForResult("SELECT * FROM listserv WHERE email = ?", 's', $email);
-if ($result->num_rows === 0) {
+if (!Listserv::exists($email)) {
 	$response['message'] = "Already unsubscribed [$email].";
 	Http::responseCode('OK');
 	echo json_encode($response);
@@ -36,20 +34,11 @@ if ($result->num_rows === 0) {
 }
 
 // Remove the email
-$affectedRows = Sql::executeSqlForAffectedRows("DELETE FROM listserv WHERE email = ?", 's', $email);
-if ($affectedRows === 1) {
+$successful = Listserv::delete($email);
+if ($successful) {
 	$response['message'] = "Successfully unsubscribed [$email].";
+	$response['emailSent'] = Listserv::notifyUnsubscribed($email);
 	Http::responseCode('OK');
-
-	// Notify the person via email
-	$to = $email;
-	$subject = "Unsubscribed from FriendCon Listserv";
-	$link = General::linkHtml('resubscribe', 'https://friendcon.com/subscribe');
-	$lines = [
-			"You're now unsubscribed from FriendCon. Listservs are not for everyone, but if you ever change your " .
-			"mind, you can always $link."
-	];
-	General::sendEmailFromBot($to, $subject, $lines);
 } else {
 	$response['error'] = "Error unsubscribing [$email].";
 	Http::responseCode('INTERNAL_SERVER_ERROR');

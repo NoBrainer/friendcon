@@ -1,10 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Challenges as Challenges;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -40,50 +39,22 @@ if (!$hasChallengeIndex) {
 	return;
 }
 
-// Build the SQL pieces
-$changes = [];
-$types = '';
-$params = [];
-if ($hasName) {
-	$changes[] = "name = ?";
-	$types .= 's';
-	$params[] = "$name";
+// Make sure the challenge exists
+if (!Challenges::exists($challengeIndex)) {
+	$response['error'] = "No challenge with challengeIndex [$challengeIndex].";
+	Http::responseCode('BAD_REQUEST');
+	echo json_encode($response);
+	return;
 }
-if ($hasStartTime) {
-	$changes[] = "startTime = ?";
-	$types .= 's';
-	$params[] = General::stringToDate($startTime);
-}
-if ($hasEndTime) {
-	$changes[] = "endTime = ?";
-	$types .= 's';
-	$params[] = General::stringToDate($endTime);
-}
-$changesStr = join(", ", $changes);
-$types .= 'i';
-$params[] = $challengeIndex;
 
 // Make the changes
-$query = "UPDATE challenges SET $changesStr WHERE challengeIndex = ?";
-$affectedRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
-if ($affectedRows === 1) {
+$successful = Challenges::update($challengeIndex, $name, $startTime, $endTime);
+if ($successful) {
+	// Return the updated challenge
+	$response['data'] = Challenges::get($challengeIndex);
 	$response['message'] = "Challenge updated.";
 	Http::responseCode('OK');
-
-	// Return the updated challenge
-	$result = Sql::executeSqlForResult("SELECT * FROM challenges WHERE challengeIndex = ?", 'i', $challengeIndex);
-	$row = Sql::getNextRow($result);
-	$response['data'] = [
-			'challengeIndex' => intval($row['challengeIndex']),
-			'startTime'      => General::stringToDate($row['startTime']),
-			'endTime'        => General::stringToDate($row['endTime']),
-			'name'           => "" . $row['name'],
-			'published'      => boolval($row['published'])
-	];
-} else if ($affectedRows === 0) {
-	Http::responseCode('NOT_MODIFIED');
 } else {
-	$response['error'] = "Unable to update challenge.";
-	Http::responseCode('INTERNAL_SERVER_ERROR');
+	Http::responseCode('NOT_MODIFIED');
 }
 echo json_encode($response);

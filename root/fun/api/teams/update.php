@@ -1,10 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Teams as Teams;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -39,42 +38,27 @@ if (!$hasTeamIndex) {
 	echo json_encode($response);
 	return;
 }
+if (!$hasName) $name = null;
+if (!$hasScore) $score = null;
 
 try {
 	// Handle members updates
 	if ($hasMembers) {
-		$membersArr = empty($members) ? [] : explode(",", $members);
-		if (sizeof($membersArr) === 0) {
-			// Delete all members
-			Sql::executeSql("DELETE FROM teamMembers WHERE teamIndex = ?", 'i', $teamIndex);
+		if (empty($members)) {
+			Teams::deleteAllMembers($teamIndex);
 		} else {
-			// Build SQL pieces
-			$valuesStr = "";
-			$types = "";
-			$params = [];
-			foreach($membersArr as $memberName) {
-				// Validate each name
-				if (preg_match("[,<>()&]", $memberName)) {
-					$response['error'] = "One of the members contains invalid special characters [$memberName].";
-					Http::responseCode('BAD_REQUEST');
-					echo json_encode($response);
-					return;
-				}
-
-				$params[] = trim($memberName);
-				$params[] = $teamIndex;
-				$types .= 'si';
-				if (!empty($valuesStr)) $valuesStr .= ",";
-				$valuesStr .= "(?, ?)";
+			$membersArr = explode(",", $members);
+			$invalidNames = Teams::getInvalidMemberNames($membersArr);
+			if (sizeof($invalidNames) > 0) {
+				$response['error'] = "One or more of the members contains invalid special characters.";
+				$response['invalidNames'] = $invalidNames;
+				Http::responseCode('BAD_REQUEST');
+				echo json_encode($response);
+				return;
 			}
 
-			// Delete the previous members
-			Sql::executeSql("DELETE FROM teamMembers WHERE teamIndex = ?", 'i', $teamIndex);
-
-			// Add the updated members
-			$query = "INSERT INTO teamMembers (name, teamIndex) VALUES $valuesStr";
-			$affectedMemberRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
-			if ($affectedMemberRows === 0) {
+			$successful = Teams::setMembers($teamIndex, $membersArr);
+			if (!$successful) {
 				$response['error'] = "Unable to update the team members.";
 				Http::responseCode('INTERNAL_SERVER_ERROR');
 				echo json_encode($response);
@@ -83,57 +67,16 @@ try {
 		}
 	}
 
-	// Build the SQL pieces
-	$changes = [];
-	$types = '';
-	$params = [];
-	if ($hasName) {
-		$changes[] = "name = ?";
-		$types .= 's';
-		$params[] = "$name";
-	}
-	if ($hasScore) {
-		$changes[] = "score = ?";
-		$types .= 'i';
-		$params[] = intval($score);
-	}
-	$changesStr = join(", ", $changes);
-	$types .= 'i';
-	$params[] = $teamIndex;
-
-	// Make the changes
-	$query = "UPDATE teams SET $changesStr WHERE teamIndex = ?";
-	$affectedRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
-	if ($affectedRows === 1 || $affectedRows === 0) {
+	$successful = Teams::update($teamIndex, $name, $score);
+	if ($successful) {
 		$response['message'] = "Team updated.";
 		Http::responseCode('OK');
 
-		// Get the teams
-		$teams = [];
-		$result = Sql::executeSqlForResult("SELECT * FROM teams");
-		while ($row = Sql::getNextRow($result)) {
-			$teams[] = [
-					'teamIndex'  => intval($row['teamIndex']),
-					'name'       => "" . $row['name'],
-					'score'      => intval($row['score']),
-					'updateTime' => General::stringToDate($row['updateTime']),
-					'members'    => []
-			];
-		}
-
-		// Add the members to the teams
-		$result = Sql::executeSqlForResult("SELECT * FROM teamMembers ORDER BY name ASC");
-		while ($row = Sql::getNextRow($result)) {
-			$memberName = "" . $row['name'];
-			$teamIndex = intval($row['teamIndex']);
-
-			// Add the member name to the team's members
-			$key = array_search($teamIndex, array_column($teams, 'teamIndex'));
-			$teams[$key]['members'][] = $memberName;
-		}
+		// Get the updated teams
+		$updatedTeams = Teams::getAll();
 
 		// Return the updated teams
-		$response['data'] = $teams;
+		$response['data'] = $updatedTeams;
 	} else {
 		$response['error'] = "Unable to update team.";
 		Http::responseCode('INTERNAL_SERVER_ERROR');

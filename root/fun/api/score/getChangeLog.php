@@ -1,10 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Score as Score;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -18,24 +17,8 @@ if (!Session::$isGameAdmin) {
 }
 
 // Get the change log entries
-$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
-$entries = [];
-while ($row = Sql::getNextRow($result)) {
-	$entry = [
-			'updateTime'     => General::stringToDate($row['updateTime']),
-			'teamIndex'      => intval($row['teamIndex']),
-			'delta'          => intval($row['delta']),
-			'challengeIndex' => null
-	];
+$entries = Score::getChangeLogEntries();
 
-	// Handle the optional challengeIndex
-	$challengeIndex = $row['challengeIndex'];
-	if (isset($challengeIndex) && !is_null($challengeIndex && is_numeric($challengeIndex))) {
-		$entry['challengeIndex'] = intval($challengeIndex);
-	}
-
-	$entries[] = $entry;
-}
 $response['data'] = $entries;
 Http::responseCode('OK');
 echo json_encode($response);

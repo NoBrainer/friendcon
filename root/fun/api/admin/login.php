@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Admins as Admins;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -33,9 +33,8 @@ if (Session::$isLoggedIn) {
 $password = trim($password);
 
 // Check for the admin
-$query = "SELECT * FROM admins WHERE email = ?";
-$result = Sql::executeSqlForResult($query, 's', trim($email));
-if (!Sql::hasRows($result, 1)) {
+$admin = Admins::getByEmail($email);
+if (is_null($admin)) {
 	$response['error'] = "No admin with this email.";
 	Http::responseCode('NOT_FOUND');
 	echo json_encode($response);
@@ -43,10 +42,9 @@ if (!Sql::hasRows($result, 1)) {
 }
 
 // Make sure the password hashes match
-$row = Sql::getNextRow($result);
-if (md5($password) === $row['hash']) {
-	$response['data'] = $row['uid'];
-	Session::login($row['uid']);
+if (Admins::checkPassword($admin, $password)) {
+	$response['data'] = $admin['uid'];
+	Session::login($admin['uid']);
 	Http::responseCode('OK');
 } else {
 	$response['error'] = "Wrong password.";

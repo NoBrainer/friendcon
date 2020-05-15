@@ -1,10 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Admins as Admins;
 use util\General as General;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -41,9 +41,7 @@ if (!isset($email) || !is_string($email) || empty(trim($email))) {
 }
 
 // Make sure an admin exists with email and token
-$query = "SELECT * FROM admins WHERE email = ? AND hash = ?";
-$result = Sql::executeSqlForResult($query, 'ss', $email, $token);
-if (!Sql::hasRows($result, 1)) {
+if (!Admins::existsWithResetToken($email, $token)) {
 	$response['error'] = "Invalid email/token pair.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -51,9 +49,7 @@ if (!Sql::hasRows($result, 1)) {
 }
 
 // Set the new password hash
-$query = "UPDATE admins SET hash = ? WHERE email = ?";
-$affectedRows = Sql::executeSqlForAffectedRows($query, 'ss', md5($password), $email);
-
+$affectedRows = Admins::updatePassword($email, $password);
 if ($affectedRows === 1) {
 	$response['message'] = "Password successfully updated.";
 	Http::responseCode('OK');

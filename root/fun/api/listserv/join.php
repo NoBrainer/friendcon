@@ -1,9 +1,8 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Listserv as Listserv;
 use util\Http as Http;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -18,7 +17,7 @@ if (!$hasEmail) {
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (preg_match('/[\s,<>()]/', $name)) {
+} else if (!Listserv::isValidEmail($email)) {
 	$response['error'] = "Field 'email' contains invalid special characters.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -27,8 +26,7 @@ if (!$hasEmail) {
 $email = trim($email);
 
 // If the email is already on the listserv, we're done
-$result = Sql::executeSqlForResult("SELECT * FROM listserv WHERE email = ?", 's', $email);
-if ($result->num_rows > 0) {
+if (Listserv::exists($email)) {
 	$response['message'] = "Already subscribed [$email].";
 	Http::responseCode('OK');
 	echo json_encode($response);
@@ -36,19 +34,11 @@ if ($result->num_rows > 0) {
 }
 
 // Add the email
-$affectedRows = Sql::executeSqlForAffectedRows("INSERT INTO listserv (email) VALUES (?)", 's', $email);
-if ($affectedRows === 1) {
+$successful = Listserv::add($email);
+if ($successful) {
 	$response['message'] = "Successfully subscribed [$email].";
+	$response['emailSent'] = Listserv::notifySubscribed($email);
 	Http::responseCode('OK');
-
-	// Notify the person via email
-	$to = $email;
-	$subject = "Subscribed to FriendCon Listserv!";
-	$link = General::linkHtml('unsubscribe', 'https://friendcon.com/unsubscribe');
-	$lines = [
-			"Thanks for subscribing! If you didn't do this, please $link and/or contact admin@friendcon.com."
-	];
-	General::sendEmailFromBot($to, $subject, $lines);
 } else {
 	$response['error'] = "Error subscribing [$email].";
 	Http::responseCode('INTERNAL_SERVER_ERROR');

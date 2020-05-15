@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Challenges as Challenges;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -27,10 +27,16 @@ if (!$hasChallengeIndex) {
 	return;
 }
 
+// Make sure the challenge exists
+if (!Challenges::exists($challengeIndex)) {
+	$response['error'] = "No challenge with challengeIndex [$challengeIndex].";
+	Http::responseCode('BAD_REQUEST');
+	echo json_encode($response);
+	return;
+}
+
 // Prevent deleting challenges with approved uploads
-$query = "SELECT * FROM uploads WHERE challengeIndex = ? AND state > 0";
-$result = Sql::executeSqlForResult($query, 'i', $challengeIndex);
-if ($result->num_rows > 0) {
+if (Challenges::hasApprovedUploads($challengeIndex)) {
 	$response['error'] = "Cannot delete a challenge with approved uploads.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -38,14 +44,10 @@ if ($result->num_rows > 0) {
 }
 
 // Delete the challenge
-$query = "DELETE FROM challenges WHERE challengeIndex = ?";
-$affectedRows = Sql::executeSqlForAffectedRows($query, 'i', $challengeIndex);
-if ($affectedRows === 1) {
+$successful = Challenges::delete($challengeIndex);
+if ($successful) {
 	$response['message'] = "Challenge deleted.";
 	Http::responseCode('OK');
-} else if ($affectedRows === 0) {
-	$response['error'] = "No challenge with challengeIndex [$challengeIndex].";
-	Http::responseCode('BAD_REQUEST');
 } else {
 	$response['error'] = "Unable to delete challenge.";
 	Http::responseCode('INTERNAL_SERVER_ERROR');

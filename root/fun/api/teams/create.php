@@ -1,10 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Teams as Teams;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -28,8 +27,7 @@ if (!$hasName) {
 }
 
 // Make sure the name is unique
-$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE name = ?", 's', $name);
-if ($result->num_rows > 0) {
+if (Teams::existsWithName($name)) {
 	$response['error'] = "There's already a team with that name [$name].";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -37,30 +35,19 @@ if ($result->num_rows > 0) {
 }
 
 // Make the changes
-$query = "INSERT INTO teams(name) VALUES (?)";
-$affectedRows = Sql::executeSqlForAffectedRows($query, 's', $name);
-if ($affectedRows !== 1) {
+$successful = Teams::add($name);
+if (!$successful) {
 	$response['error'] = "Unable to create team.";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
 }
 
-// Get the teams
-$teams = [];
-$result = Sql::executeSqlForResult("SELECT * FROM teams");
-while ($row = Sql::getNextRow($result)) {
-	$teams[] = [
-			'teamIndex'  => intval($row['teamIndex']),
-			'name'       => "" . $row['name'],
-			'score'      => intval($row['score']),
-			'updateTime' => General::stringToDate($row['updateTime']),
-			'members'    => []
-	];
-}
+// Get the updated teams
+$updatedTeams = Teams::getAll();
 
 // Return the updated teams
-$response['data'] = $teams;
+$response['data'] = $updatedTeams;
 $response['message'] = "Team created.";
 Http::responseCode('OK');
 echo json_encode($response);

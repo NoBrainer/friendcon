@@ -1,10 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\General as General;
+use dao\Score as Score;
+use dao\Teams as Teams;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -42,68 +42,26 @@ if (!$hasTeamIndex) {
 	echo json_encode($response);
 	return;
 }
-
-// Build the SQL pieces
-$fields = ['teamIndex', 'delta'];
-$vals = ['?', '?'];
-$types = 'ii';
-$params = [$teamIndex, $delta];
-if ($hasChallengeIndex) {
-	$fields[] = "challengeIndex";
-	$vals[] = "?";
-	$types .= 'i';
-	$params[] = "$challengeIndex";
+if (!$hasChallengeIndex) {
+	$challengeIndex = null;
 }
-$fieldStr = join(", ", $fields);
-$valStr = join(", ", $vals);
 
 // Make the changes
-$query = "INSERT INTO scoreChanges ($fieldStr) VALUES ($valStr)";
-$affectedRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
-if ($affectedRows !== 1) {
+$successful = Score::update($teamIndex, $delta, $challengeIndex);
+if (!$successful) {
 	$response['error'] = "Unable to create change log entry for score.";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
 }
 
-// Update the team score to reflect the change
-$query = "UPDATE teams SET score = score + ? WHERE teamIndex = ?";
-$result = Sql::executeSqlForResult($query, 'ii', $delta, $teamIndex);
-
-// Get the updated change log entries
-$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
-$entries = [];
-while ($row = Sql::getNextRow($result)) {
-	$entry = [
-			'updateTime'     => General::stringToDate($row['updateTime']),
-			'teamIndex'      => intval($row['teamIndex']),
-			'delta'          => intval($row['delta']),
-			'challengeIndex' => null
-	];
-	if (!is_null($row['challengeIndex'] && is_numeric($row['challengeIndex']))) {
-		$entry['challengeIndex'] = intval($row['challengeIndex']);
-	}
-
-	$entries[] = $entry;
-}
-
-// Get the updated teams
-$teams = [];
-$result = Sql::executeSqlForResult("SELECT * FROM teams");
-while ($row = Sql::getNextRow($result)) {
-	$teams[] = [
-			'teamIndex'  => intval($row['teamIndex']),
-			'name'       => "" . $row['name'],
-			'score'      => intval($row['score']),
-			'updateTime' => General::stringToDate($row['updateTime']),
-			'members'    => []
-	];
-}
+// Get the updated change log entries and teams
+$updatedChangeLogEntries = Score::getChangeLogEntries();
+$updatedTeams = Teams::getAll();
 
 $response['data'] = [
-		'scoreChanges' => $entries,
-		'teams'        => $teams
+		'scoreChanges' => $updatedChangeLogEntries,
+		'teams'        => $updatedTeams
 ];
 $response['message'] = "Updated score change log.";
 Http::responseCode('OK');

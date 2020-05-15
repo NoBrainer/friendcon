@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
+use dao\Uploads as Uploads;
 use util\Http as Http;
 use util\Session as Session;
-use util\Sql as Sql;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -31,28 +31,27 @@ if (!$hasFile) {
 } else if (!$hasState) {
 	Http::responseCode('NOT_MODIFIED');
 	return;
+} else if (!Uploads::exists($file)) {
+	$response['error'] = "No file found.";
+	Http::responseCode('NOT_FOUND');
+	echo json_encode($response);
+	return;
 }
 
 // Get the value of the state string
-$result = Sql::executeSqlForResult("SELECT * FROM uploadState WHERE state = ?", 's', $state);
-if (!Sql::hasRows($result, 1)) {
+$stateValue = Uploads::getStateValue($state);
+if (is_null($stateValue)) {
 	$response['error'] = "Invalid value provided for 'state'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
-$row = Sql::getNextRow($result);
-$stateValue = intval($row['value']);
 
 // Make the change
-$query = "UPDATE uploads SET state = ? WHERE file = ?";
-$info = Sql::executeSqlForInfo($query, 'is', $stateValue, $file);
-if ($info['matched'] === 1) {
+$successful = Uploads::updateState($file, $stateValue);
+if ($successful) {
 	$response['message'] = "Set file [$file] to $state.";
 	Http::responseCode('OK');
-} else if ($info['matched'] === 0) {
-	$response['error'] = "No file found.";
-	Http::responseCode('NOT_FOUND');
 } else {
 	$response['error'] = "Unexpected error occurred.";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
