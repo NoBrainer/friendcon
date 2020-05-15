@@ -2,6 +2,7 @@
 
 namespace util;
 
+use Constants as Constants;
 use mysqli as mysqli;
 use mysqli_result as mysqli_result;
 use mysqli_stmt as mysqli_stmt;
@@ -127,8 +128,10 @@ class Sql {
 	 * @see mysqli::__construct
 	 */
 	public static function initializeConnection() {
+		// Variables in this config file:
+		// - $DB - an object with database initialization parameters
 		$DB = null;
-		include($_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/db.php');
+		include(Constants::dbConfig());
 
 		Sql::$mysqli = new mysqli($DB['HOST'], $DB['USER'], $DB['PASS'], $DB['NAME']);
 		unset($DB); //Remove sensitive info from memory

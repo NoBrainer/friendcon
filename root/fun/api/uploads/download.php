@@ -13,7 +13,7 @@ if (!isset($fileName) || empty($fileName)) {
 }
 
 // Build the path from the uploads directory
-$filePath = sprintf("%s/%s", UPLOADS_DIR, $fileName);
+$filePath = sprintf("%s/%s", Constants::uploadsDir(), $fileName);
 
 // Handle missing file
 if (!file_exists($filePath)) {

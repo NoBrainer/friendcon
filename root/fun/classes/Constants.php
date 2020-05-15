@@ -21,4 +21,16 @@ class Constants {
 			'NOT_FOUND'             => 404,
 			'INTERNAL_SERVER_ERROR' => 500
 	];
+
+	public static function captchaConfig() {
+		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/captcha.php';
+	}
+
+	public static function dbConfig() {
+		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/db.php';
+	}
+
+	public static function uploadsDir() {
+		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/uploads';
+	}
 }

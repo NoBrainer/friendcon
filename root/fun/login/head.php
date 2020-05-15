@@ -3,7 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use util\Captcha as Captcha;
 
-Captcha::initialize(true);
+Captcha::initialize();
 ?>
 <!DOCTYPE html>
 <html lang="en">

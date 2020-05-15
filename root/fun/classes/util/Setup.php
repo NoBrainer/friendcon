@@ -10,9 +10,6 @@ class Setup {
 		// Initialize the user session
 		Session::initialize();
 
-		// Load the private config so that its constants are available
-		include($_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/config.php');
-
 		// Setup the database connection
 		Sql::initializeConnection();
 

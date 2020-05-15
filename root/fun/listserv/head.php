@@ -5,7 +5,7 @@ use util\Captcha as Captcha;
 use util\Http as Http;
 use util\Session as Session;
 
-Captcha::initialize(true);
+Captcha::initialize();
 
 // Variables used in rendering
 $isLoggedIn = Session::$isLoggedIn;

@@ -29,7 +29,7 @@ if (!$hasFile) {
 }
 try {
 	// Use the full path
-	$fullPath = sprintf('%s/%s', UPLOADS_DIR, $file);
+	$fullPath = sprintf('%s/%s', Constants::uploadsDir(), $file);
 
 	// Create the file in memory, depending on the image extension
 	if (preg_match('/\.gif$/i', $fullPath)) {

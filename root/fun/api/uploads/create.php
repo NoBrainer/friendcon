@@ -136,7 +136,7 @@ try {
 
 	// Build a unique file name and move the file from the temporary directory
 	$newFile = sprintf('%s_%s.%s', time(), sha1_file($_FILES['fileUpload']['tmp_name']), $extension);
-	$newFilePath = sprintf('%s/%s', UPLOADS_DIR, $newFile);
+	$newFilePath = sprintf('%s/%s', Constants::uploadsDir(), $newFile);
 	if (!move_uploaded_file($_FILES['fileUpload']['tmp_name'], $newFilePath)) {
 		$response['error'] = "Failed to move uploaded file.";
 		Http::responseCode('INTERNAL_SERVER_ERROR');

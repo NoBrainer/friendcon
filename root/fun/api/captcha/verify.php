@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Validate input
 $token = $_POST['token'];
 $action = $_POST['action'];
-$debug = isset($_POST['debug']);
 if (!isset($token) || !is_string($token) || empty($token)) {
 	$response['error'] = "Missing required field 'token'.";
 	Http::responseCode('BAD_REQUEST');
@@ -33,31 +32,23 @@ if (!isset($token) || !is_string($token) || empty($token)) {
 }
 
 // Call Google for reCAPTCHA verification
-Captcha::initialize();
-$url = "https://www.google.com/recaptcha/api/siteverify?secret=" . Captcha::$CAPTCHA_SECRET_V3_KEY . "&response=$token";
-$recaptchaResponse = json_decode(file_get_contents($url));
-Captcha::unsetCaptchaSecrets();
-
-// Parse through the response
-$success = $recaptchaResponse->success;
-$hostname = $recaptchaResponse->hostname;
-$score = $recaptchaResponse->score;
-
-if ($debug) {
-	$response['recaptcha'] = $recaptchaResponse;
-}
+$verification = Captcha::verify($token);
+$success = $verification->success;
+$hostname = $verification->hostname;
+$score = $verification->score;
+$verifiedAction = $verification->action;
 
 // Respond based on the reCAPTCHA response
 if (!$success) {
 	$response['error'] = "Invalid token.";
 	Http::responseCode('BAD_REQUEST');
-} else if ($hostname !== "friendcon.com") {
+} else if ($hostname !== Captcha::HOSTNAME) {
 	$response['error'] = "Invalid hostname for website.";
 	Http::responseCode('BAD_REQUEST');
-} else if ($action !== $recaptchaResponse->action) {
+} else if ($action !== $verifiedAction) {
 	$response['error'] = "Invalid action. Different than action used to generate token.";
 	Http::responseCode('BAD_REQUEST');
-} else if ($score < 0.5) {
+} else if ($score < Captcha::THRESHOLD) {
 	$response['message'] = "Weak reCAPTCHA score [$score]";
 	Http::responseCode('NOT_AUTHORIZED');
 } else {
