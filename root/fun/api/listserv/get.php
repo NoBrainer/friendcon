@@ -16,9 +16,7 @@ if (!Session::$isAdmin) {
 	return;
 }
 
-// Get the listserv emails
-$emailStr = Listserv::getListString();
-
-$response['data'] = $emailStr;
+// Return a string with a list of email addresses
+$response['data'] = Listserv::getListString();
 Http::responseCode('OK');
 echo json_encode($response);

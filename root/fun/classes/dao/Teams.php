@@ -2,7 +2,7 @@
 
 namespace dao;
 
-use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Teams {
@@ -63,17 +63,17 @@ class Teams {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		$team = [
-				'teamIndex'  => intval($row['teamIndex']),
-				'name'       => "" . $row['name'],
-				'score'      => intval($row['score']),
-				'updateTime' => General::stringToDate($row['updateTime']),
+				'teamIndex'  => Param::asInteger($row['teamIndex']),
+				'name'       => Param::asString($row['name']),
+				'score'      => Param::asInteger($row['score']),
+				'updateTime' => Param::asTimestamp($row['updateTime']),
 				'members'    => []
 		];
 
 		// Add the members to the team
 		$result = Sql::executeSqlForResult("SELECT * FROM teamMembers WHERE teamIndex = ? ORDER BY name ASC", 'i', $teamIndex);
 		while ($row = Sql::getNextRow($result)) {
-			$team['members'][] = $row['name'];
+			$team['members'][] = Param::asString($row['name']);
 		}
 		return $team;
 	}
@@ -83,10 +83,10 @@ class Teams {
 		$result = Sql::executeSqlForResult("SELECT * FROM teams");
 		while ($row = Sql::getNextRow($result)) {
 			$allTeams[] = [
-					'teamIndex'  => intval($row['teamIndex']),
-					'name'       => "" . $row['name'],
-					'score'      => intval($row['score']),
-					'updateTime' => General::stringToDate($row['updateTime']),
+					'teamIndex'  => Param::asInteger($row['teamIndex']),
+					'name'       => Param::asString($row['name']),
+					'score'      => Param::asInteger($row['score']),
+					'updateTime' => Param::asTimestamp($row['updateTime']),
 					'members'    => []
 			];
 		}
@@ -94,8 +94,8 @@ class Teams {
 		// Add the members to the teams
 		$result = Sql::executeSqlForResult("SELECT * FROM teamMembers ORDER BY name ASC");
 		while ($row = Sql::getNextRow($result)) {
-			$memberName = "" . $row['name'];
-			$teamIndex = intval($row['teamIndex']);
+			$memberName = Param::asString($row['name']);
+			$teamIndex = Param::asInteger($row['teamIndex']);
 
 			// Add the member name to the team's members
 			$key = array_search($teamIndex, array_column($allTeams, 'teamIndex'));
@@ -131,7 +131,7 @@ class Teams {
 		$minMemberCount = null;
 		$result = Sql::executeSqlForResult("SELECT (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
 		while ($row = Sql::getNextRow($result)) {
-			$memberCount = intval($row['memberCount']);
+			$memberCount = Param::asInteger($row['memberCount']);
 			$minMemberCount = is_null($minMemberCount) ? $memberCount : min($minMemberCount, $memberCount);
 		}
 		return is_null($minMemberCount) ? 0 : $minMemberCount;
@@ -168,6 +168,10 @@ class Teams {
 		return !preg_match("[,<>()&]", $name);
 	}
 
+	public static function isValidTeamIndex($teamIndex) {
+		return Param::isInteger($teamIndex) && $teamIndex >= 1;
+	}
+
 	public static function setMembers($teamIndex, $memberNames) {
 		// Build SQL pieces
 		$valueStr = "";
@@ -198,12 +202,12 @@ class Teams {
 		if (!is_null($name)) {
 			$changes[] = "name = ?";
 			$types .= 's';
-			$params[] = "$name";
+			$params[] = $name;
 		}
 		if (!is_null($score)) {
 			$changes[] = "score = ?";
 			$types .= 'i';
-			$params[] = intval($score);
+			$params[] = $score;
 		}
 		$changesStr = join(", ", $changes);
 		$types .= 'i';

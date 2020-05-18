@@ -2,7 +2,7 @@
 
 namespace dao;
 
-use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Score {
@@ -11,17 +11,12 @@ class Score {
 		$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
 		$entries = [];
 		while ($row = Sql::getNextRow($result)) {
-			$entry = [
-					'updateTime'     => General::stringToDate($row['updateTime']),
-					'teamIndex'      => intval($row['teamIndex']),
-					'delta'          => intval($row['delta']),
-					'challengeIndex' => null
+			$entries[] = [
+					'updateTime'     => Param::asTimestamp($row['updateTime']),
+					'teamIndex'      => Param::asInteger($row['teamIndex']),
+					'delta'          => Param::asInteger($row['delta']),
+					'challengeIndex' => Param::asInteger($row['challengeIndex'])
 			];
-			if (!is_null($row['challengeIndex'] && is_numeric($row['challengeIndex']))) {
-				$entry['challengeIndex'] = intval($row['challengeIndex']);
-			}
-
-			$entries[] = $entry;
 		}
 		return $entries;
 	}
@@ -38,7 +33,7 @@ class Score {
 			$fields[] = "challengeIndex";
 			$values[] = "?";
 			$types .= 'i';
-			$params[] = "$challengeIndex";
+			$params[] = $challengeIndex;
 		}
 		$fieldStr = join(", ", $fields);
 		$valueStr = join(", ", $values);

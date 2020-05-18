@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Uploads as Uploads;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -16,11 +17,9 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$file = $_POST['file'];
-$hasFile = isset($file) && is_string($file) && !empty($file);
-
 // Validate input
-if (!$hasFile) {
+$file = $_POST['file'];
+if (Param::isBlankString($file)) {
 	$response['error'] = "Missing required field 'file'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -48,5 +47,4 @@ try {
 	$response['error'] = $e->getMessage();
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 }
-
 echo json_encode($response);

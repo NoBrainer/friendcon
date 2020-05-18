@@ -1,6 +1,9 @@
 <?php
 
 namespace util;
+
+use util\Param as Param;
+
 class Session {
 
 	public static $userSession;
@@ -28,8 +31,8 @@ class Session {
 				if (Sql::hasRows($result, 1)) {
 					Session::$isAdmin = true;
 					$row = Sql::getNextRow($result);
-					Session::$isGameAdmin = General::getBooleanValue($row['gameAdmin']);
-					Session::$isSiteAdmin = General::getBooleanValue($row['siteAdmin']);
+					Session::$isGameAdmin = Param::asBoolean($row['gameAdmin']);
+					Session::$isSiteAdmin = Param::asBoolean($row['siteAdmin']);
 				}
 			}
 		} else {

@@ -1,6 +1,7 @@
 <?php
 
 use util\Http as Http;
+use util\Param as Param;
 
 $pageTitle = "Reset Password";
 
@@ -9,7 +10,7 @@ $email = $_GET['email'];
 $token = $_GET['token'];
 
 // Require an email and token
-if (!isset($email) || !is_string($email) || empty($email) || !isset($token) || !is_string($token) || empty($token)) {
+if (Param::isBlankString($email) || Param::isBlankString($token)) {
 	Http::contentType('TEXT');
 	Http::responseCode('BAD_REQUEST');
 	echo "BAD_REQUEST";

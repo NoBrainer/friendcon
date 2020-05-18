@@ -2,7 +2,7 @@
 
 namespace dao;
 
-use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Admins {
@@ -49,12 +49,12 @@ class Admins {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
-				'email'     => "" . $row['email'],
-				'gameAdmin' => General::getBooleanValue($row['gameAdmin']),
-				'hash'      => "" . $row['hash'],
-				'name'      => "" . $row['name'],
-				'siteAdmin' => General::getBooleanValue($row['siteAdmin']),
-				'uid'       => intval($row['uid'])
+				'email'     => Param::asString($row['email']),
+				'gameAdmin' => Param::asBoolean($row['gameAdmin']),
+				'hash'      => Param::asString($row['hash']),
+				'name'      => Param::asString($row['name']),
+				'siteAdmin' => Param::asBoolean($row['siteAdmin']),
+				'uid'       => Param::asInteger($row['uid'])
 		];
 	}
 
@@ -64,12 +64,12 @@ class Admins {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
-				'email'     => "" . $row['email'],
-				'gameAdmin' => General::getBooleanValue($row['gameAdmin']),
-				'hash'      => "" . $row['hash'],
-				'name'      => "" . $row['name'],
-				'siteAdmin' => General::getBooleanValue($row['siteAdmin']),
-				'uid'       => intval($row['uid'])
+				'email'     => Param::asString($row['email']),
+				'gameAdmin' => Param::asBoolean($row['gameAdmin']),
+				'hash'      => Param::asString($row['hash']),
+				'name'      => Param::asString($row['name']),
+				'siteAdmin' => Param::asBoolean($row['siteAdmin']),
+				'uid'       => Param::asInteger($row['uid'])
 		];
 	}
 

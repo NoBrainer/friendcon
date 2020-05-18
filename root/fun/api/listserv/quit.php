@@ -3,16 +3,15 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Listserv as Listserv;
 use util\Http as Http;
+use util\Param as Param;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
-$email = $_POST['email'];
-$hasEmail = isset($email) && is_string($email) && !empty($email) && !empty(trim($email));
-
 // Validate input
-if (!$hasEmail) {
+$email = $_POST['email'];
+if (Param::isBlankString($email)) {
 	$response['error'] = "Missing required field 'email'";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);

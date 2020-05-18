@@ -3,33 +3,33 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Admins as Admins;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
-// Get data from the request
+// Validate input
 $email = $_POST['email'];
 $password = $_POST['password'];
-
-// Validate input
 if (Session::$isLoggedIn) {
 	$response['error'] = "Already logged in.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!isset($email) || !is_string($email) || empty($email)) {
+} else if (Param::isBlankString($email)) {
 	$response['error'] = "Missing email address.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!isset($password) || !is_string($password) || empty($password) || empty(trim($password))) {
+} else if (Param::isBlankString($password)) {
 	$response['error'] = "Missing password.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
+$email = trim($email);
 $password = trim($password);
 
 // Check for the admin

@@ -4,6 +4,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 use dao\Admins as Admins;
 use util\General as General;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -12,28 +13,27 @@ $response = [];
 
 // The user must be logged out
 if (Session::$isLoggedIn) {
-	$response['error'] = "Must log out to reset password";
+	$response['error'] = "Must log out to reset password.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 
+// Validate input
 $email = $_POST['email'];
 $token = $_POST['token'];
 $password = $_POST['password'];
-
-// Validate input
-if (!isset($email) || !is_string($email) || empty(trim($email))) {
+if (Param::isBlankString($email)) {
 	$response['error'] = "Missing required field 'email'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!isset($token) || !is_string($token) || empty(trim($token))) {
+} else if (Param::isBlankString($token)) {
 	$response['error'] = "Missing required field 'token'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!isset($password) || !is_string($password) || empty(trim($password))) {
+} else if (Param::isBlankString($password)) {
 	$response['error'] = "Missing required field 'password'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -67,6 +67,3 @@ if ($affectedRows === 1) {
 }
 
 echo json_encode($response);
-
-
-

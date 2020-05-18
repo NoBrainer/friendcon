@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use util\Captcha as Captcha;
 use util\Http as Http;
+use util\Param as Param;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
@@ -19,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Validate input
 $token = $_POST['token'];
 $action = $_POST['action'];
-if (!isset($token) || !is_string($token) || empty($token)) {
+if (Param::isBlankString($token)) {
 	$response['error'] = "Missing required field 'token'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!isset($action) || !is_string($action) || empty($action)) {
+} else if (Param::isBlankString($action)) {
 	$response['error'] = "Missing required field 'action'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);

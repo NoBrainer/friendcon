@@ -16,9 +16,7 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-// Get the change log entries
-$entries = Score::getChangeLogEntries();
-
-$response['data'] = $entries;
+// Return the change log entries
+$response['data'] = Score::getChangeLogEntries();
 Http::responseCode('OK');
 echo json_encode($response);

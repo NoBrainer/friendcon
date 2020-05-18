@@ -5,12 +5,8 @@ use dao\Challenges as Challenges;
 use util\Http as Http;
 use util\Session as Session;
 
-$currentOnly = !isset($_GET['all']);
-
-// Only return current challenges if the user is not an admin
-if (!Session::$isGameAdmin) {
-	$currentOnly = true;
-}
+// Make sure non-admins only get the current challenges
+$currentOnly = Session::$isGameAdmin ? !isset($_GET['all']) : true;
 
 // Setup the content-type and response template
 Http::contentType('JSON');

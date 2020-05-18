@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Challenges as Challenges;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -16,11 +17,9 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$challengeIndex = $_POST['challengeIndex'];
-$hasChallengeIndex = isset($challengeIndex) && is_string($challengeIndex) && !empty($challengeIndex);
-
-// Input validation
-if (!$hasChallengeIndex) {
+// Validate input
+$challengeIndex = Param::asInteger($_POST['challengeIndex']);
+if (!Challenges::isValidChallengeIndex($challengeIndex)) {
 	$response['error'] = "Missing required field 'challengeIndex'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);

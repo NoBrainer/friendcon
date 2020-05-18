@@ -3,6 +3,7 @@
 namespace dao;
 
 use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Listserv {
@@ -21,7 +22,7 @@ class Listserv {
 	}
 
 	public static function exists($email) {
-		if (!is_string($email) || empty($email)) return false;
+		if (Param::isBlankString($email)) return false;
 		$result = Sql::executeSqlForResult("SELECT * FROM listserv WHERE email = ?", 's', $email);
 		return $result->num_rows > 0;
 	}

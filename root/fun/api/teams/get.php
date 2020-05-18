@@ -8,9 +8,7 @@ use util\Http as Http;
 Http::contentType('JSON');
 $response = [];
 
-// Get the teams
-$teams = Teams::getAll();
-
-$response['data'] = $teams;
+// Return the teams
+$response['data'] = Teams::getAll();
 Http::responseCode('OK');
 echo json_encode($response);

@@ -2,35 +2,14 @@
 
 namespace dao;
 
-use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Challenges {
 
 	public static function add($name, $startTime = null, $endTime = null) {
-		// Build the SQL pieces
-		$fields = ["name"];
-		$values = ["?"];
-		$types = 's';
-		$params = ["$name"];
-		if (is_null($startTime)) {
-			$fields[] = "startTime";
-			$values[] = "?";
-			$types .= 's';
-			$params[] = General::stringToDate($startTime);
-		}
-		if (is_null($startTime)) {
-			$fields[] = "endTime";
-			$values[] = "?";
-			$types .= 's';
-			$params[] = General::stringToDate($endTime);
-		}
-		$fieldStr = join(", ", $fields);
-		$valueStr = join(", ", $values);
-
-		// Make the changes
-		$query = "INSERT INTO challenges ($fieldStr) VALUES ($valueStr)";
-		$affectedRows = Sql::executeSqlForAffectedRows($query, $types, ...$params);
+		$query = "INSERT INTO challenges (name, startTime, endTime) VALUES (?, ?, ?)";
+		$affectedRows = Sql::executeSqlForAffectedRows($query, 'sss', $name, $startTime, $endTime);
 		return $affectedRows === 1;
 	}
 
@@ -56,16 +35,16 @@ class Challenges {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
-				'challengeIndex' => intval($row['challengeIndex']),
-				'name'           => "" . $row['name'],
-				'startTime'      => General::stringToDate($row['startTime']),
-				'endTime'        => General::stringToDate($row['endTime']),
-				'published'      => boolval($row['published'])
+				'challengeIndex' => Param::asInteger($row['challengeIndex']),
+				'name'           => Param::asString($row['name']),
+				'startTime'      => Param::asTimestamp($row['startTime']),
+				'endTime'        => Param::asTimestamp($row['endTime']),
+				'published'      => Param::asBoolean($row['published'])
 		];
 	}
 
 	public static function getAll($currentOnly = true) {
-		$isWithinTimeConstraints = "(startTime <= NOW() OR startTime = '0000-00-00 00:00:00' OR startTime IS NULL) AND (endTime >= NOW() OR endTime = '0000-00-00 00:00:00' OR endTime IS NULL)";
+		$isWithinTimeConstraints = "(startTime <= NOW() OR startTime IS NULL) AND (endTime >= NOW() OR endTime IS NULL)";
 		$query = "SELECT * FROM challenges" . ($currentOnly ? " WHERE published = 1 OR ($isWithinTimeConstraints)" : "");
 		$result = Sql::executeSqlForResult($query);
 
@@ -74,11 +53,11 @@ class Challenges {
 		while ($row = Sql::getNextRow($result)) {
 			// Build and append the entry
 			$challenges[] = [
-					'challengeIndex' => intval($row['challengeIndex']),
-					'startTime'      => General::stringToDate($row['startTime']),
-					'endTime'        => General::stringToDate($row['endTime']),
-					'name'           => "" . $row['name'],
-					'published'      => boolval($row['published'])
+					'challengeIndex' => Param::asInteger($row['challengeIndex']),
+					'startTime'      => Param::asTimestamp($row['startTime']),
+					'endTime'        => Param::asTimestamp($row['endTime']),
+					'name'           => Param::asString($row['name']),
+					'published'      => Param::asBoolean($row['published'])
 			];
 		}
 		return $challenges;
@@ -90,11 +69,11 @@ class Challenges {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
-				'challengeIndex' => intval($row['challengeIndex']),
-				'name'           => "" . $row['name'],
-				'startTime'      => General::stringToDate($row['startTime']),
-				'endTime'        => General::stringToDate($row['endTime']),
-				'published'      => boolval($row['published'])
+				'challengeIndex' => Param::asInteger($row['challengeIndex']),
+				'name'           => Param::asString($row['name']),
+				'startTime'      => Param::asTimestamp($row['startTime']),
+				'endTime'        => Param::asTimestamp($row['endTime']),
+				'published'      => Param::asBoolean($row['published'])
 		];
 	}
 
@@ -104,11 +83,15 @@ class Challenges {
 		return $result->num_rows > 0;
 	}
 
-	public static function publish($challengeIndex, $isPublished) {
-		return Challenges::update($challengeIndex, null, null, null, $isPublished);
+	public static function isValidChallengeIndex($challengeIndex) {
+		return Param::isInteger($challengeIndex) && $challengeIndex >= 1;
 	}
 
-	public static function update($challengeIndex, $name = null, $startTime = null, $endTime = null, $isPublished = null) {
+	public static function publish($challengeIndex, $isPublished) {
+		return Challenges::update($challengeIndex, null, 'IGNORE', 'IGNORE', $isPublished);
+	}
+
+	public static function update($challengeIndex, $name = null, $startTime = 'IGNORE', $endTime = 'IGNORE', $isPublished = null) {
 		// Build the SQL pieces
 		$changes = [];
 		$types = '';
@@ -116,22 +99,22 @@ class Challenges {
 		if (!is_null($name)) {
 			$changes[] = "name = ?";
 			$types .= 's';
-			$params[] = "$name";
+			$params[] = $name;
 		}
-		if (!is_null($startTime)) {
+		if ($startTime !== 'IGNORE') {
 			$changes[] = "startTime = ?";
 			$types .= 's';
-			$params[] = General::stringToDate($startTime);
+			$params[] = $startTime;
 		}
-		if (!is_null($endTime)) {
+		if ($endTime !== 'IGNORE') {
 			$changes[] = "endTime = ?";
 			$types .= 's';
-			$params[] = General::stringToDate($endTime);
+			$params[] = $endTime;
 		}
 		if (!is_null($isPublished)) {
 			$changes[] = "published = ?";
 			$types .= 'i';
-			$params[] = General::getBooleanValue($isPublished);
+			$params[] = $isPublished;
 		}
 		$changesStr = join(", ", $changes);
 		$types .= 'i';

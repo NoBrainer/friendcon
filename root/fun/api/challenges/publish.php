@@ -2,8 +2,8 @@
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Challenges as Challenges;
-use util\General as General;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -17,26 +17,20 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$challengeIndex = $_POST['challengeIndex'];
-$isPublished = $_POST['published'];
-
-$hasChallengeIndex = isset($challengeIndex) && !is_nan($challengeIndex);
-$hasPublished = General::isBooleanSet($isPublished);
-
 // Validate input
-if (!$hasChallengeIndex) {
+$challengeIndex = Param::asInteger($_POST['challengeIndex']);
+$isPublished = Param::asBoolean($_POST['published']);
+if (!Challenges::isValidChallengeIndex($challengeIndex)) {
 	$response['error'] = "Missing required field 'challengeIndex'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!$hasPublished) {
+} else if (is_null($isPublished)) {
 	$response['error'] = "Missing required field 'published'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
-$challengeIndex = intval($challengeIndex);
-$isPublished = General::getBooleanValue($isPublished);
 
 // Make sure the challenge exists
 if (!Challenges::exists($challengeIndex)) {

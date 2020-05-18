@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Teams as Teams;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -16,18 +17,15 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$teamIndex = $_POST['teamIndex'];
+// Validate input
+$teamIndex = Param::asInteger($_POST['teamIndex']);
 $name = $_POST['name'];
-$score = $_POST['score'];
+$score = Param::asInteger($_POST['score']);
 $members = $_POST['members'];
-
-$hasTeamIndex = isset($teamIndex) && !is_nan($teamIndex);
-$hasName = isset($name) && is_string($name) && !empty($name);
-$hasScore = isset($score) && !is_nan($score);
+$hasName = Param::isPopulatedString($name);
+$hasScore = !is_null($score);
 $hasMembers = isset($members);
-
-// Input validation
-if (!$hasTeamIndex) {
+if (!Teams::isValidTeamIndex($teamIndex)) {
 	$response['error'] = "Missing required field 'teamIndex'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
@@ -39,7 +37,6 @@ if (!$hasTeamIndex) {
 	return;
 }
 if (!$hasName) $name = null;
-if (!$hasScore) $score = null;
 
 try {
 	// Handle members updates
@@ -47,6 +44,7 @@ try {
 		if (empty($members)) {
 			Teams::deleteAllMembers($teamIndex);
 		} else {
+			// Convert the members string into an array
 			$membersArr = explode(",", $members);
 			$invalidNames = Teams::getInvalidMemberNames($membersArr);
 			if (sizeof($invalidNames) > 0) {
@@ -57,6 +55,7 @@ try {
 				return;
 			}
 
+			// Set the members
 			$successful = Teams::setMembers($teamIndex, $membersArr);
 			if (!$successful) {
 				$response['error'] = "Unable to update the team members.";
@@ -67,6 +66,7 @@ try {
 		}
 	}
 
+	// Update the team score
 	$successful = Teams::update($teamIndex, $name, $score);
 	if ($successful) {
 		$response['message'] = "Team updated.";

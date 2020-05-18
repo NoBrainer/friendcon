@@ -4,7 +4,7 @@ namespace dao;
 
 use Constants as Constants;
 use http\Exception\RuntimeException;
-use util\General as General;
+use util\Param as Param;
 use util\Sql as Sql;
 
 class Uploads {
@@ -15,8 +15,7 @@ class Uploads {
 	}
 
 	public static function delete($file) {
-		//TODO
-		throw new RuntimeException("Uploads::delete() NOT YET IMPLEMENTED.");
+		throw new RuntimeException("Uploads::delete() NOT YET IMPLEMENTED."); //TODO
 	}
 
 	public static function exists($file) {
@@ -33,13 +32,13 @@ class Uploads {
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
-				'file'           => "" . $row['file'],
-				'challengeIndex' => intval($row['challengeIndex']),
-				'teamIndex'      => intval($row['teamIndex']),
-				'state'          => "" . $row['state'],
-				'rotation'       => intval($row['rotation']),
-				'uploadTime'     => General::stringToDate($row['uploadTime']),
-				'published'      => boolval($row['published'])
+				'file'           => Param::asString($row['file']),
+				'challengeIndex' => Param::asInteger($row['challengeIndex']),
+				'teamIndex'      => Param::asInteger($row['teamIndex']),
+				'state'          => Param::asString($row['state']),
+				'rotation'       => Param::asInteger($row['rotation']),
+				'uploadTime'     => Param::asTimestamp($row['uploadTime']),
+				'published'      => Param::asBoolean($row['published'])
 		];
 	}
 
@@ -55,13 +54,13 @@ class Uploads {
 		while ($row = Sql::getNextRow($result)) {
 			// Build and append the entry
 			$uploads[] = [
-					'file'           => "" . $row['file'],
-					'challengeIndex' => intval($row['challengeIndex']),
-					'teamIndex'      => intval($row['teamIndex']),
-					'state'          => "" . $row['state'],
-					'rotation'       => intval($row['rotation']),
-					'uploadTime'     => General::stringToDate($row['uploadTime']),
-					'published'      => boolval($row['published'])
+					'file'           => Param::asString($row['file']),
+					'challengeIndex' => Param::asInteger($row['challengeIndex']),
+					'teamIndex'      => Param::asInteger($row['teamIndex']),
+					'state'          => Param::asString($row['state']),
+					'rotation'       => Param::asInteger($row['rotation']),
+					'uploadTime'     => Param::asTimestamp($row['uploadTime']),
+					'published'      => Param::asBoolean($row['published'])
 			];
 		}
 		return $uploads;
@@ -73,7 +72,7 @@ class Uploads {
 			return null;
 		}
 		$row = Sql::getNextRow($result);
-		return intval($row['value']);
+		return Param::asInteger($row['value']);
 	}
 
 	public static function rotate($file) {
@@ -114,7 +113,7 @@ class Uploads {
 		$result = Sql::executeSqlForResult("SELECT * FROM uploads WHERE file = ?", 's', $file);
 		if (!Sql::hasRows($result, 1)) return false;
 		$row = Sql::getNextRow($result);
-		$rotationIndex = intval($row['rotation']);
+		$rotationIndex = Param::asInteger($row['rotation']);
 
 		// Rotate the rotation index 0->1->2->3->0
 		if (++$rotationIndex > 3) $rotationIndex = 0;
@@ -125,7 +124,6 @@ class Uploads {
 
 	public static function updateState($file, $stateValue) {
 		$query = "UPDATE uploads SET state = ? WHERE file = ?";
-		$info = Sql::executeSqlForInfo($query, 'is', $stateValue, $file);
-		return $info['matched'] === 1;
+		return Sql::executeSql($query, 'is', $stateValue, $file);
 	}
 }

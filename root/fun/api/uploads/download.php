@@ -2,10 +2,11 @@
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use util\Http as Http;
+use util\Param as Param;
 
 // Validate input
-$fileName = $_GET['file'];
-if (!isset($fileName) || empty($fileName)) {
+$file = $_GET['file'];
+if (Param::isBlankString($file)) {
 	Http::contentType('TEXT');
 	Http::responseCode('BAD_REQUEST');
 	echo "Missing field 'file'";
@@ -13,13 +14,13 @@ if (!isset($fileName) || empty($fileName)) {
 }
 
 // Build the path from the uploads directory
-$filePath = sprintf("%s/%s", Constants::uploadsDir(), $fileName);
+$filePath = sprintf("%s/%s", Constants::uploadsDir(), $file);
 
 // Handle missing file
 if (!file_exists($filePath)) {
 	Http::contentType('TEXT');
 	Http::responseCode('NOT_FOUND');
-	echo sprintf("No file found [%s]", $fileName);
+	echo sprintf("No file found [%s].", $file);
 	return;
 }
 

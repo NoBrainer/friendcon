@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Challenges as Challenges;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -16,18 +17,15 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$challengeIndex = $_POST['challengeIndex'];
+// Validate input
+$challengeIndex = Param::asInteger($_POST['challengeIndex']);
 $name = $_POST['name'];
-$startTime = $_POST['startTime'];
-$endTime = $_POST['endTime'];
-
-$hasChallengeIndex = isset($challengeIndex) && !is_nan($challengeIndex);
-$hasName = isset($name) && is_string($name) && !empty($name);
-$hasStartTime = isset($startTime) && (is_string($startTime) || is_null($startTime));
-$hasEndTime = isset($endTime) && (is_string($endTime) || is_null($endTime));
-
-// Input validation
-if (!$hasChallengeIndex) {
+$hasName = Param::isPopulatedString($name);
+$hasStartTime = isset($_POST['startTime']);
+$hasEndTime = isset($_POST['endTime']);
+if ($hasStartTime) $startTime = Param::asTimestamp($_POST['startTime']);
+if ($hasEndTime) $endTime = Param::asTimestamp($_POST['endTime']);
+if (!Challenges::isValidChallengeIndex($challengeIndex)) {
 	$response['error'] = "Missing required field 'challengeIndex'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);

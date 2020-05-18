@@ -5,34 +5,35 @@ use dao\Challenges as Challenges;
 use dao\Teams as Teams;
 use dao\Uploads as Uploads;
 use util\Http as Http;
+use util\Param as Param;
 
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
 try {
-	// Make sure the form was submitted with required fields
+	// Only allow accessing this file with POST
 	if ($_SERVER["REQUEST_METHOD"] !== 'POST') {
 		$response['error'] = "Must send data with a POST.";
-		Http::responseCode('BAD_REQUEST');
-		echo json_encode($response);
-		return;
-	} else if (!isset($_POST['teamIndex'])) {
-		$response['error'] = "Missing required field 'teamIndex'.";
-		Http::responseCode('BAD_REQUEST');
-		echo json_encode($response);
-		return;
-	} else if (!isset($_POST['challengeIndex'])) {
-		$response['error'] = "Missing required field 'challengeIndex'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
 
 	// Validate input
-	$teamIndex = ctype_digit($_POST['teamIndex']) ? intval($_POST['teamIndex']) : -1;
-	$challengeIndex = ctype_digit($_POST['challengeIndex']) ? intval($_POST['challengeIndex']) : -1;
-	if ($teamIndex < 0 || $teamIndex > 999) {
+	$teamIndex = Param::asInteger($_POST['teamIndex']);
+	$challengeIndex = Param::asInteger($_POST['challengeIndex']);
+	if (!Teams::isValidTeamIndex($teamIndex)) {
+		$response['error'] = "Missing required field 'teamIndex'.";
+		Http::responseCode('BAD_REQUEST');
+		echo json_encode($response);
+		return;
+	} else if (!Challenges::isValidChallengeIndex($challengeIndex)) {
+		$response['error'] = "Missing required field 'challengeIndex'.";
+		Http::responseCode('BAD_REQUEST');
+		echo json_encode($response);
+		return;
+	} else if ($teamIndex < 0 || $teamIndex > 999) {
 		$response['error'] = "Field 'team' must be a positive 1-3 digit number.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
@@ -68,7 +69,7 @@ try {
 			echo json_encode($response);
 			return;
 		default:
-			$response['error'] = "Unknown error with file";
+			$response['error'] = "Unknown error with file.";
 			Http::responseCode('INTERNAL_SERVER_ERROR');
 			echo json_encode($response);
 			return;
@@ -144,7 +145,7 @@ try {
 	$successful = Uploads::add($teamIndex, $challengeIndex, $newFile);
 	if ($successful) {
 		// Success
-		$response['message'] = "File is successfully uploaded!";
+		$response['message'] = "File is successfully uploaded.";
 		Http::responseCode('OK');
 	} else {
 		$response['error'] = "File saved but metadata not saved in database.";

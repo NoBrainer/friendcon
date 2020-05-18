@@ -3,6 +3,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use dao\Teams as Teams;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -16,19 +17,15 @@ if (!Session::$isGameAdmin) {
 	return;
 }
 
-$names = trim($_POST['names']);
-$teamIndex = $_POST['teamIndex'];
-
-$hasNames = isset($names) && is_string($names) && !empty($names);
-$hasTeamIndex = isset($teamIndex) && is_numeric($teamIndex) && $teamIndex >= 0;
-
-// Input validation
-if (!$hasTeamIndex) {
+// Validate input
+$names = $_POST['names'];
+$teamIndex = Param::asInteger($_POST['teamIndex']);
+if (!Teams::isValidTeamIndex($teamIndex)) {
 	$response['error'] = "Missing required field 'teamIndex'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
-} else if (!$hasNames) {
+} else if (Param::isBlankString($names)) {
 	$response['error'] = "Missing required field 'names'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);

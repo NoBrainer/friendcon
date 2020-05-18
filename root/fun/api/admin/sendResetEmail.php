@@ -4,6 +4,7 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 use dao\Admins as Admins;
 use util\General as General;
 use util\Http as Http;
+use util\Param as Param;
 use util\Session as Session;
 
 // Setup the content-type and response template
@@ -12,17 +13,16 @@ $response = [];
 
 // The user must be logged out
 if (Session::$isLoggedIn) {
-	$response['error'] = "Must log out to send password token";
+	$response['error'] = "Must log out to send password token.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
 }
 
-$email = $_POST['email'];
-
 // Validate input
-if (!isset($email) || !is_string($email) || empty(trim($email))) {
-	$response['error'] = "Missing required field 'email'";
+$email = $_POST['email'];
+if (Param::isBlankString($email)) {
+	$response['error'] = "Missing required field 'email'.";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
@@ -32,7 +32,7 @@ $email = trim($email);
 // Make sure an admin exists with email
 $admin = Admins::getByEmail($email);
 if (is_null($admin)) {
-	$response['error'] = "Invalid email address [$email]";
+	$response['error'] = "Invalid email address [$email].";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
@@ -52,10 +52,10 @@ $lines = [
 // Send the email
 $successful = General::sendEmailFromBot($to, $subject, $lines);
 if (!$successful) {
-	$response['error'] = "Error sending the reset email";
+	$response['error'] = "Error sending the reset email.";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 } else {
-	$response['message'] = "Reset email sent";
+	$response['message'] = "Reset email sent.";
 	Http::responseCode('OK');
 }
 echo json_encode($response);

@@ -10,10 +10,10 @@ $response = [];
 
 if (Session::$isLoggedIn) {
 	Session::logout();
-	$response['data'] = "Successfully logged out";
+	$response['data'] = "Successfully logged out.";
 	Http::responseCode('OK');
 } else {
-	$response['error'] = "Not logged in";
+	$response['error'] = "Not logged in.";
 	Http::responseCode('BAD_REQUEST');
 }
 echo json_encode($response);

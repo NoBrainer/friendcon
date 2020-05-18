@@ -74,9 +74,9 @@ class Sql {
 		}
 		$info = Sql::mysqliInfoArray();
 		return [
-				'matched'  => intval($info["Rows matched"]),
-				'changed'  => intval($info["Changed"]),
-				'warnings' => intval($info["Warnings"])
+				'matched'  => Param::asInteger($info["Rows matched"]),
+				'changed'  => Param::asInteger($info["Changed"]),
+				'warnings' => Param::asInteger($info["Warnings"])
 		];
 	}
 
