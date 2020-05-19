@@ -5,6 +5,9 @@ use dao\Listserv as Listserv;
 use util\Http as Http;
 use util\Session as Session;
 
+// Only allow GET request method
+if (Http::return404IfNotGet()) exit;
+
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];

@@ -5,17 +5,12 @@ use util\Captcha as Captcha;
 use util\Http as Http;
 use util\Param as Param;
 
+// Only allow POST request method
+if (Http::return404IfNotPost()) exit;
+
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
-
-// Only accept POST method
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	$response['error'] = "Invalid method. Must be POST.";
-	Http::responseCode('BAD_REQUEST');
-	echo json_encode($response);
-	return;
-}
 
 // Validate input
 $token = $_POST['token'];

@@ -5,6 +5,9 @@ use dao\Uploads as Uploads;
 use util\Http as Http;
 use util\Session as Session;
 
+// Only allow GET request method
+if (Http::return404IfNotGet()) exit;
+
 // Make sure non-admins only get the published uploads
 $publishedOnly = Session::$isGameAdmin ? !isset($_GET['all']) : true;
 

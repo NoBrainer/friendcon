@@ -7,6 +7,9 @@ use util\Param as Param;
 use util\Session as Session;
 use util\Sql as Sql;
 
+// Only allow POST request method
+if (Http::return404IfNotPost()) exit;
+
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];

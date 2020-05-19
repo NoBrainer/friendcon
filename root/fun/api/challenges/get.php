@@ -5,6 +5,9 @@ use dao\Challenges as Challenges;
 use util\Http as Http;
 use util\Session as Session;
 
+// Only allow GET request method
+if (Http::return404IfNotGet()) exit;
+
 // Make sure non-admins only get the current challenges
 $currentOnly = Session::$isGameAdmin ? !isset($_GET['all']) : true;
 

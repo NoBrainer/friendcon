@@ -4,6 +4,9 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 use util\Http as Http;
 use util\Param as Param;
 
+// Only allow POST request method
+if (Http::return404IfNotPost()) exit;
+
 // Validate input
 $file = $_GET['file'];
 if (Param::isBlankString($file)) {

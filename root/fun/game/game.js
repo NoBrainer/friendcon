@@ -172,6 +172,7 @@ function loadData(opts) {
 	const defaultOpts = {asAdmin: false, withScoreChanges: false};
 	opts = _.extend(defaultOpts, opts);
 	const teamDeferred = $.ajax({
+		type: 'GET',
 		url: "/fun/api/teams/get.php",
 		success: (resp) => {
 			teams = resp.data.sort(sortTeams);
@@ -183,6 +184,7 @@ function loadData(opts) {
 		}
 	});
 	const challengeDeferred = $.ajax({
+		type: 'GET',
 		url: "/fun/api/challenges/get.php" + (opts.asAdmin ? "?all" : ""),
 		success: (resp) => {
 			challenges = resp.data.sort(sortChallenges);
@@ -194,6 +196,7 @@ function loadData(opts) {
 		}
 	});
 	const uploadDeferred = $.ajax({
+		type: 'GET',
 		url: "/fun/api/uploads/get.php" + (opts.asAdmin ? "?all" : ""),
 		success: (resp) => {
 			uploads = resp.data.sort(sortUploads);
@@ -207,6 +210,7 @@ function loadData(opts) {
 	let combined = $.when(teamDeferred, challengeDeferred, uploadDeferred);
 	if (opts.withScoreChanges) {
 		const scoreChangesDeferred = $.ajax({
+			type: 'GET',
 			url: "/fun/api/score/getChangeLog.php",
 			success: (resp) => {
 				scoreChanges = resp.data.sort(sortScoreChanges);

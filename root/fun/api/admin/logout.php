@@ -4,6 +4,9 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 use util\Http as Http;
 use util\Session as Session;
 
+// Only allow POST request method
+if (Http::return404IfNotPost()) exit;
+
 // Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
