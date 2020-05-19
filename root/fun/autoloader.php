@@ -1,5 +1,4 @@
 <?php
-
 use util\Setup as Setup;
 
 // Autoload custom classes

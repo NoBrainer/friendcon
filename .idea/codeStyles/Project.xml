@@ -11,12 +11,14 @@
     <JSCodeStyleSettings>
       <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
       <option name="SPACE_BEFORE_ASYNC_ARROW_LPAREN" value="false" />
+      <option name="BLANK_LINES_AROUND_FUNCTION" value="0" />
     </JSCodeStyleSettings>
     <PHPCodeStyleSettings>
       <option name="ALIGN_KEY_VALUE_PAIRS" value="true" />
       <option name="GROUP_USE_WRAP" value="1" />
       <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
       <option name="KEEP_RPAREN_AND_LBRACE_ON_ONE_LINE" value="true" />
+      <option name="KEEP_BLANK_LINES_AFTER_LBRACE" value="1" />
     </PHPCodeStyleSettings>
     <SqlCodeStyleSettings version="1">
       <option name="KEYWORD_CASE" value="0" />
@@ -32,6 +34,8 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
+      <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+      <option name="BLANK_LINES_AROUND_METHOD" value="0" />
       <option name="SPACE_BEFORE_WHILE_PARENTHESES" value="false" />
       <option name="SPACE_BEFORE_FOR_PARENTHESES" value="false" />
       <option name="SPACE_BEFORE_CATCH_PARENTHESES" value="false" />
@@ -42,6 +46,13 @@
     </codeStyleSettings>
     <codeStyleSettings language="PHP">
       <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+      <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
+      <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
+      <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
+      <option name="BLANK_LINES_BEFORE_PACKAGE" value="0" />
+      <option name="BLANK_LINES_AFTER_PACKAGE" value="1" />
+      <option name="BLANK_LINES_BEFORE_IMPORTS" value="0" />
+      <option name="BLANK_LINES_AROUND_METHOD" value="0" />
       <option name="CLASS_BRACE_STYLE" value="1" />
       <option name="METHOD_BRACE_STYLE" value="1" />
       <option name="SPECIAL_ELSE_IF_TREATMENT" value="true" />

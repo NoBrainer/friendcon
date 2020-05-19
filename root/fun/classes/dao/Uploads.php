@@ -1,5 +1,4 @@
 <?php
-
 namespace dao;
 
 use Constants as Constants;

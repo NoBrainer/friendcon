@@ -1,5 +1,4 @@
 <?php
-
 namespace util;
 
 use util\Param as Param;

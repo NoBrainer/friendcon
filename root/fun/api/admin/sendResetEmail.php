@@ -38,7 +38,6 @@ if (is_null($admin)) {
 	return;
 }
 
-
 // Setup the email
 $token = Admins::getResetToken($admin);
 $to = $email;

@@ -1,8 +1,7 @@
 <?php
-
 namespace util;
 
-use \Constants as Constants;
+use Constants as Constants;
 
 class Http {
 

@@ -32,7 +32,6 @@ class Param {
 		}
 	}
 
-
 	public static function isBlankString($value) {
 		return !Param::isPopulatedString($value);
 	}
