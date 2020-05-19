@@ -31,7 +31,7 @@ $name = trim($name);
 
 // Make sure the name is unique
 if (Challenges::existsWithName($name)) {
-	$response['error'] = "There's already a challenge with that name.";
+	$response['error'] = "There's already a challenge with that name [$name].";
 	Http::responseCode('BAD_REQUEST');
 	echo json_encode($response);
 	return;
@@ -40,7 +40,7 @@ if (Challenges::existsWithName($name)) {
 // Make the changes
 $successful = Challenges::add($name, $startTime, $endTime);
 if (!$successful) {
-	$response['error'] = "Unable to create challenge.";
+	$response['error'] = "Unable to create challenge [$name].";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
@@ -48,6 +48,6 @@ if (!$successful) {
 
 // Return the new challenge
 $response['data'] = Challenges::getByName($name);
-$response['message'] = "Challenge created.";
+$response['message'] = "Challenge created [$name].";
 Http::responseCode('OK');
 echo json_encode($response);

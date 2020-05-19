@@ -159,6 +159,7 @@ $requireAdmin = true;
 		const $modalMembersWrapper = $('#modalMembersWrapper');
 		const $modalMembersSection = $('#modalMembersSection');
 		const $modalMessage = $('#modalMessage');
+		const $modalFooter = $modal.find('.modal-footer');
 		const $modalDeleteSection = $('#deleteSection');
 		const $modalDeleteBtn = $('#deleteTeamBtn');
 		const $modalConfirmDelete = $('#confirmDelete');
@@ -206,16 +207,22 @@ $requireAdmin = true;
 			let prevMembers = [];
 			let updatedMembers = [];
 
-			// Enable the submit button on modal show
-			$modal.off('show.bs.modal').on('show.bs.modal', (e) => enableSubmitButton(true));
-
 			// Focus on the first input once the modal is shown
-			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => $modalName.focus());
+			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => {
+				$modalFooter.show();
+				$modalName.focus();
+			});
 
 			// Keep the delete button disabled unless the confirm checkbox is checked
 			$modalConfirmDelete.off().change((e) => {
 				enableDeleteButton($modalConfirmDelete.is(':checked'));
 			});
+
+			// Clear the message as the form changes
+			$modalName.keydown(clearMessageUnlessEnter);
+			function clearMessageUnlessEnter(e) {
+				if (e.which !== 32) clearMessage($modalMessage);
+			}
 
 			// Edit team click handler
 			$('.editTeam').off().click((e) => {
@@ -320,15 +327,9 @@ $requireAdmin = true;
 							teams = resp.data.teams;
 							resortTeams();
 							render();
-
-							// Close the modal in 2 seconds
-							setTimeout(() => $modal.modal('hide'), 2000);
 						},
 						304: () => {
 							successMessage($addMemberMessage, "No changes");
-
-							// Close the modal in 2 seconds
-							setTimeout(() => $modal.modal('hide'), 2000);
 						}
 					},
 					error: (jqXHR) => {
@@ -339,9 +340,7 @@ $requireAdmin = true;
 
 			// Delete team click handler
 			$modalDeleteBtn.off().click((e) => {
-				enableDeleteButton(false);
-				enableSubmitButton(false);
-
+				$modalFooter.hide();
 				const teamIndex = $modalForm.attr('teamIndex');
 				const team = getTeam(teamIndex);
 
@@ -364,12 +363,9 @@ $requireAdmin = true;
 					processData: false,
 					success: (resp) => {
 						successMessage($modalMessage, resp.message);
-
-						// Close the modal in 2 seconds
-						setTimeout(() => $modal.modal('hide'), 2000);
 					},
 					error: (jqXHR) => {
-						enableSubmitButton(true);
+						$modalFooter.show();
 						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
@@ -391,8 +387,7 @@ $requireAdmin = true;
 					return;
 				}
 
-				enableDeleteButton(false);
-				enableSubmitButton(false);
+				$modalFooter.hide();
 				const isNew = $modalSubmitBtn.hasClass('new');
 
 				let teamIndex;
@@ -433,16 +428,17 @@ $requireAdmin = true;
 					contentType: false,
 					processData: false,
 					success: (resp) => {
+						if (isNew && $modal.data('bs.modal')._isShown) {
+							// Reset form to make it easy for multi-create
+							$modalName.val(null);
+							$modalName.focus();
+						}
 						successMessage($modalMessage, resp.message);
 						teams = resp.data;
 						resortTeams();
 						render();
-
-						// Close the modal in 2 seconds
-						setTimeout(() => $modal.modal('hide'), 2000);
 					},
 					error: (jqXHR) => {
-						enableSubmitButton(true);
 						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
@@ -456,6 +452,9 @@ $requireAdmin = true;
 						}
 						resortTeams();
 						render();
+					},
+					complete: () => {
+						$modalFooter.show();
 					}
 				});
 			});
@@ -497,10 +496,6 @@ $requireAdmin = true;
 			$pill.find('.text').text(name);
 			$pill.attr('memberName', _.escape(name));
 			return $pill;
-		}
-
-		function enableSubmitButton(enabled) {
-			$modalSubmitBtn.prop('disabled', !enabled);
 		}
 
 		function enableDeleteButton(enabled) {

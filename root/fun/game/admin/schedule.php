@@ -143,6 +143,7 @@ $requireAdmin = true;
 		const $modalStartPicker = $('#modalStartPicker');
 		const $modalEndPicker = $('#modalEndPicker');
 		const $modalMessage = $('#modalMessage');
+		const $modalFooter = $modal.find('.modal-footer');
 		const $modalDeleteSection = $('#deleteSection');
 		const $modalDeleteBtn = $('#deleteChallengeBtn');
 		const $modalConfirmDelete = $('#confirmDelete');
@@ -167,16 +168,24 @@ $requireAdmin = true;
 			let prevStartTime;
 			let prevEndTime;
 
-			// Enable the submit button on modal show
-			$modal.off('show.bs.modal').on('show.bs.modal', (e) => enableSubmitButton(true));
-
 			// Focus on the first input once the modal is shown
-			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => $modalName.focus());
+			$modal.off('shown.bs.modal').on('shown.bs.modal', (e) => {
+				$modalFooter.show();
+				$modalName.focus();
+			});
 
 			// Keep the delete button disabled unless the confirm checkbox is checked
 			$modalConfirmDelete.off().change((e) => {
 				enableDeleteButton($modalConfirmDelete.is(':checked'));
 			});
+
+			// Clear the message as the form changes
+			$modalName.keydown(clearMessageUnlessEnter);
+			$modalStartPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
+			$modalEndPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
+			function clearMessageUnlessEnter(e) {
+				if (e.which !== 32) clearMessage($modalMessage);
+			}
 
 			// Edit challenge click handler
 			$('.editChallenge').off().click((e) => {
@@ -223,8 +232,7 @@ $requireAdmin = true;
 
 			// Delete challenge click handler
 			$modalDeleteBtn.off().click((e) => {
-				enableDeleteButton(false);
-				enableSubmitButton(false);
+				$modalFooter.hide();
 
 				const challengeIndex = $modalForm.attr('challengeIndex');
 				const challenge = getChallenge(challengeIndex);
@@ -248,12 +256,9 @@ $requireAdmin = true;
 					processData: false,
 					success: (resp) => {
 						successMessage($modalMessage, resp.message);
-
-						// Close the modal in 2 seconds
-						setTimeout(() => $modal.modal('hide'), 2000);
 					},
 					error: (jqXHR) => {
-						enableSubmitButton(true);
+						$modalFooter.show();
 						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
@@ -275,8 +280,7 @@ $requireAdmin = true;
 					return;
 				}
 
-				enableDeleteButton(false);
-				enableSubmitButton(false);
+				$modalFooter.hide();
 				const isNew = $modalSubmitBtn.hasClass('new');
 
 				let challengeIndex;
@@ -320,6 +324,13 @@ $requireAdmin = true;
 					processData: false,
 					statusCode: {
 						200: (resp) => {
+							if (isNew && $modal.data('bs.modal')._isShown) {
+								// Reset form to make it easy for multi-create
+								$modalName.val(null);
+								$modalStartPicker.datetimepicker('date', null);
+								$modalEndPicker.datetimepicker('date', null);
+								$modalName.focus();
+							}
 							successMessage($modalMessage, resp.message);
 							challenge.challengeIndex = resp.data.challengeIndex;
 							challenge.name = resp.data.name;
@@ -328,19 +339,12 @@ $requireAdmin = true;
 							challenge.published = resp.data.published;
 							resortChallenges();
 							render();
-
-							// Close the modal in 2 seconds
-							setTimeout(() => $modal.modal('hide'), 2000);
 						},
 						304: () => {
 							successMessage($modalMessage, "No changes");
-
-							// Close the modal in 2 seconds
-							setTimeout(() => $modal.modal('hide'), 2000);
 						}
 					},
 					error: (jqXHR) => {
-						enableSubmitButton(true);
 						errorMessage($modalMessage, getErrorMessageFromResponse(jqXHR));
 
 						// Revert changes
@@ -353,6 +357,9 @@ $requireAdmin = true;
 						}
 						resortChallenges();
 						render();
+					},
+					complete: () => {
+						$modalFooter.show();
 					}
 				});
 			});
@@ -396,10 +403,6 @@ $requireAdmin = true;
 			const $btn = $($('#editRowButton').html());
 			$btn.attr('challengeIndex', challenge.challengeIndex);
 			return $btn;
-		}
-
-		function enableSubmitButton(enabled) {
-			$modalSubmitBtn.prop('disabled', !enabled);
 		}
 
 		function enableDeleteButton(enabled) {

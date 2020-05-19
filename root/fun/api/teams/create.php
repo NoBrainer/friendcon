@@ -38,7 +38,7 @@ if (Teams::existsWithName($name)) {
 // Make the changes
 $successful = Teams::add($name);
 if (!$successful) {
-	$response['error'] = "Unable to create team.";
+	$response['error'] = "Unable to create team [$name].";
 	Http::responseCode('INTERNAL_SERVER_ERROR');
 	echo json_encode($response);
 	return;
@@ -49,6 +49,6 @@ $updatedTeams = Teams::getAll();
 
 // Return the updated teams
 $response['data'] = $updatedTeams;
-$response['message'] = "Team created.";
+$response['message'] = "Team created [$name].";
 Http::responseCode('OK');
 echo json_encode($response);
