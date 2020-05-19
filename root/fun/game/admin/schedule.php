@@ -48,7 +48,7 @@ $requireAdmin = true;
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Name:</span>
+								<span class="input-group-text" style="min-width:100px">Name:</span>
 							</div>
 							<input type="text" class="form-control" placeholder="Name" aria-label="Edit Name" id="modalName" required>
 						</div>
@@ -56,9 +56,9 @@ $requireAdmin = true;
 					<div class="form-group">
 						<div class="input-group date" id="modalStartPicker" data-target-input="nearest">
 							<span class="input-group-prepend">
-								<span class="input-group-text">Start Time:</span>
+								<span class="input-group-text" style="min-width:100px">Start Time:</span>
 							</span>
-							<input type="text" class="form-control datetimepicker-input" data-target="#modalStartPicker" placeholder="NONE">
+							<input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#modalStartPicker" placeholder="NONE" readonly>
 							<span class="input-group-append" data-toggle="datetimepicker" data-target="#modalStartPicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
@@ -69,9 +69,9 @@ $requireAdmin = true;
 					<div class="form-group">
 						<div class="input-group date" id="modalEndPicker" data-target-input="nearest">
 							<span class="input-group-prepend">
-								<span class="input-group-text">End Time:</span>
+								<span class="input-group-text" style="min-width:100px">End Time:</span>
 							</span>
-							<input type="text" class="form-control datetimepicker-input" data-target="#modalEndPicker" placeholder="NONE">
+							<input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#modalEndPicker" placeholder="NONE" readonly>
 							<span class="input-group-append" data-toggle="datetimepicker" data-target="#modalEndPicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
@@ -181,6 +181,8 @@ $requireAdmin = true;
 
 			// Clear the message as the form changes
 			$modalName.keydown(clearMessageUnlessEnter);
+			$modalStartPicker.off('keydown update.datetimepicker change.datetimepicker');
+			$modalEndPicker.off('keydown update.datetimepicker change.datetimepicker');
 			$modalStartPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
 			$modalEndPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
 			function clearMessageUnlessEnter(e) {
@@ -369,12 +371,30 @@ $requireAdmin = true;
 			$picker.datetimepicker({
 				buttons: {showClear: true, showClose: true, showToday: true},
 				format: DATE_FORMAT_DISPLAY,
-				icons: {today: 'fa fa-calendar-day', clear: 'fa fa-trash-alt', close: 'fa fa-check'},
+				icons: {
+					today: 'fa fa-calendar-day',
+					date: 'fa fa-calendar',
+					time: 'fa fa-clock',
+					clear: 'fa fa-trash-alt',
+					close: 'fa fa-check'
+				},
+				tooltips: {
+					today: 'Go to now'
+				},
+				ignoreReadonly: true,
 				maxDate: false,
 				minDate: false,
-				sideBySide: true,
 				toolbarPlacement: 'top'
 			});
+
+			// Prevent setting date on show
+			$modalStartPicker.off('show.datetimepicker').on('show.datetimepicker', preventDefaultTime);
+			$modalEndPicker.off('show.datetimepicker').on('show.datetimepicker', preventDefaultTime);
+			function preventDefaultTime(e) {
+				const $picker = $(e.currentTarget);
+				const initialDate = $picker.datetimepicker('date')._i;
+				if (!initialDate) $picker.datetimepicker('date', null);
+			}
 		}
 
 		function scheduleTable() {

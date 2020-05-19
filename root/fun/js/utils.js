@@ -225,3 +225,14 @@ function setCookie(key, value) {
 	if (!_.isString(value)) throw new Error("Invalid value for cookie [" + value + "]");
 	document.cookie = key + " = " + value;
 }
+
+//================================
+// Fixing tempusdominus DateTimePicker
+
+// https://github.com/tempusdominus/bootstrap-4/issues/227#issuecomment-538509657
+if (jQuery.fn.datetimepicker) jQuery.fn.datetimepicker.Constructor.prototype._notifyEvent = function _notifyEvent(e) {
+	if (e.type === jQuery.fn.datetimepicker.Constructor.Event.CHANGE && (e.date && e.date.isSame(e.oldDate) || !e.date && !e.oldDate)) {
+		return;
+	}
+	this._element.trigger(e);
+};

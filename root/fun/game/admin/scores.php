@@ -40,21 +40,21 @@ $requireAdmin = true;
 				<div class="form-group">
 					<div class="input-group" id="pickTeamWrapper">
 						<div class="input-group-prepend">
-							<label class="input-group-text" for="pickTeamDropdown">Team:</label>
+							<label class="input-group-text" for="pickTeamDropdown" style="min-width:100px">Team:</label>
 						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="input-group" id="pickChallengeWrapper">
 						<div class="input-group-prepend">
-							<label class="input-group-text" for="pickChallengeDropdown">Challenge:</label>
+							<label class="input-group-text" for="pickChallengeDropdown" style="min-width:100px">Challenge:</label>
 						</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="input-group">
 						<div class="input-group-prepend">
-							<label class="input-group-text" for="scoreChange">Change:</label>
+							<label class="input-group-text" for="scoreChange" style="min-width:100px">Change:</label>
 						</div>
 						<input type="number" class="form-control" id="scoreChange" required>
 					</div>

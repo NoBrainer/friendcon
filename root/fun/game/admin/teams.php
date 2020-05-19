@@ -38,7 +38,7 @@ $requireAdmin = true;
 				<div class="form-group">
 					<div class="input-group">
 						<div class="input-group-prepend">
-							<label class="input-group-text" for="addMemberName">Name:</label>
+							<label class="input-group-text" for="addMemberName" style="min-width:70px">Name:</label>
 						</div>
 						<input type="text" class="form-control" placeholder="Name" id="addMemberName" required>
 					</div>
@@ -46,7 +46,7 @@ $requireAdmin = true;
 				<div class="form-group">
 					<div class="input-group" id="addMemberDropdownWrapper">
 						<div class="input-group-prepend">
-							<label class="input-group-text" for="addMemberDropdown">Team:</label>
+							<label class="input-group-text" for="addMemberDropdown" style="min-width:70px">Team:</label>
 						</div>
 					</div>
 				</div>
@@ -78,7 +78,7 @@ $requireAdmin = true;
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Name:</span>
+								<span class="input-group-text" style="min-width:100px">Name:</span>
 							</div>
 							<input type="text" class="form-control" placeholder="Name" aria-label="Edit Name" id="modalName" required>
 						</div>
@@ -86,7 +86,7 @@ $requireAdmin = true;
 					<div class="form-group" id="modalMembersSection">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Members:</span>
+								<span class="input-group-text" style="min-width:100px">Members:</span>
 							</div>
 							<div class="form-control h-auto" id="modalMembersWrapper"></div>
 						</div>
