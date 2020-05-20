@@ -1,16 +1,17 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use dao\Teams as Teams;
 use util\Http as Http;
 
-if (Http::return404IfNotGet()) exit;
+if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');
 $response = [];
 
 try {
-	// Return the teams
-	$response['data'] = Teams::getAll();
+	// Validate input
+	// ...
+
+	$response['data'] = [];
 	Http::responseCode('OK');
 } catch(RuntimeException $e) {
 	$response['error'] = $e->getMessage();

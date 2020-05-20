@@ -4,19 +4,21 @@ include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 use util\Http as Http;
 use util\Session as Session;
 
-// Only allow POST request method
 if (Http::return404IfNotPost()) exit;
-
-// Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
-if (Session::$isLoggedIn) {
-	Session::logout();
-	$response['data'] = "Successfully logged out.";
-	Http::responseCode('OK');
-} else {
-	$response['error'] = "Not logged in.";
-	Http::responseCode('BAD_REQUEST');
+try {
+	if (Session::$isLoggedIn) {
+		Session::logout();
+		$response['data'] = "Successfully logged out.";
+		Http::responseCode('OK');
+	} else {
+		$response['error'] = "Not logged in.";
+		Http::responseCode('BAD_REQUEST');
+	}
+} catch(RuntimeException $e) {
+	$response['error'] = $e->getMessage();
+	Http::responseCode('INTERNAL_SERVER_ERROR');
 }
 echo json_encode($response);

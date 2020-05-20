@@ -6,42 +6,39 @@ use util\Http as Http;
 use util\Param as Param;
 use util\Session as Session;
 
-// Only allow POST request method
 if (Http::return404IfNotPost()) exit;
-
-// Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
-if (!Session::$isGameAdmin) {
-	$response['error'] = "You are not an admin! GTFO.";
-	Http::responseCode('FORBIDDEN');
-	echo json_encode($response);
-	return;
-}
-
-// Validate input
-$teamIndex = Param::asInteger($_POST['teamIndex']);
-$name = $_POST['name'];
-$score = Param::asInteger($_POST['score']);
-$members = $_POST['members'];
-$hasName = Param::isPopulatedString($name);
-$hasScore = !is_null($score);
-$hasMembers = isset($members);
-if (!Teams::isValidTeamIndex($teamIndex)) {
-	$response['error'] = "Missing required field 'teamIndex'.";
-	Http::responseCode('BAD_REQUEST');
-	echo json_encode($response);
-	return;
-} else if (!$hasName && !$hasScore && !$hasMembers) {
-	$response['error'] = "No change fields.";
-	Http::responseCode('BAD_REQUEST');
-	echo json_encode($response);
-	return;
-}
-if (!$hasName) $name = null;
-
 try {
+	if (!Session::$isGameAdmin) {
+		$response['error'] = "You are not an admin! GTFO.";
+		Http::responseCode('FORBIDDEN');
+		echo json_encode($response);
+		return;
+	}
+
+	// Validate input
+	$teamIndex = Param::asInteger($_POST['teamIndex']);
+	$name = $_POST['name'];
+	$score = Param::asInteger($_POST['score']);
+	$members = $_POST['members'];
+	$hasName = Param::isPopulatedString($name);
+	$hasScore = !is_null($score);
+	$hasMembers = isset($members);
+	if (!Teams::isValidTeamIndex($teamIndex)) {
+		$response['error'] = "Missing required field 'teamIndex'.";
+		Http::responseCode('BAD_REQUEST');
+		echo json_encode($response);
+		return;
+	} else if (!$hasName && !$hasScore && !$hasMembers) {
+		$response['error'] = "No change fields.";
+		Http::responseCode('BAD_REQUEST');
+		echo json_encode($response);
+		return;
+	}
+	if (!$hasName) $name = null;
+
 	// Handle members updates
 	if ($hasMembers) {
 		if (empty($members)) {

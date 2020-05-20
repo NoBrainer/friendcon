@@ -7,10 +7,7 @@ use dao\Uploads as Uploads;
 use util\Http as Http;
 use util\Param as Param;
 
-// Only allow POST request method
 if (Http::return404IfNotPost()) exit;
-
-// Setup the content-type and response template
 Http::contentType('JSON');
 $response = [];
 
