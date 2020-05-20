@@ -129,6 +129,12 @@ $requireAdmin = false;
 			renderAlbum();
 			renderModal();
 			setupHandlers();
+			probeForTeamsChanges();
+		}
+
+		function probeForTeamsChanges() {
+			// Reload teams and render the score table every 10 seconds
+			setInterval(() => loadTeams().always(renderScoreTable), 10000);
 		}
 
 		function renderScoreTable() {

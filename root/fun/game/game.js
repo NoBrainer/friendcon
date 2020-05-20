@@ -168,22 +168,10 @@ function isUploadWinner(upload) {
 	return upload.state === WINNER;
 }
 
-function loadData(opts) {
-	const defaultOpts = {asAdmin: false, withScoreChanges: false};
+function loadChallenges(opts) {
+	const defaultOpts = {asAdmin: false};
 	opts = _.extend(defaultOpts, opts);
-	const teamDeferred = $.ajax({
-		type: 'GET',
-		url: "/fun/api/teams/get.php",
-		success: (resp) => {
-			teams = resp.data.sort(sortTeams);
-		},
-		error: (jqXHR) => {
-			const resp = jqXHR.responseJSON;
-			console.log(resp.error);
-			alert(resp.error);
-		}
-	});
-	const challengeDeferred = $.ajax({
+	return $.ajax({
 		type: 'GET',
 		url: "/fun/api/challenges/get.php" + (opts.asAdmin ? "?all" : ""),
 		success: (resp) => {
@@ -195,7 +183,64 @@ function loadData(opts) {
 			alert(resp.error);
 		}
 	});
-	const uploadDeferred = $.ajax({
+}
+
+function loadData(opts) {
+	const defaultOpts = {asAdmin: false, withScoreChanges: false};
+	opts = _.extend(defaultOpts, opts);
+	const challengeDeferred = loadChallenges(opts);
+	const teamDeferred = loadTeams(opts);
+	const uploadDeferred = loadUploads(opts);
+	let combined = $.when(challengeDeferred, teamDeferred, uploadDeferred);
+	if (opts.withScoreChanges) {
+		const scoreChangesDeferred = loadScoreChanges(opts);
+		combined = $.when(challengeDeferred, scoreChangesDeferred, teamDeferred, uploadDeferred);
+	}
+	return combined.fail(() => {
+		const message = "Failed to load data";
+		console.log(message);
+		alert(message);
+	});
+}
+
+function loadScoreChanges(opts) {
+	const defaultOpts = {};
+	opts = _.extend(defaultOpts, opts);
+	return $.ajax({
+		type: 'GET',
+		url: "/fun/api/score/getChangeLog.php",
+		success: (resp) => {
+			scoreChanges = resp.data.sort(sortScoreChanges);
+		},
+		error: (jqXHR) => {
+			const resp = jqXHR.responseJSON;
+			console.log(resp.error);
+			alert(resp.error);
+		}
+	});
+}
+
+function loadTeams(opts) {
+	const defaultOpts = {};
+	opts = _.extend(defaultOpts, opts);
+	return $.ajax({
+		type: 'GET',
+		url: "/fun/api/teams/get.php",
+		success: (resp) => {
+			teams = resp.data.sort(sortTeams);
+		},
+		error: (jqXHR) => {
+			const resp = jqXHR.responseJSON;
+			console.log(resp.error);
+			alert(resp.error);
+		}
+	});
+}
+
+function loadUploads(opts) {
+	const defaultOpts = {asAdmin: false};
+	opts = _.extend(defaultOpts, opts);
+	return $.ajax({
 		type: 'GET',
 		url: "/fun/api/uploads/get.php" + (opts.asAdmin ? "?all" : ""),
 		success: (resp) => {
@@ -206,27 +251,6 @@ function loadData(opts) {
 			console.log(resp.error);
 			alert(resp.error);
 		}
-	});
-	let combined = $.when(teamDeferred, challengeDeferred, uploadDeferred);
-	if (opts.withScoreChanges) {
-		const scoreChangesDeferred = $.ajax({
-			type: 'GET',
-			url: "/fun/api/score/getChangeLog.php",
-			success: (resp) => {
-				scoreChanges = resp.data.sort(sortScoreChanges);
-			},
-			error: (jqXHR) => {
-				const resp = jqXHR.responseJSON;
-				console.log(resp.error);
-				alert(resp.error);
-			}
-		});
-		combined = $.when(teamDeferred, challengeDeferred, uploadDeferred, scoreChangesDeferred);
-	}
-	return combined.fail(() => {
-		const message = "Failed to load data";
-		console.log(message);
-		alert(message);
 	});
 }
 
