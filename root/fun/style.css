@@ -14,6 +14,11 @@ button, .btn, a, .pointer, select, option, input[type="file" i], input[type="che
 	cursor: not-allowed !important;
 }
 
+/* Overriding Bootstrap styles */
+.modal-open {
+	padding-right: 0 !important;
+}
+
 /* Max widths based on container-* sizes*/
 .maxWidth-sm {
 	max-width: 540px;

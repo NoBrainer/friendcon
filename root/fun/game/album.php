@@ -26,7 +26,7 @@ $requireAdmin = false;
 	<div id="album"></div>
 </div>
 
-<!-- Modal -->
+<!-- Album Modal -->
 <div id="albumModal" class="modal p-0" tabindex="-1" role="dialog">
 	<div class="modal-dialog m-0 w-100 mw-100" role="document">
 		<div class="modal-content">
@@ -59,6 +59,21 @@ $requireAdmin = false;
 	</div>
 </div>
 
+<!-- Team Member Modal -->
+<div id="teamMemberModal" class="modal p-0" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-sm maxWidth-sm" role="document">
+		<div class="modal-content">
+			<div class="modal-header position-relative">
+				<h5 class="modal-title"></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+
 <!--  HTML Templates -->
 <div class="templates" style="display:none">
 	<div id="carouselSlide">
@@ -84,6 +99,19 @@ $requireAdmin = false;
 				<div class="text"></div>
 			</div>
 		</div>
+	</div>
+	<div id="memberPill">
+		<h4 class="d-inline-block mb-2 mr-2 memberPill">
+			<span class="badge badge-pill badge-secondary">
+				<span class="d-inline-block text-truncate font-weight-normal text"></span>
+			</span>
+		</h4>
+	</div>
+	<div id="teamNameWithMembersIcon">
+		<span>
+			<a class="fa fa-users showMembersIcon" data-toggle="modal" data-target="#teamMemberModal" aria-label="Show members"></a>
+			<span class="text"></span>
+		</span>
 	</div>
 	<div id="thumbnail">
 		<div class="col mb-2 pl-0 pr-2 thumbnailWrapper">
@@ -111,12 +139,15 @@ $requireAdmin = false;
 	$(document).ready(() => {
 		const $scoreTableBody = $('#scoreTable').find('tbody');
 		const $album = $('#album');
-		const $modal = $('#albumModal');
-		const $modalChallengeName = $modal.find('.challengeName');
-		const $modalIcon = $modal.find('.thumbnailIcon');
-		const modalId = 'modalCarousel';
-		const $modalCarousel = $('#' + modalId);
-		const $modalSlidesWrapper = $modalCarousel.find('.carousel-inner');
+		const $albumModal = $('#albumModal');
+		const $albumModalChallengeName = $albumModal.find('.challengeName');
+		const $albumModalIcon = $albumModal.find('.thumbnailIcon');
+		const albumModalId = 'modalCarousel';
+		const $albumModalCarousel = $('#' + albumModalId);
+		const $albumModalSlidesWrapper = $albumModalCarousel.find('.carousel-inner');
+		const $teamMemberModal = $('#teamMemberModal');
+		const $teamMemberModalTitle = $teamMemberModal.find('.modal-title');
+		const $teamMemberModalBody = $teamMemberModal.find('.modal-body');
 		let uploadsByChallenge;
 		let slideIndex = {};
 
@@ -127,7 +158,7 @@ $requireAdmin = false;
 			uploadsByChallenge = getUploadsByChallenge();
 			renderScoreTable();
 			renderAlbum();
-			renderModal();
+			renderAlbumModal();
 			setupHandlers();
 			probeForTeamsChanges();
 		}
@@ -146,6 +177,13 @@ $requireAdmin = false;
 					$scoreTableBody.append(scoreRow(team));
 				});
 			}
+
+			// Render the team member modal based on the clicked link
+			$('.showMembersIcon').click((e) => {
+				const $link = $(e.currentTarget);
+				const teamIndex = $link.attr('teamIndex');
+				renderTeamMemberModal(teamIndex);
+			});
 		}
 
 		function renderAlbum() {
@@ -161,9 +199,9 @@ $requireAdmin = false;
 			}
 		}
 
-		function renderModal() {
+		function renderAlbumModal() {
 			// Reset the slides
-			$modalSlidesWrapper.empty();
+			$albumModalSlidesWrapper.empty();
 			slideIndex = {};
 
 			// Render each slide
@@ -175,7 +213,7 @@ $requireAdmin = false;
 					const teamName = getTeamName(upload.teamIndex);
 					const isActive = isFirst;
 					isFirst = false;
-					$modalSlidesWrapper.append(carouselSlide(modalId, url, teamName, isActive, {file: upload.file}));
+					$albumModalSlidesWrapper.append(carouselSlide(albumModalId, url, teamName, isActive, {file: upload.file}));
 
 					// Keep a mapping of key-value (file-slideNum) for look-up later
 					slideIndex[upload.file] = slideNum++;
@@ -183,27 +221,41 @@ $requireAdmin = false;
 			});
 		}
 
+		function renderTeamMemberModal(teamIndex) {
+			const team = getTeam(teamIndex) || {name: 'INVALID_TEAM'};
+			$teamMemberModalTitle.text("Members of " + team.name);
+			const members = team.members || [];
+			if (_.isEmpty(members)) {
+				$teamMemberModalBody.text("No members.");
+			} else {
+				$teamMemberModalBody.empty();
+				_.each(members, (member) => {
+					$teamMemberModalBody.append(memberPill(member));
+				});
+			}
+		}
+
 		function setupHandlers() {
 			// Set the slide when opening the modal
-			$('.thumbnailLink').click((e) => {
+			$('.thumbnailLink').off().click((e) => {
 				const $link = $(e.currentTarget);
 				const file = $link.attr('file');
 				const slideNum = slideIndex[file];
-				$modalCarousel.carousel(slideNum);
+				$albumModalCarousel.carousel(slideNum);
 			});
 
 			// Update the modal on slide transition
-			$modalCarousel.off('slide.bs.carousel').on('slide.bs.carousel', (e) => {
+			$albumModalCarousel.off('slide.bs.carousel').on('slide.bs.carousel', (e) => {
 				const $slide = $(e.relatedTarget);
 				const file = $slide.attr('file');
 				const upload = getUploadByFile(file);
-				$modalChallengeName.text(getChallengeName(upload.challengeIndex));
-				$modalIcon.html(thumbnailIcon(upload));
+				$albumModalChallengeName.text(getChallengeName(upload.challengeIndex));
+				$albumModalIcon.html(thumbnailIcon(upload));
 			});
 
 			if ($album.find('.text').text().trim() !== 'No published albums.') {
 				// Trigger first transition to enable mobile swiping
-				$modalCarousel.carousel('next');
+				$albumModalCarousel.carousel('next');
 			}
 		}
 
@@ -254,12 +306,25 @@ $requireAdmin = false;
 			return $slide;
 		}
 
+		function memberPill(name) {
+			const $pill = $($('#memberPill').html());
+			$pill.find('.text').text(name);
+			return $pill;
+		}
+
 		function scoreRow(team) {
 			const objArr = [
-				{className: 'team', ele: getTeamName(team.teamIndex)},
+				{className: 'team', ele: teamNameWithMembersIcon(team.teamIndex)},
 				{className: 'score', ele: "" + team.score}
 			];
 			return tr(objArr);
+		}
+
+		function teamNameWithMembersIcon(teamIndex) {
+			const $div = $($('#teamNameWithMembersIcon').html());
+			$div.find('.showMembersIcon').attr('teamIndex', teamIndex);
+			$div.find('.text').text(getTeamName(teamIndex));
+			return $div;
 		}
 	});
 </script>
