@@ -109,7 +109,7 @@ $requireAdmin = false;
 <!-- JavaScript -->
 <script type="text/javascript">
 	$(document).ready(() => {
-		const $scoreTable = $('#scoreTable');
+		const $scoreTableBody = $('#scoreTable').find('tbody');
 		const $album = $('#album');
 		const $modal = $('#albumModal');
 		const $modalChallengeName = $modal.find('.challengeName');
@@ -138,12 +138,12 @@ $requireAdmin = false;
 		}
 
 		function renderScoreTable() {
-			$scoreTable.find('tbody').empty();
+			$scoreTableBody.empty();
 			if (teams.length === 0) {
-				$scoreTable.append("Teams have not been setup.");
+				$scoreTableBody.append("Teams have not been setup.");
 			} else {
 				_.each(getTeamsSortedByScore(), (team) => {
-					$scoreTable.append(scoreRow(team));
+					$scoreTableBody.append(scoreRow(team));
 				});
 			}
 		}

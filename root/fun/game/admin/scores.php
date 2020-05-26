@@ -90,6 +90,7 @@ $requireAdmin = true;
 						<th class="border-0">Challenge</th>
 					</tr>
 				</thead>
+				<tbody></tbody>
 			</table>
 		</div>
 	</div>
@@ -98,7 +99,7 @@ $requireAdmin = true;
 <!-- JavaScript -->
 <script type="text/javascript">
 	$(document).ready(() => {
-		const $scoreTable = $('#scoreTable');
+		const $scoreTableBody = $('#scoreTable').find('tbody');
 		const $modifyForm = $('#modifyForm');
 		const $pickTeamDropdownWrapper = $('#pickTeamWrapper');
 		const $pickChallengeDropdownWrapper = $('#pickChallengeWrapper');
@@ -125,12 +126,12 @@ $requireAdmin = true;
 		}
 
 		function renderScoreTable() {
-			$scoreTable.find('tbody').empty();
+			$scoreTableBody.empty();
 			if (teams.length === 0) {
-				$scoreTable.append("Teams need to be setup via the Teams admin page.");
+				$scoreTableBody.append("Teams need to be setup via the Teams admin page.");
 			} else {
 				_.each(getTeamsSortedByScore(), (team) => {
-					$scoreTable.append(scoreRow(team));
+					$scoreTableBody.append(scoreRow(team));
 				});
 			}
 		}
@@ -228,20 +229,22 @@ $requireAdmin = true;
 		}
 
 		function renderChangeLog() {
-			$changeLogEntries.empty().show();
-			if (scoreChanges.length === 0) {
-				$changeLogEntries.text("Empty change log.");
-			} else {
-				$changeLogEntries.html(changeLogTableScaffold());
-				const $table = $changeLogEntries.find('.table');
-				_.each(scoreChanges, (scoreChange) => {
-					$table.append(changeLogRow(scoreChange));
-				});
-			}
+			$changeLogEntries.html(changeLogTable());
+			$changeLogEntries.show();
 		}
 
-		function changeLogTableScaffold() {
-			return $($('#changeLogTableScaffold').html());
+		function changeLogTable() {
+			const $table = $($('#changeLogTableScaffold').html());
+			const $tbody = $table.find('tbody');
+			if (scoreChanges.length === 0) {
+				$table.find('thead').hide();
+				$tbody.text("Empty change log.");
+			} else {
+				_.each(scoreChanges, (scoreChange) => {
+					$tbody.append(changeLogRow(scoreChange));
+				});
+			}
+			return $table;
 		}
 
 		function changeLogRow(scoreChange) {

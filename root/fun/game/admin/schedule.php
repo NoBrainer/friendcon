@@ -128,6 +128,7 @@ $requireAdmin = true;
 					<th class="border-0">End</th>
 				</tr>
 			</thead>
+			<tbody></tbody>
 		</table>
 	</div>
 </div>
@@ -399,11 +400,12 @@ $requireAdmin = true;
 
 		function scheduleTable() {
 			const $table = $($('#tableScaffold').html());
+			const $tbody = $table.find('tbody');
 			if (challenges.length === 0) {
-				$table.append("Add challenges with the '+' button above.");
+				$tbody.append("Add challenges with the '+' button above.");
 			} else {
 				_.each(challenges, (challenge) => {
-					$table.append(challengeRow(challenge));
+					$tbody.append(challengeRow(challenge));
 				});
 			}
 			return $table;

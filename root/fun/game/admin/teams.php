@@ -462,11 +462,12 @@ $requireAdmin = true;
 
 		function teamTable() {
 			const $table = $($('#tableScaffold').html());
+			const $tbody = $table.find('tbody');
 			if (teams.length === 0) {
-				$table.append("Add teams with the '+' button above.");
+				$tbody.append("Add teams with the '+' button above.");
 			} else {
 				_.each(teams, (team) => {
-					$table.append(teamRow(team));
+					$tbody.append(teamRow(team));
 				});
 			}
 			return $table;
