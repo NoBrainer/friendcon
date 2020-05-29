@@ -10,48 +10,39 @@
 		padding-right: 0;
 	}
 }
-
 /* Action bar */
 .actionBar .action {
 	font-size: 50px;
 }
-
 @media (max-width: 575.98px) {
 	.actionBar .action.col-3 {
 		font-size: 40px;
 	}
 }
-
 .actionBar .approve {
 	color: rgba(62, 143, 62, 0.3);
 }
-
 .actionBar .approve:hover,
 .actionBar .approve.active {
 	color: rgba(62, 143, 62, 1.0);
 }
-
 .actionBar .reject {
 	color: rgba(220, 20, 60, 0.3);
 }
-
 .actionBar .reject:hover,
 .actionBar .reject.active {
 	color: rgba(220, 20, 60, 1.0);
 }
-
 .actionBar .honor,
 .actionBar .winner {
 	color: rgba(240, 173, 78, 0.3);
 }
-
 .actionBar .honor:hover,
 .actionBar .honor.active,
 .actionBar .winner:hover,
 .actionBar .winner.active {
 	color: rgba(240, 173, 78, 1.0);
 }
-
 /* Number positioning for trophy icon */
 .fa-trophy .number {
 	color: black;
@@ -59,19 +50,16 @@
 	left: 22px;
 	top: 4px;
 }
-
 @media (max-width: 575.98px) {
 	.col-3 .fa-trophy .number {
 		font-size: 20px;
 		left: 18px;
 	}
 }
-
 .fa-trophy .number.small {
 	font-size: 13px;
 	left: 11px;
 }
-
 /* Thumbnails */
 .thumbnailIcon {
 	color: rgba(240, 173, 78, 1.0);
@@ -79,12 +67,10 @@
 	left: 5px;
 	top: 0;
 }
-
 /* Icons */
 .dropdownItemIcon {
 	width: 20px;
 }
-
 /* Member pills */
 .memberPill .text {
 	max-width: 300px;

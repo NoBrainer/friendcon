@@ -5,33 +5,29 @@ body {
 	background: #f9f9f9;
 	overflow-y: scroll !important;
 }
-
 button, .btn, a, .pointer, select, option, input[type="file" i], input[type="checkbox" i], .custom-file, .form-check * {
 	cursor: pointer;
 }
-
 *:disabled {
 	cursor: not-allowed !important;
 }
-
 /* Overriding Bootstrap styles */
+.badge {
+	line-height: inherit;
+}
 .modal-open {
 	padding-right: 0 !important;
 }
-
-/* Max widths based on container-* sizes*/
+/* Max widths based on container-* sizes */
 .maxWidth-sm {
 	max-width: 540px;
 }
-
 .maxWidth-md {
 	max-width: 720px;
 }
-
 .maxWidth-lg {
 	max-width: 960px;
 }
-
 .maxWidth-xl {
 	max-width: 1140px;
 }
