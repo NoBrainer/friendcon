@@ -128,7 +128,15 @@ class Teams {
 	public static function getMinTeamMemberCount() {
 		// Get the teams with member counts and figure out the least members on a single team
 		$minMemberCount = null;
-		$result = Sql::executeSqlForResult("SELECT (SELECT COUNT(*) FROM teamMembers m WHERE m.teamIndex = t.teamIndex) AS memberCount FROM teams t");
+		$query = <<< SQL
+			SELECT (
+				SELECT COUNT(*)
+				FROM teamMembers m
+				WHERE m.teamIndex = t.teamIndex
+			) AS memberCount
+			FROM teams t
+		SQL;
+		$result = Sql::executeSqlForResult($query);
 		while ($row = Sql::getNextRow($result)) {
 			$memberCount = Param::asInteger($row['memberCount']);
 			$minMemberCount = is_null($minMemberCount) ? $memberCount : min($minMemberCount, $memberCount);

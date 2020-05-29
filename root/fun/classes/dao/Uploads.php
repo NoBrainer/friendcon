@@ -42,10 +42,14 @@ class Uploads {
 	}
 
 	public static function getAll($publishedOnly = true) {
-		$query = "SELECT u.*, s.state, c.published FROM uploads u " .
-				"JOIN uploadState s ON u.state = s.value " .
-				"JOIN challenges c ON u.challengeIndex = c.challengeIndex" .
-				($publishedOnly ? " WHERE u.state > 0 AND c.published = 1" : "");
+		$condition = ($publishedOnly ? " WHERE u.state > 0 AND c.published = 1" : "");
+		$query = <<< SQL
+			SELECT u.*, s.state, c.published
+			FROM uploads u
+			JOIN uploadState s ON u.state = s.value
+			JOIN challenges c ON u.challengeIndex = c.challengeIndex
+			$condition
+		SQL;
 		$result = Sql::executeSqlForResult($query);
 
 		// Build the data array
