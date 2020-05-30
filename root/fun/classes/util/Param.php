@@ -7,10 +7,14 @@ use Exception as Exception;
 
 class Param {
 
+	private const VALID_FALSE_VALUES = [0, false, "0", "false"];
+	private const VALID_TRUE_VALUES = [1, true, "1", "true"];
+	private const VALID_BOOLEAN_VALUES = [0, 1, false, true, "0", "1", "false", "true"];
+
 	public static function asBoolean($value, $default = null) {
 		if (!isset($value)) return $default;
-		if ($value === 0 || $value === false || $value === 'false') return false;
-		if ($value === 1 || $value === true || $value === 'true') return true;
+		if (in_array($value, Param::VALID_FALSE_VALUES, true)) return false;
+		if (in_array($value, Param::VALID_TRUE_VALUES, true)) return true;
 		return $default;
 	}
 
@@ -18,8 +22,8 @@ class Param {
 		return Param::isInteger($value) ? intval($value) : $default;
 	}
 
-	public static function asString($value) {
-		return "$value";
+	public static function asString($value, $trim = true) {
+		return $trim ? trim("$value") : "$value";
 	}
 
 	public static function asTimestamp($value, $default = null) {
@@ -37,11 +41,11 @@ class Param {
 	}
 
 	public static function isBoolean($value) {
-		return isset($value) && ($value === 0 || $value === 1 || $value === 'true' || $value === 'false' || $value === true || $value === false);
+		return isset($value) && in_array($value, Param::VALID_BOOLEAN_VALUES);
 	}
 
 	public static function isEmptyString($value) {
-		return empty($value) || empty(trim($value));
+		return sizeof(trim($value)) === 0;
 	}
 
 	public static function isInteger($value) {
@@ -50,7 +54,7 @@ class Param {
 	}
 
 	public static function isPopulatedString($value) {
-		return Param::isString($value) && !empty($value) && !empty(trim($value));
+		return Param::isString($value) && !Param::isEmptyString($value);
 	}
 
 	public static function isString($value) {

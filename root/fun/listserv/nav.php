@@ -44,6 +44,11 @@
 							<span class="fa fa-gamepad"></span>
 							<span>Game</span>
 						</a>
+						<a class="dropdown-item" href="/fun/admin">
+							<span class="fa fa-lock"></span>
+							<span>Site Admin</span>
+						</a>
+						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" id="navLogoutBtn" href="#">
 							<span class="fa fa-sign-out-alt"></span>
 							<span>Log Out</span>

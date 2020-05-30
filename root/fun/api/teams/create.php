@@ -45,11 +45,8 @@ try {
 		return;
 	}
 
-	// Get the updated teams
-	$updatedTeams = Teams::getAll();
-
 	// Return the updated teams
-	$response['data'] = $updatedTeams;
+	$response['data'] = Teams::getAll();
 	$response['message'] = "Team created [$name].";
 	Http::responseCode('OK');
 } catch(RuntimeException $e) {

@@ -70,6 +70,58 @@ function formatPhoneNumberOnBlur($input) {
 }
 
 //================================
+// Global variables
+let globals = [];
+
+function addGlobal(global) {
+	globals.push(global);
+	resortGlobals();
+}
+
+function getGlobalByName(name) {
+	return _.find(globals, (global) => {
+		return global.name === name;
+	});
+}
+
+function loadGlobals() {
+	return $.ajax({
+		type: 'GET',
+		url: "/fun/api/admin/globals/get.php",
+		success: (resp) => {
+			globals = resp.data.sort(sortGlobals);
+		},
+		error: (jqXHR) => {
+			const resp = jqXHR.responseJSON;
+			console.log(resp.error);
+			alert(resp.error);
+		}
+	});
+}
+
+function removeGlobal(name) {
+	globals = _.reject(globals, (global) => {
+		return global.name === name;
+	});
+}
+
+function resortGlobals() {
+	globals = globals.sort(sortGlobals);
+}
+
+function sortGlobals(a, b) {
+	// Sort alphabetically by name
+	return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+}
+
+function updateGlobal(global) {
+	let g = getGlobalByName(global.name);
+	g.type = global.type;
+	g.value = global.value;
+	g.description = global.description;
+}
+
+//================================
 // Messaging success/error/info to a div
 
 function clearMessage($message) {
@@ -159,7 +211,7 @@ function option(text, value, selected) {
 }
 
 // Create a 'select' element.
-function select(options, id) {
+function select(options, id, startingValue) {
 	const $select = $(document.createElement('select'));
 	$select.addClass('custom-select');
 	if (!!id) $select.prop('id', id);
@@ -174,6 +226,7 @@ function select(options, id) {
 	} else {
 		$select.html(options);
 	}
+	if (!!startingValue) setTimeout(() => $select.val(startingValue), 1); //Set the starting value after it's on the page
 	return $select;
 }
 
