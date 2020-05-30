@@ -15,6 +15,7 @@ For example `root/game.php` gives us the https://friendcon.com/game URL.
 - The `fun/classes` directory is for the autoloaded classes.
 - The `fun/js` directory is for custom JavaScript files.
 - The `fun/static` directory is for assets and third-party libraries.
+- The `fun/wp-content/mu-plugins` directory is for WordPress must use plugins.
 - Every other directory in `fun` is part of the UI. Each of those should have its own CSS file for its specific styling
 and its own JS file for its specific utility functions. They should also have a `head.php` to prevent repeating HTML 
 headers and `nav.php` to prevent repeating navigation HTML.
