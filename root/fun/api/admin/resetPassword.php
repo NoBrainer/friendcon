@@ -21,9 +21,9 @@ try {
 	}
 
 	// Validate input
-	$email = $_POST['email'];
-	$token = $_POST['token'];
-	$password = $_POST['password'];
+	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
+	$token = isset($_POST['token']) ? Param::asString($_POST['token']) : null;
+	$password = isset($_POST['password']) ? Param::asString($_POST['password']) : null;
 	if (Param::isBlankString($email)) {
 		$response['error'] = "Missing required field 'email'.";
 		Http::responseCode('BAD_REQUEST');

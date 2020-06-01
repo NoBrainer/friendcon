@@ -12,8 +12,8 @@ $response = [];
 
 try {
 	// Validate input
-	$email = $_POST['email'];
-	$password = $_POST['password'];
+	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
+	$password = isset($_POST['password']) ? Param::asString($_POST['password']) : null;
 	if (Session::$isLoggedIn) {
 		$response['error'] = "Already logged in.";
 		Http::responseCode('BAD_REQUEST');
@@ -30,8 +30,6 @@ try {
 		echo json_encode($response);
 		return;
 	}
-	$email = trim($email);
-	$password = trim($password);
 
 	// Check for the admin
 	$admin = Admins::getByEmail($email);

@@ -19,29 +19,27 @@ try {
 	}
 
 	// Validate input
-	$teamIndex = Param::asInteger($_POST['teamIndex']);
-	$name = $_POST['name'];
-	$score = Param::asInteger($_POST['score']);
-	$members = $_POST['members'];
-	$hasName = Param::isPopulatedString($name);
-	$hasScore = !is_null($score);
-	$hasMembers = isset($members);
+	$teamIndex = isset($_POST['teamIndex']) ? Param::asInteger($_POST['teamIndex']) : null;
+	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
+	$score = isset($_POST['score']) ? Param::asInteger($_POST['score']) : null;
+	$members = isset($_POST['members']) ? Param::asString($_POST['members']) : null;
+	$hasMembers = isset($_POST['members']);
+	$hasChanges = Param::isPopulatedString($name) || !is_null($score) || $hasMembers;
 	if (!Teams::isValidTeamIndex($teamIndex)) {
 		$response['error'] = "Missing required field 'teamIndex'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
-	} else if (!$hasName && !$hasScore && !$hasMembers) {
+	} else if (!$hasChanges) {
 		$response['error'] = "No change fields.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	if (!$hasName) $name = null;
 
 	// Handle members updates
 	if ($hasMembers) {
-		if (empty($members)) {
+		if (Param::isEmptyString($members)) {
 			Teams::deleteAllMembers($teamIndex);
 		} else {
 			// Convert the members string into an array

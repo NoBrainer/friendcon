@@ -21,14 +21,13 @@ try {
 	}
 
 	// Validate input
-	$email = $_POST['email'];
+	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
 	if (Param::isBlankString($email)) {
 		$response['error'] = "Missing required field 'email'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	$email = trim($email);
 
 	// Make sure an admin exists with email
 	$admin = Admins::getByEmail($email);

@@ -11,8 +11,8 @@ $response = [];
 
 try {
 	// Validate input
-	$token = $_POST['token'];
-	$action = $_POST['action'];
+	$token = isset($_POST['token']) ? Param::asString($_POST['token']) : null;
+	$action = isset($_POST['action']) ? Param::asString($_POST['action']) : null;
 	if (Param::isBlankString($token)) {
 		$response['error'] = "Missing required field 'token'.";
 		Http::responseCode('BAD_REQUEST');

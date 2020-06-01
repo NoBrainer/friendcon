@@ -20,9 +20,9 @@ try {
 	}
 
 	// Validate input
-	$challengeIndex = Param::asInteger($_POST['challengeIndex']);
-	$teamIndex = Param::asInteger($_POST['teamIndex']);
-	$delta = Param::asInteger($_POST['delta']);
+	$challengeIndex = isset($_POST['challengeIndex']) ? Param::asInteger($_POST['challengeIndex']) : null;
+	$teamIndex = isset($_POST['teamIndex']) ? Param::asInteger($_POST['teamIndex']) : null;
+	$delta = isset($_POST['delta']) ? Param::asInteger($_POST['delta']) : null;
 	if (!Teams::isValidTeamIndex($teamIndex)) {
 		$response['error'] = "Missing required field 'teamIndex'.";
 		Http::responseCode('BAD_REQUEST');

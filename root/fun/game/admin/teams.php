@@ -121,7 +121,7 @@ $requireAdmin = true;
 	<div id="memberPill">
 		<h4 class="d-inline-block mb-2 mr-2 memberPill">
 			<span class="badge badge-pill badge-secondary">
-				<span class="d-inline-block text-truncate font-weight-normal text"></span>
+				<span class="d-inline-block text-truncate font-weight-normal align-middle text"></span>
 				<span class="pointer remove">&times;</span>
 			</span>
 		</h4>

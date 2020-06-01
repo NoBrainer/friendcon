@@ -19,7 +19,7 @@ try {
 	}
 
 	// Validate input
-	$file = $_POST['file'];
+	$file = isset($_POST['file']) ? Param::asString($_POST['file']) : null;
 	if (Param::isBlankString($file)) {
 		$response['error'] = "Missing required field 'file'.";
 		Http::responseCode('BAD_REQUEST');

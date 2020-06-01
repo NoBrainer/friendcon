@@ -19,8 +19,8 @@ try {
 	}
 
 	// Validate input
-	$challengeIndex = Param::asInteger($_POST['challengeIndex']);
-	$isPublished = Param::asBoolean($_POST['published']);
+	$challengeIndex = isset($_POST['challengeIndex']) ? Param::asInteger($_POST['challengeIndex']) : null;
+	$isPublished = isset($_POST['published']) ? Param::asBoolean($_POST['published']) : null;
 	if (!Challenges::isValidChallengeIndex($challengeIndex)) {
 		$response['error'] = "Missing required field 'challengeIndex'.";
 		Http::responseCode('BAD_REQUEST');

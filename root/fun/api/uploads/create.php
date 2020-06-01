@@ -13,8 +13,8 @@ $response = [];
 
 try {
 	// Validate input
-	$teamIndex = Param::asInteger($_POST['teamIndex']);
-	$challengeIndex = Param::asInteger($_POST['challengeIndex']);
+	$teamIndex = isset($_POST['teamIndex']) ? Param::asInteger($_POST['teamIndex']) : null;
+	$challengeIndex = isset($_POST['challengeIndex']) ? Param::asInteger($_POST['challengeIndex']) : null;
 	if (!Teams::isValidTeamIndex($teamIndex)) {
 		$response['error'] = "Missing required field 'teamIndex'.";
 		Http::responseCode('BAD_REQUEST');

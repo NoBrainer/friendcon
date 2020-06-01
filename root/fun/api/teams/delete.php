@@ -19,7 +19,7 @@ try {
 	}
 
 	// Validate input
-	$teamIndex = Param::asInteger($_POST['teamIndex']);
+	$teamIndex = isset($_POST['teamIndex']) ? Param::asInteger($_POST['teamIndex']) : null;
 	if (!Teams::isValidTeamIndex($teamIndex)) {
 		$response['error'] = "Missing required field 'teamIndex'.";
 		Http::responseCode('BAD_REQUEST');

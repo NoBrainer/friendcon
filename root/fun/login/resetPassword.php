@@ -1,12 +1,15 @@
 <?php
+$pageTitle = "Reset Password";
+?>
+<?php
+include('head.php');
+
 use util\Http as Http;
 use util\Param as Param;
 
-$pageTitle = "Reset Password";
-
 // Variables used in rendering
-$email = $_GET['email'];
-$token = $_GET['token'];
+$email = isset($_GET['email']) ? Param::asString($_GET['email']) : null;
+$token = isset($_GET['token']) ? Param::asString($_GET['token']) : null;
 
 // Require an email and token
 if (Param::isBlankString($email) || Param::isBlankString($token)) {
@@ -16,7 +19,6 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 	return;
 }
 ?>
-<?php include('head.php'); ?>
 <body>
 
 <!-- Content -->

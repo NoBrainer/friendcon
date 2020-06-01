@@ -20,16 +20,14 @@ try {
 	}
 
 	// Validate input
-	$name = $_POST['name'];
-	$teamIndex = Param::asInteger($_POST['teamIndex']);
+	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
+	$teamIndex = isset($_POST['teamIndex']) ? Param::asInteger($_POST['teamIndex']) : null;
 	if (Param::isBlankString($name)) {
 		$response['error'] = "Missing required field 'name'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
-	}
-	$name = trim($name);
-	if (!Teams::isValidMemberName($name)) {
+	} else if (!Teams::isValidMemberName($name)) {
 		$response['error'] = "Field 'name' contains invalid special characters.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);

@@ -11,7 +11,7 @@ $response = [];
 
 try {
 	// Validate input
-	$email = $_POST['email'];
+	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
 	if (Param::isBlankString($email)) {
 		$response['error'] = "Missing required field 'email'";
 		Http::responseCode('BAD_REQUEST');
@@ -23,7 +23,6 @@ try {
 		echo json_encode($response);
 		return;
 	}
-	$email = trim($email);
 
 	// If the email is already off the listserv, we're done
 	if (!Listserv::exists($email)) {

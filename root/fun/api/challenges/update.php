@@ -19,19 +19,15 @@ try {
 	}
 
 	// Validate input
-	$challengeIndex = Param::asInteger($_POST['challengeIndex']);
-	$name = $_POST['name'];
-	$hasName = Param::isPopulatedString($name);
-	$hasStartTime = isset($_POST['startTime']);
-	$hasEndTime = isset($_POST['endTime']);
-	if ($hasStartTime) $startTime = Param::asTimestamp($_POST['startTime']);
-	if ($hasEndTime) $endTime = Param::asTimestamp($_POST['endTime']);
+	$challengeIndex = isset($_POST['challengeIndex']) ? Param::asInteger($_POST['challengeIndex']) : null;
+	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
+	$hasChanges = Param::isPopulatedString($name) || isset($_POST['startTime']) || isset($_POST['endTime']);
 	if (!Challenges::isValidChallengeIndex($challengeIndex)) {
 		$response['error'] = "Missing required field 'challengeIndex'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
-	} else if (!$hasName && !$hasStartTime && !$hasEndTime) {
+	} else if (!$hasChanges) {
 		$response['error'] = "No change fields.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);

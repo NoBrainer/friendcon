@@ -19,14 +19,13 @@ try {
 	}
 
 	// Validate input
-	$name = $_POST['name'];
+	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
 	if (Param::isBlankString($name)) {
 		$response['error'] = "Missing required field 'name'.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;
 	}
-	$name = trim($name);
 
 	// Make sure the name is unique
 	if (Teams::existsWithName($name)) {
