@@ -27,6 +27,34 @@ $requireAdmin = true;
 			</div>
 		</div>
 	</div>
+	<div class="container-fluid card mb-3 maxWidth-sm border-danger">
+		<div class="card-body">
+			<h5 class="card-title">Danger Zone</h5>
+
+			<!-- Reset Game Data Section -->
+			<div class="input-group row mb-0">
+				<div class="input-group-prepend col-10 pr-0">
+					<span class="input-group-text form-control font-weight-bold border-bottom-0 rounded-0">Reset Game Data</span>
+				</div>
+				<label class="sr-only" for="confirmResetGameData">Text box to confirm intentions to reset game data</label>
+				<input class="form-control text-danger col-2 border-bottom-0 rounded-0" type="text" id="confirmResetGameData" placeholder="Reset?">
+			</div>
+			<div class="input-group row mb-0">
+				<div class="input-group-prepend col-10 pr-0">
+					<div class="input-group-text form-control h-auto rounded-0">
+						<div class="text-wrap small text-left">
+							This resets the database for the game without deleting files on the server.
+							<b>This CANNOT be undone!</b> Type 'RESET' to confirm your intentions.
+						</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-outline-danger form-control col-2 h-auto rounded-0" id="resetGameDataBtn">Reset</button>
+			</div>
+			<div class="form-group mb-3">
+				<div id="resetGameDataMessage"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal -->
@@ -115,6 +143,9 @@ $requireAdmin = true;
 		const $variableModalDeleteBtn = $('#variableModalDeleteBtn');
 		const $variableModalConfirmDelete = $('#variableModalConfirmDelete');
 		const $variableModalSubmitBtn = $('#variableModalSubmitBtn');
+		const $confirmResetGameData = $('#confirmResetGameData');
+		const $resetGameDataBtn = $('#resetGameDataBtn');
+		const $resetGameDataMessage = $('#resetGameDataMessage');
 
 		trackStats("LOAD/fun/admin");
 		loadGlobals().always(render);
@@ -136,6 +167,11 @@ $requireAdmin = true;
 		}
 
 		function setupHandlers() {
+			setupGlobalVariableHandlers();
+			setupDangerZoneHandlers();
+		}
+
+		function setupGlobalVariableHandlers() {
 			let prevName;
 			let prevType;
 			let prevValue;
@@ -350,6 +386,41 @@ $requireAdmin = true;
 					},
 					complete: () => {
 						$variableModalFooter.show();
+					}
+				});
+			});
+		}
+
+		function setupDangerZoneHandlers() {
+			$resetGameDataBtn.off().click((e) => {
+				clearMessage($resetGameDataMessage);
+				if ($confirmResetGameData.val() !== 'RESET') {
+					warnMessage($resetGameDataMessage, "You must type 'RESET' in the text box to before clicking the button.");
+					return;
+				}
+
+				// Build request data
+				const formData = new FormData();
+				formData.append('precaution', $confirmResetGameData.val());
+
+				// Clear the confirmation text box
+				$confirmResetGameData.val("");
+
+				// Make the change
+				trackStats("RESET_GAME_DATA/fun/admin");
+				infoMessage($resetGameDataMessage, "Resetting game data...");
+				$.ajax({
+					type: 'POST',
+					url: '/fun/api/admin/resetGameData.php',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: (resp) => {
+						successMessage($resetGameDataMessage, resp.message);
+					},
+					error: (jqXHR) => {
+						errorMessage($resetGameDataMessage, getErrorMessageFromResponse(jqXHR));
 					}
 				});
 			});

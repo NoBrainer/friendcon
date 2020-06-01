@@ -12,6 +12,17 @@ class Sql {
 	private static $mysqli = null;
 
 	/**
+	 * Execute MySQL query with multiple queries joined by semicolons.
+	 *
+	 * @param string $query
+	 * @return boolean
+	 * @see mysqli::multi_query()
+	 */
+	public static function executeMultipleSql($query) {
+		return Sql::$mysqli->multi_query($query);
+	}
+
+	/**
 	 * Execute MySQL query with prepared statement to prevent SQL injection.
 	 *
 	 * @param string $query
