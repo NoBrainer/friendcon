@@ -8,7 +8,7 @@ $forwardAdmin = true;
 <?php include('nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title"><?php echo $pageTitle; ?></h5>

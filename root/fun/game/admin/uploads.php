@@ -41,7 +41,7 @@ $requireAdmin = true;
 </div>
 
 <!-- HTML Templates -->
-<div class="templates" style="display:none">
+<div class="templates" aria-hidden="true" style="display:none">
 	<div id="actionBarForPending">
 		<div class="container-sm mt-3 maxWidth-sm actionBar">
 			<div class="row">

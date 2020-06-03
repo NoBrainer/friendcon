@@ -62,7 +62,7 @@ $requireAdmin = false;
 </div>
 
 <!-- HTML Templates -->
-<div class="templates" style="display:none">
+<div class="templates" aria-hidden="true" style="display:none">
 	<div id="challengeListItem">
 		<li class="list-group-item">
 			<div class="font-weight-bold name"></div>

@@ -58,7 +58,7 @@ $requireAdmin = true;
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">Start Time:</span>
 							</span>
-							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalStartPicker" data-toggle="datetimepicker" readonly>
+							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalStartPicker" data-toggle="datetimepicker" aria-label="Pick start time" readonly>
 							<span class="input-group-append" data-target="#modalStartPicker" data-toggle="datetimepicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
@@ -71,7 +71,7 @@ $requireAdmin = true;
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">End Time:</span>
 							</span>
-							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalEndPicker" data-toggle="datetimepicker" readonly>
+							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalEndPicker" data-toggle="datetimepicker" aria-label="Pick end time" readonly>
 							<span class="input-group-append" data-target="#modalEndPicker" data-toggle="datetimepicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
@@ -102,17 +102,7 @@ $requireAdmin = true;
 </div>
 
 <!-- HTML Templates -->
-<div class="templates" style="display:none">
-	<div id="datePicker">
-		<div class="input-group date" data-target-input="nearest">
-			<input class="form-control datetimepicker-input" type="text">
-			<div class="input-group-append" data-toggle="datetimepicker">
-				<div class="input-group-text">
-					<i class="fa fa-calendar"></i>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="templates" aria-hidden="true" style="display:none">
 	<div id="editRowButton">
 		<a class="fa fa-edit editChallenge" data-target="#challengeModal" data-toggle="modal" aria-label="Edit Challenge"></a>
 	</div>

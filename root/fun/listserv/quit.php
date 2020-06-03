@@ -28,9 +28,6 @@ $requireAdmin = false;
 	</div>
 </div>
 
-<!--  HTML Templates -->
-<div class="templates" style="display:none"></div>
-
 <!-- JavaScript -->
 <script type="text/javascript">
 	$(document).ready(() => {

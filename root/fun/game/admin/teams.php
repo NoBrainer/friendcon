@@ -114,7 +114,7 @@ $requireAdmin = true;
 </div>
 
 <!-- HTML Templates -->
-<div class="templates" style="display:none">
+<div class="templates" aria-hidden="true" style="display:none">
 	<div id="editRowButton">
 		<a class="fa fa-edit editTeam" data-target="#teamModal" data-toggle="modal" aria-label="Edit Team"></a>
 	</div>

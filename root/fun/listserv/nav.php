@@ -84,7 +84,7 @@
 						<input class="form-control" type="password" id="navPassword" placeholder="Password" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col" href="/fun/login/forgotPassword" target="_blank" style="text-align:right">Forgot Your Password?</a>
+						<a class="col text-right" href="/fun/login/forgotPassword" target="_blank">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>

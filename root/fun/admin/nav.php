@@ -4,7 +4,7 @@
 	<a class="navbar-brand">FriendCon Site Admin</a>
 
 	<!-- Navbar toggler when collapsed -->
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#siteAdminNav" aria-controls="siteAdminNav" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-target="#siteAdminNav" data-toggle="collapse" aria-controls="siteAdminNav" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 
@@ -14,7 +14,7 @@
 		<div class="navbar-nav">
 			<?php if ($isLoggedIn) { ?>
 				<div class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<a class="nav-link dropdown-toggle" role="button" id="userDropdown" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
 						<span class="fa fa-user-lock"></span>
 						<span>User</span>
 					</a>
@@ -35,7 +35,7 @@
 					</div>
 				</div>
 			<?php } else { ?>
-				<a class="nav-item" data-toggle="modal" data-target="#navLoginModal">
+				<a class="nav-item" data-target="#navLoginModal" data-toggle="modal">
 					<span class="fa fa-user-lock"></span>
 					<span>User</span>
 				</a>
@@ -45,31 +45,31 @@
 </nav>
 
 <!-- Navbar login modal -->
-<div class="modal fade" id="navLoginModal" tabindex="-1" role="dialog" aria-labelledby="navLoginModalTitle">
+<div class="modal fade" role="dialog" id="navLoginModal" aria-labelledby="navLoginModalTitle" tabindex="-1">
 	<div class="modal-dialog modal-sm" role="document">
 		<div class="modal-content">
 			<form id="navLoginForm">
 				<div class="modal-header">
 					<h5 class="modal-title" id="navLoginModalTitle">Admin Login</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<input type="email" class="form-control" placeholder="Email address" id="navEmail" required/>
+						<input class="form-control" type="email" id="navEmail" placeholder="Email address" maxlength="254" required/>
 					</div>
 					<div class="form-group">
-						<input type="password" class="form-control" placeholder="Password" id="navPassword" required/>
+						<input class="form-control" type="password" id="navPassword" placeholder="Password" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col" href="/fun/login/forgotPassword" target="_blank" style="text-align:right">Forgot Your Password?</a>
+						<a class="col text-right" href="/fun/login/forgotPassword" target="_blank">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-					<button type="submit" class="btn btn-outline-primary">
+					<button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
+					<button class="btn btn-outline-primary" type="submit">
 						<span class="fa fa-sign-in-alt"></span>
 						<span>Login</span>
 					</button>

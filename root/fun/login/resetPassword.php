@@ -49,7 +49,7 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 					</button>
 				</div>
 				<div class="form-group row">
-					<a class="col" href="/fun/login/forgotPassword" style="text-align:right">
+					<a class="col text-right" href="/fun/login/forgotPassword">
 						<span>Need another password reset email?</span>
 					</a>
 				</div>

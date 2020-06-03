@@ -75,7 +75,7 @@ $requireAdmin = false;
 </div>
 
 <!--  HTML Templates -->
-<div class="templates" style="display:none">
+<div class="templates" aria-hidden="true" style="display:none">
 	<div id="carouselSlide">
 		<div class="carousel-item">
 			<figure class="figure img-thumbnail m-0 w-100">
