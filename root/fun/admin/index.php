@@ -7,7 +7,26 @@ $requireAdmin = true;
 <?php include('nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
+	<div class="container-fluid card mb-3 maxWidth-lg">
+		<div class="card-body">
+			<h5 class="card-title">Admins</h5>
+			<div class="table-responsive">
+				<table class="table" id="adminTable">
+					<thead>
+						<th class="pl-0 border-0">
+							<a class="fa fa-plus-square" id="addNewAdmin" data-target="#adminModal" data-toggle="modal" aria-label="Add New Admin"></a>
+						</th>
+						<th class="pl-0 border-0">Name</th>
+						<th class="pl-0 border-0">Email</th>
+						<th class="pl-0 border-0 text-wrap">Game Admin?</th>
+						<th class="pl-0 pr-0 border-0 text-wrap">Site Admin?</th>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 	<div class="container-fluid card mb-3 maxWidth-lg">
 		<div class="card-body">
 			<h5 class="card-title">Global Variables</h5>
@@ -15,7 +34,7 @@ $requireAdmin = true;
 				<table class="table" id="variableTable">
 					<thead>
 						<th class="pl-0 border-0">
-							<a class="fa fa-plus-square" id="addNewVariable" data-toggle="modal" data-target="#variableModal" aria-label="Create New Variable"></a>
+							<a class="fa fa-plus-square" id="addNewVariable" data-target="#variableModal" data-toggle="modal" aria-label="Create New Variable"></a>
 						</th>
 						<th class="pl-0 border-0">Name</th>
 						<th class="pl-0 border-0">Type</th>
@@ -48,7 +67,7 @@ $requireAdmin = true;
 						</div>
 					</div>
 				</div>
-				<button type="submit" class="btn btn-outline-danger form-control col-2 h-auto rounded-0" id="resetGameDataBtn">Reset</button>
+				<button class="btn btn-outline-danger form-control col-2 h-auto rounded-0" type="submit" id="resetGameDataBtn">Reset</button>
 			</div>
 			<div class="form-group mb-3">
 				<div id="resetGameDataMessage"></div>
@@ -57,14 +76,14 @@ $requireAdmin = true;
 	</div>
 </div>
 
-<!-- Modal -->
-<div id="variableModal" class="modal" tabindex="-1" role="dialog">
+<!-- Global Variable Modal -->
+<div class="modal" role="dialog" id="variableModal" tabindex="-1">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<form id="variableModalForm">
 				<div class="modal-header">
 					<h5 class="modal-title"></h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -73,7 +92,7 @@ $requireAdmin = true;
 						<span class="input-group-prepend">
 							<label class="input-group-text" for="variableModalName">Name:</label>
 						</span>
-						<input class="form-control" type="text" maxlength="32" id="variableModalName" placeholder="Name" required>
+						<input class="form-control" type="text" id="variableModalName" placeholder="Name" maxlength="32" required>
 					</div>
 					<div class="input-group mb-3">
 						<span class="input-group-prepend">
@@ -89,13 +108,13 @@ $requireAdmin = true;
 						<span class="input-group-prepend">
 							<label class="input-group-text" for="variableModalValue">Value:</label>
 						</span>
-						<input class="form-control" type="text" maxlength="32" id="variableModalValue" placeholder="Value" required>
+						<input class="form-control" type="text" id="variableModalValue" placeholder="Value" maxlength="32" required>
 					</div>
 					<div class="input-group mb-3">
 						<span class="input-group-prepend">
 							<label class="input-group-text" for="variableModalDescription">Description:</label>
 						</span>
-						<input class="form-control" type="text" maxlength="64" id="variableModalDescription" placeholder="Description (optional)">
+						<input class="form-control" type="text" id="variableModalDescription" placeholder="Description (optional)" maxlength="64">
 					</div>
 					<div class="form-group">
 						<div id="variableModalMessage"></div>
@@ -103,7 +122,7 @@ $requireAdmin = true;
 				</div>
 				<div class="modal-footer">
 					<div class="input-group mr-auto w-auto" id="variableModalDeleteSection">
-						<button type="button" class="btn btn-outline-danger form-control" id="variableModalDeleteBtn" disabled>Delete</button>
+						<button class="btn btn-outline-danger form-control" type="button" id="variableModalDeleteBtn" disabled>Delete</button>
 						<span class="input-group-append">
 							<label class="sr-only" for="variableModalConfirmDelete">Confirm Delete</label>
 							<div class="input-group-text">
@@ -111,8 +130,74 @@ $requireAdmin = true;
 							</div>
 						</span>
 					</div>
-					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-outline-primary" id="variableModalSubmitBtn"></button>
+					<button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<button class="btn btn-outline-primary" type="submit" id="variableModalSubmitBtn"></button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal" role="dialog" id="adminModal" tabindex="-1">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form id="adminModalForm">
+				<div class="modal-header">
+					<h5 class="modal-title"></h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="input-group mb-3">
+						<span class="input-group-prepend">
+							<label class="input-group-text" for="adminModalName">Name:</label>
+						</span>
+						<input class="form-control" type="text" id="adminModalName" placeholder="Name" maxlength="32" required>
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-prepend">
+							<label class="input-group-text" for="adminModalEmail">Email:</label>
+						</span>
+						<input class="form-control" type="email" id="adminModalEmail" placeholder="Email" maxlength="254" required>
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-prepend">
+							<label class="input-group-text" for="adminModalIsGameAdmin">Game Admin?</label>
+						</span>
+						<span class="input-group-append">
+							<span class="input-group-text bg-transparent border-left-0">
+								<input type="checkbox" id="adminModalIsGameAdmin" aria-label="Checkbox for game admin">
+							</span>
+						</span>
+					</div>
+					<div class="input-group mb-3">
+						<span class="input-group-prepend">
+							<label class="input-group-text" for="adminModalIsSiteAdmin">Site Admin?</label>
+						</span>
+						<span class="input-group-append">
+							<span class="input-group-text bg-transparent border-left-0">
+								<input type="checkbox" id="adminModalIsSiteAdmin" aria-label="Checkbox for site admin">
+							</span>
+						</span>
+					</div>
+					<div class="form-group">
+						<div id="adminModalMessage"></div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="input-group mr-auto w-auto" id="adminModalDeleteSection">
+						<button class="btn btn-outline-danger form-control" type="button" id="adminModalDeleteBtn" disabled>Delete</button>
+						<span class="input-group-append">
+							<label class="sr-only" for="adminModalConfirmDelete">Confirm Delete</label>
+							<div class="input-group-text">
+								<input type="checkbox" id="adminModalConfirmDelete" aria-label="Checkbox for confirming admin delete">
+							</div>
+						</span>
+					</div>
+					<button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<button class="btn btn-outline-primary" type="submit" id="adminModalSubmitBtn"></button>
 				</div>
 			</form>
 		</div>
@@ -121,15 +206,42 @@ $requireAdmin = true;
 
 <!--  HTML Templates -->
 <div class="templates" style="display:none">
+	<div id="editAdminButton">
+		<a class="fa fa-edit editAdmin" data-target="#adminModal" data-toggle="modal" aria-label="Edit Admin"></a>
+	</div>
 	<div id="editVariableButton">
-		<a class="fa fa-edit editVariable" data-toggle="modal" data-target="#variableModal" aria-label="Edit Global Variable"></a>
+		<a class="fa fa-edit editVariable" data-target="#variableModal" data-toggle="modal" aria-label="Edit Global Variable"></a>
+	</div>
+	<div id="iconFalse">
+		<span class="far fa-square" aria-label="false"></span>
+	</div>
+	<div id="iconTrue">
+		<span class="far fa-check-square" aria-label="true"></span>
 	</div>
 </div>
 
 <!-- JavaScript -->
 <script type="text/javascript">
 	$(document).ready(() => {
+		// Admins Card
+		const $adminTableBody = $('#adminTable').find('tbody');
+		const $addNewAdmin = $('#addNewAdmin');
+		const $adminModal = $('#adminModal');
+		const $adminModalForm = $('#adminModalForm');
+		const $adminModalTitle = $adminModal.find('.modal-title');
+		const $adminModalName = $('#adminModalName');
+		const $adminModalEmail = $('#adminModalEmail');
+		const $adminModalIsGameAdmin = $('#adminModalIsGameAdmin');
+		const $adminModalIsSiteAdmin = $('#adminModalIsSiteAdmin');
+		const $adminModalMessage = $('#adminModalMessage');
+		const $adminModalFooter = $adminModal.find('.modal-footer');
+		const $adminModalDeleteSection = $('#adminModalDeleteSection');
+		const $adminModalDeleteBtn = $('#adminModalDeleteBtn');
+		const $adminModalConfirmDelete = $('#adminModalConfirmDelete');
+		const $adminModalSubmitBtn = $('#adminModalSubmitBtn');
+		// Global Variable Card
 		const $variableTableBody = $('#variableTable').find('tbody');
+		const $addNewVariable = $('#addNewVariable');
 		const $variableModal = $('#variableModal');
 		const $variableModalForm = $('#variableModalForm');
 		const $variableModalTitle = $variableModal.find('.modal-title');
@@ -143,19 +255,251 @@ $requireAdmin = true;
 		const $variableModalDeleteBtn = $('#variableModalDeleteBtn');
 		const $variableModalConfirmDelete = $('#variableModalConfirmDelete');
 		const $variableModalSubmitBtn = $('#variableModalSubmitBtn');
+		// Danger Zone Card
 		const $confirmResetGameData = $('#confirmResetGameData');
 		const $resetGameDataBtn = $('#resetGameDataBtn');
 		const $resetGameDataMessage = $('#resetGameDataMessage');
 
 		trackStats("LOAD/fun/admin");
-		loadGlobals().always(render);
+		loadGlobals().always(renderGlobalVariableTable);
+		loadAdmins().always(renderAdminTable);
+		setupDangerZoneHandlers();
 
 		function render() {
-			renderVariableTable();
-			setupHandlers();
+			renderAdminTable();
+			renderGlobalVariableTable();
+			setupDangerZoneHandlers();
 		}
 
-		function renderVariableTable() {
+		function renderAdminTable() {
+			$adminTableBody.empty();
+			if (admins.length === 0) {
+				$adminTableBody.append("No admins.");
+			} else {
+				_.each(admins, (admin) => {
+					$adminTableBody.append(adminRow(admin));
+				});
+			}
+			setupAdminTableHandlers();
+		}
+
+		function setupAdminTableHandlers() {
+			let prevName;
+			let prevEmail;
+			let prevIsGameAdmin;
+			let prevIsSiteAdmin;
+
+			// Focus on the first input once the modal is shown
+			$adminModal.off('shown.bs.modal').on('shown.bs.modal', (e) => {
+				$adminModalFooter.show();
+				$adminModalName.focus();
+			});
+
+			// Keep the delete button disabled unless the confirm checkbox is checked
+			$adminModalConfirmDelete.off().change((e) => {
+				enableDeleteAdminButton($adminModalConfirmDelete.is(':checked'));
+			});
+
+			// Clear the message as the form changes
+			$adminModalName.on('keydown change', clearMessageUnlessEnter);
+			$adminModalEmail.on('keydown change', clearMessageUnlessEnter);
+			$adminModalIsGameAdmin.on('keydown change', clearMessageUnlessEnter);
+			$adminModalIsSiteAdmin.on('keydown change', clearMessageUnlessEnter);
+			function clearMessageUnlessEnter(e) {
+				if (e.which !== 32) clearMessage($adminModalMessage);
+			}
+
+			// Edit variable click handler
+			$('.editAdmin').off('click').click((e) => {
+				const $btn = $(e.currentTarget);
+				const uid = $btn.attr('uid');
+				const admin = getAdmin(uid);
+
+				// Setup the modal
+				clearMessage($adminModalMessage);
+				$adminModalTitle.text("Edit Admin");
+				$adminModalDeleteSection.show();
+				enableDeleteAdminButton(false);
+				$adminModalSubmitBtn.text("Save");
+				$adminModalSubmitBtn.removeClass('new');
+
+				// Save the starting state
+				prevName = admin.name;
+				prevEmail = admin.email;
+				prevIsGameAdmin = admin.gameAdmin;
+				prevIsSiteAdmin = admin.siteAdmin;
+
+				// Set the starting state
+				$adminModalForm.attr('uid', uid);
+				$adminModalName.val(admin.name);
+				$adminModalEmail.val(admin.email);
+				$adminModalIsGameAdmin.prop('checked', admin.gameAdmin);
+				$adminModalIsSiteAdmin.prop('checked', admin.siteAdmin);
+			});
+
+			// Add new admin click handler
+			$addNewAdmin.off().click((e) => {
+				// Setup the modal
+				clearMessage($adminModalMessage);
+				$adminModalTitle.text("New Admin");
+				$adminModalDeleteSection.hide();
+				enableDeleteAdminButton(false);
+				$adminModalSubmitBtn.text("Create");
+				$adminModalSubmitBtn.addClass('new');
+
+				// Set the starting state
+				$adminModalForm.attr('uid', null);
+				$adminModalName.val(null);
+				$adminModalEmail.val(null);
+				$adminModalIsGameAdmin.prop('checked', false);
+				$adminModalIsSiteAdmin.prop('checked', false);
+			});
+
+			// Delete variable click handler
+			$adminModalDeleteBtn.off().click((e) => {
+				$adminModalFooter.hide();
+
+				const uid = $variableModalForm.attr('uid');
+				const admin = getAdmin(uid);
+
+				// Optimistically make changes
+				removeAdmin(uid);
+				render();
+
+				// Build request data
+				const formData = new FormData();
+				formData.append('uid', uid);
+
+				// Make the change
+				trackStats("DELETE_ADMIN/fun/admin");
+				$.ajax({
+					type: 'POST',
+					url: '/fun/api/admin/delete.php',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: (resp) => {
+						successMessage($adminModalMessage, resp.message);
+					},
+					error: (jqXHR) => {
+						$adminModalFooter.show();
+						errorMessage($adminModalMessage, getErrorMessageFromResponse(jqXHR));
+
+						// Revert changes
+						addAdmin(admin);
+						render();
+					}
+				});
+			});
+
+			// Add/Edit variable submit handler
+			$adminModalForm.off('submit').submit((e) => {
+				clearMessage($adminModalMessage);
+				e.preventDefault();
+				e.stopPropagation();
+
+				// HTML5 form validation
+				if ($adminModalForm[0].checkValidity() === false) {
+					return;
+				}
+
+				$adminModalFooter.hide();
+				const isNew = $adminModalSubmitBtn.hasClass('new');
+
+				const name = $adminModalName.val().trim();
+				const email = $adminModalEmail.val().trim();
+				const isSiteAdmin = $adminModalIsSiteAdmin.prop('checked');
+				const isGameAdmin = $adminModalIsGameAdmin.prop('checked');
+
+				let uid;
+				let admin;
+				if (isNew) {
+					admin = getTempAdmin();
+					if (!!getAdminByEmail(email)) {
+						errorMessage($adminModalMessage, "Admin already exists with that email.");
+						return;
+					}
+				} else {
+					uid = $adminModalForm.attr('uid');
+					admin = getAdmin(uid);
+				}
+
+				// Optimistically make changes
+				admin.name = name;
+				admin.email = email;
+				admin.siteAdmin = isSiteAdmin;
+				admin.gameAdmin = isGameAdmin;
+				if (isNew) {
+					addAdmin(admin);
+				} else {
+					updateAdmin(admin);
+				}
+				render();
+
+				// Build request data
+				const formData = new FormData();
+				if (!isNew) formData.append('uid', uid);
+				formData.append('name', name);
+				formData.append('email', email);
+				formData.append('gameAdmin', isGameAdmin);
+				formData.append('siteAdmin', isSiteAdmin);
+
+				// Make the change
+				infoMessage($adminModalMessage, (isNew ? "Creating admin..." : "Updating admin..."));
+				trackStats((isNew ? 'CREATE' : 'UPDATE') + "_ADMIN/fun/admin");
+				$.ajax({
+					type: 'POST',
+					url: (isNew ? "/fun/api/admin/create.php" : "/fun/api/admin/update.php"),
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					statusCode: {
+						200: (resp) => {
+							if (isNew && $adminModal.data('bs.modal')._isShown) {
+								// Reset form to make it easy for multi-create
+								$adminModalName.val(null);
+								$adminModalEmail.val(null);
+								$adminModalIsGameAdmin.prop('checked', false);
+								$adminModalIsSiteAdmin.prop('checked', false);
+								$adminModalName.focus();
+							}
+							successMessage($adminModalMessage, resp.message);
+							admin.uid = resp.data.uid;
+							admin.name = resp.data.name;
+							admin.email = resp.data.email;
+							admin.gameAdmin = resp.data.gameAdmin;
+							admin.siteAdmin = resp.data.siteAdmin;
+							render();
+						},
+						304: () => {
+							successMessage($adminModalMessage, "No changes");
+						}
+					},
+					error: (jqXHR) => {
+						errorMessage($adminModalMessage, getErrorMessageFromResponse(jqXHR));
+
+						// Revert changes
+						if (isNew) {
+							removeAdmin(uid);
+						} else {
+							admin.name = prevName;
+							admin.email = prevEmail;
+							admin.gameAdmin = prevIsGameAdmin;
+							admin.siteAdmin = prevIsSiteAdmin;
+							updateAdmin(admin);
+						}
+						render();
+					},
+					complete: () => {
+						$adminModalFooter.show();
+					}
+				});
+			});
+		}
+
+		function renderGlobalVariableTable() {
 			$variableTableBody.empty();
 			if (globals.length === 0) {
 				$variableTableBody.append("No global variables.");
@@ -164,11 +508,7 @@ $requireAdmin = true;
 					$variableTableBody.append(variableRow(team));
 				});
 			}
-		}
-
-		function setupHandlers() {
 			setupGlobalVariableHandlers();
-			setupDangerZoneHandlers();
 		}
 
 		function setupGlobalVariableHandlers() {
@@ -193,7 +533,7 @@ $requireAdmin = true;
 
 			// Keep the delete button disabled unless the confirm checkbox is checked
 			$variableModalConfirmDelete.off().change((e) => {
-				enableDeleteButton($variableModalConfirmDelete.is(':checked'));
+				enableDeleteGlobalVariableButton($variableModalConfirmDelete.is(':checked'));
 			});
 
 			// Clear the message as the form changes
@@ -214,7 +554,7 @@ $requireAdmin = true;
 				clearMessage($variableModalMessage);
 				$variableModalTitle.text("Edit Global Variable");
 				$variableModalDeleteSection.show();
-				enableDeleteButton(false);
+				enableDeleteGlobalVariableButton(false);
 				$variableModalSubmitBtn.text("Save");
 				$variableModalSubmitBtn.removeClass('new');
 
@@ -233,12 +573,12 @@ $requireAdmin = true;
 			});
 
 			// Add new variable click handler
-			$('#addNewVariable').off().click((e) => {
+			$addNewVariable.off().click((e) => {
 				// Setup the modal
 				clearMessage($variableModalMessage);
 				$variableModalTitle.text("New Global Variable");
 				$variableModalDeleteSection.hide();
-				enableDeleteButton(false);
+				enableDeleteGlobalVariableButton(false);
 				$variableModalSubmitBtn.text("Create");
 				$variableModalSubmitBtn.addClass('new');
 
@@ -426,6 +766,17 @@ $requireAdmin = true;
 			});
 		}
 
+		function adminRow(admin) {
+			const objArr = [
+				{className: 'pl-0', ele: editAdminButton(admin.uid)},
+				{className: 'pl-0 small name', ele: "" + admin.name},
+				{className: 'pl-0 small email', ele: "" + admin.email},
+				{className: 'pl-0 isGameAdmin', ele: booleanIcon(admin.gameAdmin)},
+				{className: 'pl-0 isSiteAdmin', ele: booleanIcon(admin.siteAdmin)}
+			];
+			return tr(objArr);
+		}
+
 		function variableRow(global) {
 			const objArr = [
 				{className: 'pl-0', ele: editVariableButton(global)},
@@ -437,13 +788,28 @@ $requireAdmin = true;
 			return tr(objArr, 'small');
 		}
 
+		function editAdminButton(uid) {
+			const $btn = $($('#editAdminButton').html());
+			$btn.attr('uid', uid);
+			return $btn;
+		}
+
 		function editVariableButton(global) {
 			const $btn = $($('#editVariableButton').html());
 			$btn.attr('name', global.name);
 			return $btn;
 		}
 
-		function enableDeleteButton(enabled) {
+		function booleanIcon(value) {
+			return value ? $($('#iconTrue').html()) : $($('#iconFalse').html());
+		}
+
+		function enableDeleteAdminButton(enabled) {
+			$adminModalConfirmDelete.prop('checked', enabled);
+			$adminModalDeleteBtn.prop('disabled', !enabled);
+		}
+
+		function enableDeleteGlobalVariableButton(enabled) {
 			$variableModalConfirmDelete.prop('checked', enabled);
 			$variableModalDeleteBtn.prop('disabled', !enabled);
 		}

@@ -30,7 +30,7 @@ try {
 	}
 
 	// Make sure an admin exists with email
-	$admin = Admins::getByEmail($email);
+	$admin = Admins::getByEmail($email, true);
 	if (is_null($admin)) {
 		$response['error'] = "Invalid email address [$email].";
 		Http::responseCode('BAD_REQUEST');
@@ -40,7 +40,6 @@ try {
 
 	// Setup the email
 	$token = Admins::getResetToken($admin);
-	$to = $email;
 	$subject = "FriendCon Password Reset";
 	$link = General::linkHtml('link', "https://friendcon.com/fun/login/resetPassword?token=$token&email=$email");
 	$lines = [
@@ -49,7 +48,7 @@ try {
 	];
 
 	// Send the email
-	$successful = General::sendEmailFromBot($to, $subject, $lines);
+	$successful = General::sendEmailFromBot($email, $subject, $lines);
 	if (!$successful) {
 		$response['error'] = "Error sending the reset email.";
 		Http::responseCode('INTERNAL_SERVER_ERROR');

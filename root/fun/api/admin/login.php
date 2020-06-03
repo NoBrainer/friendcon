@@ -32,7 +32,7 @@ try {
 	}
 
 	// Check for the admin
-	$admin = Admins::getByEmail($email);
+	$admin = Admins::getByEmail($email, true);
 	if (is_null($admin)) {
 		$response['error'] = "No admin with this email.";
 		Http::responseCode('NOT_FOUND');

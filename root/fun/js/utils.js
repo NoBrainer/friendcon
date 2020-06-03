@@ -1,4 +1,73 @@
 //================================
+// Admins
+let admins = [];
+
+function addAdmin(admin) {
+	admins.push(admin);
+	resortAdmins();
+}
+
+function getAdmin(uid) {
+	uid = parseInt(uid);
+	return _.find(admins, (admin) => {
+		return admin.uid === uid;
+	});
+}
+
+function getAdminByEmail(email) {
+	return _.find(admins, (admin) => {
+		return admin.email === email;
+	});
+}
+
+function getTempAdmin(name, email, isSiteAdmin, isGameAdmin) {
+	return {
+		email: email || "",
+		isGameAdmin: !!isGameAdmin,
+		isSiteAdmin: !!isSiteAdmin,
+		name: name || "",
+		uid: parseInt(_.uniqueId(-1))
+	};
+}
+
+function loadAdmins() {
+	return $.ajax({
+		type: 'GET',
+		url: "/fun/api/admin/get.php",
+		success: (resp) => {
+			admins = resp.data.sort(sortAdmins);
+		},
+		error: (jqXHR) => {
+			const resp = jqXHR.responseJSON;
+			console.log(resp.error);
+			alert(resp.error);
+		}
+	});
+}
+
+function removeAdmin(uid) {
+	admins = _.reject(admins, (admin) => {
+		return admin.uid === uid;
+	});
+}
+
+function resortAdmins() {
+	admins = admins.sort(sortAdmins);
+}
+
+function sortAdmins(a, b) {
+	// Sort alphabetically by name
+	return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+}
+
+function updateAdmin(admin) {
+	let g = getAdmin(admin.uid);
+	g.email = admin.email;
+	g.gameAdmin = admin.gameAdmin;
+	g.siteAdmin = admin.siteAdmin;
+}
+
+//================================
 // CAPTCHA
 
 function renderCaptchaV2Checkbox(onClick, onExpire) {
