@@ -47,7 +47,7 @@ class Listserv {
 	}
 
 	public static function isValidEmail($email) {
-		return !preg_match('/[\s,<>()]/', $email);
+		return !preg_match('/[\s,<>()]/', $email) && sizeof($email) <= 254;
 	}
 
 	public static function notifySubscribed($email) {

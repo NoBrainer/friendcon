@@ -9,7 +9,7 @@ $requireAdmin = true;
 <?php include('../nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title"><?php echo $pageTitle; ?></h5>
@@ -56,11 +56,11 @@ $requireAdmin = true;
 						<div class="input-group-prepend">
 							<label class="input-group-text" for="scoreChange" style="min-width:100px">Change:</label>
 						</div>
-						<input type="number" class="form-control" id="scoreChange" required>
+						<input class="form-control" type="number" id="scoreChange" required>
 					</div>
 				</div>
 				<div class="form-group">
-					<button type="submit" class="btn btn-outline-secondary" aria-label="Modify score">Submit</button>
+					<button class="btn btn-outline-secondary" type="submit" aria-label="Modify score">Submit</button>
 				</div>
 				<div class="form-group">
 					<div id="modifyMessage"></div>
@@ -71,7 +71,7 @@ $requireAdmin = true;
 	<div class="container-fluid card mb-3 maxWidth-md">
 		<div class="card-body">
 			<h5 class="card-title">Change Log</h5>
-			<button type="button" class="btn btn-outline-secondary" id="showChangeLog">Show</button>
+			<button class="btn btn-outline-secondary" type="button" id="showChangeLog">Show</button>
 			<div id="changeLogEntries"></div>
 		</div>
 	</div>

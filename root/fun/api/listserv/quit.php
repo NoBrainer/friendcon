@@ -18,7 +18,7 @@ try {
 		echo json_encode($response);
 		return;
 	} else if (!Listserv::isValidEmail($email)) {
-		$response['error'] = "Field 'email' contains invalid special characters.";
+		$response['error'] = "Field 'email' either contains invalid special characters or is too long.";
 		Http::responseCode('BAD_REQUEST');
 		echo json_encode($response);
 		return;

@@ -8,16 +8,16 @@ $requireAdmin = false;
 <?php include('nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title">Subscribe to FriendCon Emails</h5>
 			<form id="subscribeForm">
 				<div class="form-group" id="captchaWrapper"></div>
 				<div class="input-group mb-3">
-					<input type="email" class="form-control" id="email" placeholder="Email address" aria-label="Email address" required>
+					<input class="form-control" type="email" id="email" placeholder="Email address" aria-label="Email address" maxlength="254" required>
 					<span class="input-group-append">
-						<button type="submit" class="btn btn-outline-primary" id="submitButton" disabled>Subscribe</button>
+						<button class="btn btn-outline-primary" type="submit" id="submitButton" disabled>Subscribe</button>
 					</span>
 				</div>
 				<div class="form-group">

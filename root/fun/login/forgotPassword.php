@@ -5,19 +5,19 @@ $pageTitle = "Forgot Password";
 <body>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-sm card mb-3 mt-3 maxWidth-sm">
 		<div class="card-body">
 			<form id="forgotPasswordForm">
 				<h5 class="card-title">Forgot Password</h5>
 				<div class="form-group">
-					<input type="email" class="form-control" placeholder="Email address" id="email" required/>
+					<input class="form-control" type="email" id="email" placeholder="Email address" maxlength="254" required/>
 				</div>
 				<div class="form-group">
 					<div id="captchaWrapper"></div>
 				</div>
 				<div class="form-group">
-					<button type="submit" class="btn btn-outline-primary" id="sendResetEmail" disabled>
+					<button class="btn btn-outline-primary" type="submit" id="sendResetEmail" disabled>
 						<span class="fa fa-sign-in-alt"></span>
 						<span>Send Reset Email</span>
 					</button>

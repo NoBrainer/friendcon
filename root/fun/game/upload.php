@@ -9,7 +9,7 @@ $requireAdmin = false;
 <?php include('nav.php'); ?>
 
 <!-- Content - Based on: https://www.tutorialrepublic.com/php-tutorial/php-file-upload.php -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-sm card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title">Current Challenges</h5>
@@ -19,7 +19,7 @@ $requireAdmin = false;
 	<div class="container-sm card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<h5 class="card-title">Submit Photos</h5>
-			<form action="/fun/api/uploads/create.php" method="post" enctype="multipart/form-data" id="uploadForm">
+			<form id="uploadForm" action="/fun/api/uploads/create.php" method="post" enctype="multipart/form-data">
 				<div class="form-group ">
 					<div class="input-group" id="teamDropdownWrapper">
 						<div class="input-group-prepend">
@@ -40,16 +40,16 @@ $requireAdmin = false;
 							<span class="input-group-text" id="fileLabel">Upload</span>
 						</div>
 						<div class="custom-file">
-							<input type="file" class="custom-file-input" id="file" aria-describedby="fileLabel" required>
+							<input class="custom-file-input" type="file" id="file" aria-describedby="fileLabel" required>
 							<label class="d-inline-block text-truncate custom-file-label" for="file">
-								<span id="fileLabelText" class="d-inline-block text-truncate">Choose file</span>
+								<span class="d-inline-block text-truncate" id="fileLabelText">Choose file</span>
 							</label>
 						</div>
 					</div>
 				</div>
 				<div class="form-group" id="captchaWrapper"></div>
 				<div class="form-group">
-					<button id="submitButton" type="submit" class="btn btn-outline-secondary" aria-label="submit button" disabled="disabled">
+					<button class="btn btn-outline-secondary" type="submit" id="submitButton" aria-label="submit button" disabled>
 						<span>Submit</span>
 					</button>
 				</div>

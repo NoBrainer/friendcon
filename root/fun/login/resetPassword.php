@@ -22,28 +22,28 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 <body>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-sm card mb-3 mt-3 maxWidth-sm">
 		<div class="card-body">
 			<form id="resetPasswordForm">
 				<h5 class="card-title">Reset Password</h5>
 				<div class="form-group">
-					<input type="email" class="form-control" placeholder="Email" id="email" value="<?php echo $email; ?>" required disabled/>
+					<input class="form-control" type="email" id="email" placeholder="Email" value="<?php echo $email; ?>" maxlength="254" required disabled/>
 				</div>
 				<div class="form-group">
-					<input type="text" class="form-control" placeholder="Token from email" id="token" value="<?php echo $token; ?>" required disabled/>
+					<input class="form-control" type="text" id="token" placeholder="Token from email" value="<?php echo $token; ?>" required disabled/>
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control" placeholder="New password" id="newPassword" required/>
+					<input class="form-control" type="password" id="newPassword" placeholder="New password" required/>
 				</div>
 				<div class="form-group">
-					<input type="password" class="form-control" placeholder="New password (again)" id="newPasswordDupe" required/>
+					<input class="form-control" type="password" id="newPasswordDupe" placeholder="New password (again)" required/>
 				</div>
 				<div class="form-group">
 					<div id="captchaWrapper"></div>
 				</div>
 				<div class="form-group">
-					<button type="submit" class="btn btn-outline-primary" id="resetPassword" disabled>
+					<button class="btn btn-outline-primary" type="submit" id="resetPassword" disabled>
 						<span class="fa fa-sign-in-alt"></span>
 						<span>Reset Password</span>
 					</button>

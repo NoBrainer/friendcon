@@ -9,7 +9,7 @@ $requireAdmin = true;
 <?php include('../nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-md">
 		<div class="card-body">
 			<h5 class="card-title"><?php echo $pageTitle; ?></h5>
@@ -28,19 +28,19 @@ $requireAdmin = true;
 	</div>
 	<div class="container-fluid card mb-3 maxWidth-md">
 		<div class="card-body">
-			<div id="tableWrapper" class="table-responsive"></div>
+			<div class="table-responsive" id="tableWrapper"></div>
 		</div>
 	</div>
 </div>
 
 <!-- Modal -->
-<div id="challengeModal" class="modal" tabindex="-1" role="dialog">
+<div class="modal" role="dialog" id="challengeModal" tabindex="-1">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<form id="modalForm">
 				<div class="modal-header">
 					<h5 class="modal-title"></h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -50,7 +50,7 @@ $requireAdmin = true;
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">Name:</span>
 							</div>
-							<input type="text" class="form-control" placeholder="Name" aria-label="Edit Name" id="modalName" required>
+							<input class="form-control" type="text" id="modalName" placeholder="Name" aria-label="Edit Name" required>
 						</div>
 					</div>
 					<div class="form-group">
@@ -58,8 +58,8 @@ $requireAdmin = true;
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">Start Time:</span>
 							</span>
-							<input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#modalStartPicker" placeholder="NONE" readonly>
-							<span class="input-group-append" data-toggle="datetimepicker" data-target="#modalStartPicker">
+							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalStartPicker" data-toggle="datetimepicker" readonly>
+							<span class="input-group-append" data-target="#modalStartPicker" data-toggle="datetimepicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
 								</span>
@@ -71,8 +71,8 @@ $requireAdmin = true;
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">End Time:</span>
 							</span>
-							<input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#modalEndPicker" placeholder="NONE" readonly>
-							<span class="input-group-append" data-toggle="datetimepicker" data-target="#modalEndPicker">
+							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalEndPicker" data-toggle="datetimepicker" readonly>
+							<span class="input-group-append" data-target="#modalEndPicker" data-toggle="datetimepicker">
 								<span class="input-group-text">
 									<i class="fa fa-calendar"></i>
 								</span>
@@ -85,7 +85,7 @@ $requireAdmin = true;
 				</div>
 				<div class="modal-footer">
 					<div class="input-group mr-auto w-auto" id="deleteSection">
-						<button type="button" class="btn btn-outline-danger form-control" id="deleteChallengeBtn" disabled>Delete</button>
+						<button class="btn btn-outline-danger form-control" type="button" id="deleteChallengeBtn" disabled>Delete</button>
 						<span class="input-group-append">
 							<label class="sr-only" for="confirmDelete">Confirm Delete</label>
 							<div class="input-group-text">
@@ -93,8 +93,8 @@ $requireAdmin = true;
 							</div>
 						</span>
 					</div>
-					<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
-					<button type="submit" class="btn btn-outline-primary" id="modalSubmitBtn"></button>
+					<button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<button class="btn btn-outline-primary" type="submit" id="modalSubmitBtn"></button>
 				</div>
 			</form>
 		</div>
@@ -105,7 +105,7 @@ $requireAdmin = true;
 <div class="templates" style="display:none">
 	<div id="datePicker">
 		<div class="input-group date" data-target-input="nearest">
-			<input type="text" class="form-control datetimepicker-input"/>
+			<input class="form-control datetimepicker-input" type="text">
 			<div class="input-group-append" data-toggle="datetimepicker">
 				<div class="input-group-text">
 					<i class="fa fa-calendar"></i>
@@ -114,14 +114,14 @@ $requireAdmin = true;
 		</div>
 	</div>
 	<div id="editRowButton">
-		<a class="fa fa-edit editChallenge" data-toggle="modal" data-target="#challengeModal" aria-label="Edit Challenge"></a>
+		<a class="fa fa-edit editChallenge" data-target="#challengeModal" data-toggle="modal" aria-label="Edit Challenge"></a>
 	</div>
 	<div id="tableScaffold">
 		<table class="table">
 			<thead>
 				<tr>
 					<th class="border-0">
-						<a class="fa fa-plus-square" id="addNewChallenge" data-toggle="modal" data-target="#challengeModal" aria-label="Create Challenge"></a>
+						<a class="fa fa-plus-square" id="addNewChallenge" data-target="#challengeModal" data-toggle="modal" aria-label="Create Challenge"></a>
 					</th>
 					<th class="border-0">Name</th>
 					<th class="border-0">Start</th>

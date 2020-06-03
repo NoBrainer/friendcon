@@ -9,7 +9,7 @@ $requireAdmin = true;
 <?php include('../nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-md">
 		<div class="card-body">
 			<h5 class="card-title"><?php echo $pageTitle; ?></h5>
@@ -90,7 +90,7 @@ $requireAdmin = true;
 		</div>
 	</div>
 	<div id="carousel">
-		<div id="_CAROUSEL_ID" class="carousel slide" data-interval="false">
+		<div class="carousel slide" id="_CAROUSEL_ID" data-interval="false">
 			<!-- Indicators -->
 			<ol class="carousel-indicators"></ol>
 
@@ -98,18 +98,18 @@ $requireAdmin = true;
 			<div class="carousel-inner"></div>
 
 			<!-- Controls -->
-			<a class="carousel-control-prev" href="#_CAROUSEL_ID" role="button" data-slide="prev">
+			<a class="carousel-control-prev" role="button" href="#_CAROUSEL_ID" data-slide="prev">
 				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 				<span class="sr-only">Previous</span>
 			</a>
-			<a class="carousel-control-next" href="#_CAROUSEL_ID" role="button" data-slide="next">
+			<a class="carousel-control-next" role="button" href="#_CAROUSEL_ID" data-slide="next">
 				<span class="carousel-control-next-icon" aria-hidden="true"></span>
 				<span class="sr-only">Next</span>
 			</a>
 		</div>
 	</div>
 	<div id="carouselIndicator">
-		<li data-target="#_CAROUSEL_ID" data-slide-to="_INDEX"></li>
+		<li data-slide-to="_INDEX" data-target="#_CAROUSEL_ID"></li>
 	</div>
 	<div id="carouselSlide">
 		<div class="carousel-item">

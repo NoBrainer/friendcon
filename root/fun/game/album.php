@@ -9,7 +9,7 @@ $requireAdmin = false;
 <?php include('nav.php'); ?>
 
 <!-- Content -->
-<div id="content" class="container-fluid">
+<div class="container-fluid" id="content">
 	<div class="container-fluid card mb-3 maxWidth-sm">
 		<div class="card-body">
 			<div class="table-responsive">
@@ -27,7 +27,7 @@ $requireAdmin = false;
 </div>
 
 <!-- Album Modal -->
-<div id="albumModal" class="modal p-0" tabindex="-1" role="dialog">
+<div class="modal p-0" role="dialog" id="albumModal" tabindex="-1">
 	<div class="modal-dialog m-0 w-100 mw-100" role="document">
 		<div class="modal-content">
 			<div class="modal-header position-relative">
@@ -35,21 +35,21 @@ $requireAdmin = false;
 					<span class="thumbnailIcon"></span>
 					<span class="challengeName"></span>
 				</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<div id="modalCarousel" class="carousel slide col p-0" data-interval="false">
+				<div class="carousel slide col p-0" id="modalCarousel" data-interval="false">
 					<!-- Wrapper for slides -->
 					<div class="carousel-inner"></div>
 
 					<!-- Controls -->
-					<a class="carousel-control-prev" href="#modalCarousel" role="button" data-slide="prev">
+					<a class="carousel-control-prev" role="button" href="#modalCarousel" data-slide="prev">
 						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 						<span class="sr-only">Previous</span>
 					</a>
-					<a class="carousel-control-next" href="#modalCarousel" role="button" data-slide="next">
+					<a class="carousel-control-next" role="button" href="#modalCarousel" data-slide="next">
 						<span class="carousel-control-next-icon" aria-hidden="true"></span>
 						<span class="sr-only">Next</span>
 					</a>
@@ -60,12 +60,12 @@ $requireAdmin = false;
 </div>
 
 <!-- Team Member Modal -->
-<div id="teamMemberModal" class="modal p-0" tabindex="-1" role="dialog">
+<div class="modal p-0" role="dialog" id="teamMemberModal" tabindex="-1">
 	<div class="modal-dialog modal-sm maxWidth-sm" role="document">
 		<div class="modal-content">
 			<div class="modal-header position-relative">
 				<h5 class="modal-title"></h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -109,14 +109,14 @@ $requireAdmin = false;
 	</div>
 	<div id="teamNameWithMembersIcon">
 		<span>
-			<a class="fa fa-users showMembersIcon" data-toggle="modal" data-target="#teamMemberModal" aria-label="Show members"></a>
+			<a class="fa fa-users showMembersIcon" data-target="#teamMemberModal" data-toggle="modal" aria-label="Show members"></a>
 			<span class="text"></span>
 		</span>
 	</div>
 	<div id="thumbnail">
 		<div class="col mb-2 pl-0 pr-2 thumbnailWrapper">
 			<span class="position-absolute thumbnailIcon"></span>
-			<a class="thumbnailLink" data-toggle="modal" data-target="#albumModal" aria-label="Expand image">
+			<a class="thumbnailLink" data-target="#albumModal" data-toggle="modal" aria-label="Expand image">
 				<figure class="figure img-thumbnail m-0">
 					<img class="figure-img img-fluid">
 					<figcaption class="figure-caption text-center"></figcaption>
