@@ -2,8 +2,8 @@
 $pageTitle = "Listserv";
 $navTab = "SHOW";
 $requireAdmin = true;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
 <?php include('nav.php'); ?>
 

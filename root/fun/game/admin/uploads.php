@@ -3,8 +3,8 @@ $pageTitle = "Manage Uploads";
 $navTab = "ADMIN";
 $subNavPage = "UPLOADS";
 $requireAdmin = true;
+include('../head.php');
 ?>
-<?php include('../head.php'); ?>
 <body>
 <?php include('../nav.php'); ?>
 

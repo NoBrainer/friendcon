@@ -3,8 +3,8 @@ $pageTitle = "Schedule Challenges";
 $navTab = "ADMIN";
 $subNavPage = "SCHEDULE";
 $requireAdmin = true;
+include('../head.php');
 ?>
-<?php include('../head.php'); ?>
 <body>
 <?php include('../nav.php'); ?>
 

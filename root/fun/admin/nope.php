@@ -2,8 +2,8 @@
 $pageTitle = "Login Required";
 $requireAdmin = false;
 $forwardAdmin = true;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
 <?php include('nav.php'); ?>
 

@@ -1,8 +1,11 @@
 <?php
 $pageTitle = "Forgot Password";
+$requireAdmin = false;
+$forwardAdmin = true;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
+<?php include('nav.php'); ?>
 
 <!-- Content -->
 <div class="container-fluid" id="content">
@@ -89,11 +92,7 @@ $pageTitle = "Forgot Password";
 				contentType: false,
 				processData: false,
 				success: (resp) => {
-					// Display the success message then close the window in 3 seconds
-					successMessage($message, resp.message + " Closing window in a few seconds...");
-					setTimeout(() => {
-						window.close();
-					}, 3000);
+					successMessage($message, resp.message);
 				},
 				error: (jqXHR) => {
 					errorMessage($message, getErrorMessageFromResponse(jqXHR));

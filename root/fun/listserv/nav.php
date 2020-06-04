@@ -40,13 +40,13 @@
 						<span>User</span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+						<a class="dropdown-item" href="/fun/admin">
+							<span class="fa fa-lock"></span>
+							<span>Admin</span>
+						</a>
 						<a class="dropdown-item" href="/fun/game">
 							<span class="fa fa-gamepad"></span>
 							<span>Game</span>
-						</a>
-						<a class="dropdown-item" href="/fun/admin">
-							<span class="fa fa-lock"></span>
-							<span>Site Admin</span>
 						</a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" id="navLogoutBtn" href="#">
@@ -84,7 +84,7 @@
 						<input class="form-control" type="password" id="navPassword" placeholder="Password" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col text-right" href="/fun/admin/forgotPassword" target="_blank">Forgot Your Password?</a>
+						<a class="col text-right" href="/fun/admin/forgotPassword">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>

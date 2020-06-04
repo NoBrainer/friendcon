@@ -20,7 +20,7 @@ if ($requireAdmin && !$isAdmin) {
 	Http::forward("/fun/admin/nope", true);
 	exit;
 } else if ($forwardAdmin && $isAdmin) {
-	Http::forward("/fun/admin", true);
+	Http::forward("/fun/game", true);
 	exit;
 }
 ?>

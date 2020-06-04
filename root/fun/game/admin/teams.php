@@ -3,8 +3,8 @@ $pageTitle = "Setup Teams";
 $navTab = "ADMIN";
 $subNavPage = "TEAMS";
 $requireAdmin = true;
+include('../head.php');
 ?>
-<?php include('../head.php'); ?>
 <body>
 <?php include('../nav.php'); ?>
 

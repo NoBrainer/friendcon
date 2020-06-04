@@ -1,8 +1,8 @@
 <?php
-$pageTitle = "Site Admin";
+$pageTitle = "Admin";
 $requireAdmin = true;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
 <?php include('nav.php'); ?>
 

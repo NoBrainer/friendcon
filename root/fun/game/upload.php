@@ -3,8 +3,8 @@ $pageTitle = "Game";
 $navTab = "UPLOAD";
 $subNavPage = null;
 $requireAdmin = false;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
 <?php include('nav.php'); ?>
 

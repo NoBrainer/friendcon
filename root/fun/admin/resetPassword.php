@@ -1,25 +1,21 @@
 <?php
 $pageTitle = "Reset Password";
-?>
-<?php
+$requireAdmin = false;
+$forwardAdmin = true;
 include('head.php');
 
-use util\Http as Http;
 use util\Param as Param;
 
-// Variables used in rendering
 $email = isset($_GET['email']) ? Param::asString($_GET['email']) : null;
 $token = isset($_GET['token']) ? Param::asString($_GET['token']) : null;
 
-// Require an email and token
+// Use this awkward way of forwarding since we're in the middle of the HTML
 if (Param::isBlankString($email) || Param::isBlankString($token)) {
-	Http::contentType('TEXT');
-	Http::responseCode('BAD_REQUEST');
-	echo "BAD_REQUEST";
-	return;
+	echo '<script>window.location = "/fun/admin/forgotPassword";</script>';
 }
 ?>
 <body>
+<?php include('nav.php'); ?>
 
 <!-- Content -->
 <div class="container-fluid" id="content">
@@ -133,11 +129,8 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 				contentType: false,
 				processData: false,
 				success: (resp) => {
-					// Display the success message then close the window in 3 seconds
-					successMessage($message, resp.message + " Closing window in a few seconds...");
-					setTimeout(() => {
-						window.close();
-					}, 3000);
+					successMessage($message, resp.message);
+					setTimeout(() => $('#navLoginModal').modal('show'), 1000);
 				},
 				error: (jqXHR) => {
 					errorMessage($message, getErrorMessageFromResponse(jqXHR));

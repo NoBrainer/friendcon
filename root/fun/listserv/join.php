@@ -2,8 +2,8 @@
 $pageTitle = "Subscribe";
 $navTab = "JOIN";
 $requireAdmin = false;
+include('head.php');
 ?>
-<?php include('head.php'); ?>
 <body>
 <?php include('nav.php'); ?>
 

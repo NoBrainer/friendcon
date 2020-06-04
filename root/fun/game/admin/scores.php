@@ -3,8 +3,8 @@ $pageTitle = "Manage Scores";
 $navTab = "ADMIN";
 $subNavPage = "SCORES";
 $requireAdmin = true;
+include('../head.php');
 ?>
-<?php include('../head.php'); ?>
 <body>
 <?php include('../nav.php'); ?>
 

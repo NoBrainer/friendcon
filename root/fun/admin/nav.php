@@ -1,15 +1,15 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
 	<!-- Branding -->
-	<a class="navbar-brand" href="/fun/admin">FriendCon Site Admin</a>
+	<a class="navbar-brand" href="/fun/admin">FriendCon Admin</a>
 
 	<!-- Navbar toggler when collapsed -->
-	<button class="navbar-toggler" type="button" data-target="#siteAdminNav" data-toggle="collapse" aria-controls="siteAdminNav" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-target="#adminNav" data-toggle="collapse" aria-controls="adminNav" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 
 	<!-- Navbar contents -->
-	<div class="collapse navbar-collapse" id="siteAdminNav">
+	<div class="collapse navbar-collapse" id="adminNav">
 		<div class="navbar-nav mr-auto"></div>
 		<div class="navbar-nav">
 			<?php if ($isLoggedIn) { ?>
@@ -63,7 +63,7 @@
 						<input class="form-control" type="password" id="navPassword" placeholder="Password" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col text-right" href="/fun/admin/forgotPassword" target="_blank">Forgot Your Password?</a>
+						<a class="col text-right" href="/fun/admin/forgotPassword">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>
