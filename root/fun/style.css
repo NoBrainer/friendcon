@@ -31,3 +31,6 @@ button, .btn, a, .pointer, select, option, input[type="file" i], input[type="che
 .maxWidth-xl {
 	max-width: 1140px;
 }
+.maxWidth-120px {
+	max-width: 150px;
+}

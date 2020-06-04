@@ -23,8 +23,8 @@ try {
 	// Validate input
 	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
 	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
-	$isGameAdmin = isset($_POST['gameAdmin']) ? Param::asString($_POST['gameAdmin']) : null;
-	$isSiteAdmin = isset($_POST['siteAdmin']) ? Param::asString($_POST['siteAdmin']) : null;
+	$isGameAdmin = isset($_POST['gameAdmin']) ? Param::asBoolean($_POST['gameAdmin']) : null;
+	$isSiteAdmin = isset($_POST['siteAdmin']) ? Param::asBoolean($_POST['siteAdmin']) : null;
 	if (Param::isBlankString($name)) {
 		$response['error'] = "Missing required field 'name'.";
 		Http::responseCode('BAD_REQUEST');

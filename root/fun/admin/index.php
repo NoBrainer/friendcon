@@ -318,6 +318,7 @@ include('head.php');
 				// Setup the modal
 				clearMessage($adminModalMessage);
 				$adminModalTitle.text("Edit Admin");
+				$adminModalEmail.prop('disabled', true);
 				$adminModalDeleteSection.show();
 				enableDeleteAdminButton(false);
 				$adminModalSubmitBtn.text("Save");
@@ -342,6 +343,7 @@ include('head.php');
 				// Setup the modal
 				clearMessage($adminModalMessage);
 				$adminModalTitle.text("New Admin");
+				$adminModalEmail.prop('disabled', false);
 				$adminModalDeleteSection.hide();
 				enableDeleteAdminButton(false);
 				$adminModalSubmitBtn.text("Create");
@@ -359,7 +361,7 @@ include('head.php');
 			$adminModalDeleteBtn.off().click((e) => {
 				$adminModalFooter.hide();
 
-				const uid = $variableModalForm.attr('uid');
+				const uid = $adminModalForm.attr('uid');
 				const admin = getAdmin(uid);
 
 				// Optimistically make changes
@@ -418,6 +420,7 @@ include('head.php');
 					admin = getTempAdmin();
 					if (!!getAdminByEmail(email)) {
 						errorMessage($adminModalMessage, "Admin already exists with that email.");
+						$adminModalFooter.show();
 						return;
 					}
 				} else {
@@ -482,7 +485,7 @@ include('head.php');
 
 						// Revert changes
 						if (isNew) {
-							removeAdmin(uid);
+							removeAdminByEmail(email);
 						} else {
 							admin.name = prevName;
 							admin.email = prevEmail;

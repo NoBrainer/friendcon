@@ -46,8 +46,15 @@ function loadAdmins() {
 }
 
 function removeAdmin(uid) {
+	uid = parseInt(uid);
 	admins = _.reject(admins, (admin) => {
 		return admin.uid === uid;
+	});
+}
+
+function removeAdminByEmail(email) {
+	admins = _.reject(admins, (admin) => {
+		return admin.email === email;
 	});
 }
 
@@ -56,7 +63,10 @@ function resortAdmins() {
 }
 
 function sortAdmins(a, b) {
-	// Sort alphabetically by name
+	// Sort alphabetically by name (null first)
+	if (a.name === b.name) return 0;
+	if (!a.name) return -1;
+	if (!b.name) return +1;
 	return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
 }
 
@@ -65,6 +75,7 @@ function updateAdmin(admin) {
 	g.email = admin.email;
 	g.gameAdmin = admin.gameAdmin;
 	g.siteAdmin = admin.siteAdmin;
+	resortAdmins();
 }
 
 //================================
@@ -188,6 +199,7 @@ function updateGlobal(global) {
 	g.type = global.type;
 	g.value = global.value;
 	g.description = global.description;
+	resortGlobals();
 }
 
 //================================

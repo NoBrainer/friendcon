@@ -8,6 +8,7 @@ use util\Session as Session;
 Captcha::initialize();
 
 // Variables used in rendering
+$name = Session::$name;
 $isLoggedIn = Session::$isLoggedIn;
 $isGameAdmin = Session::$isGameAdmin;
 

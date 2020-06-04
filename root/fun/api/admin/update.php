@@ -23,8 +23,8 @@ try {
 	$uid = isset($_POST['uid']) ? Param::asInteger($_POST['uid']) : null;
 	$name = isset($_POST['name']) ? Param::asString($_POST['name']) : null;
 	$email = isset($_POST['email']) ? Param::asString($_POST['email']) : null;
-	$isGameAdmin = isset($_POST['gameAdmin']) ? Param::asString($_POST['gameAdmin']) : null;
-	$isSiteAdmin = isset($_POST['siteAdmin']) ? Param::asString($_POST['siteAdmin']) : null;
+	$isGameAdmin = isset($_POST['gameAdmin']) ? Param::asBoolean($_POST['gameAdmin']) : null;
+	$isSiteAdmin = isset($_POST['siteAdmin']) ? Param::asBoolean($_POST['siteAdmin']) : null;
 	if (is_null($uid)) {
 		$response['error'] = "Missing required field 'uid'.";
 		Http::responseCode('BAD_REQUEST');
@@ -56,14 +56,30 @@ try {
 	}
 	$admin = Admins::get($uid);
 
+	// Prevent anyone from updating the email
+	if ($email !== $admin['email']) {
+		$response['error'] = "No one is allowed to update an admin email. Instead, add a new admin.";
+		Http::responseCode('BAD_REQUEST');
+		echo json_encode($response);
+		return;
+	}
+
 	// Prevent non-site/game admins from modifying game privileges
-	if (!Session::$isGameAdmin && !Session::$isSiteAdmin) {
-		$isGameAdmin = $admin['gameAdmin'];
+	if (!Session::$isGameAdmin && !Session::$isSiteAdmin && $isGameAdmin !== $admin['gameAdmin']) {
+		$response['error'] = "You lack the permission to modify 'gameAdmin' status.";
+		$response['sent'] = $isGameAdmin;
+		$response['prev'] = $admin['gameAdmin'];
+		Http::responseCode('FORBIDDEN');
+		echo json_encode($response);
+		return;
 	}
 
 	// Prevent non-site admins from modifying site privileges
-	if (!Session::$isSiteAdmin) {
-		$isSiteAdmin = $admin['siteAdmin'];
+	if (!Session::$isSiteAdmin && $isSiteAdmin !== $admin['siteAdmin']) {
+		$response['error'] = "You lack the permission to modify 'siteAdmin' status.";
+		Http::responseCode('FORBIDDEN');
+		echo json_encode($response);
+		return;
 	}
 
 	// Make the changes

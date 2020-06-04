@@ -9,6 +9,7 @@ use util\Session as Session;
 Captcha::initialize();
 
 // Variables used in rendering
+$name = Session::$name;
 $isLoggedIn = Session::$isLoggedIn;
 $isAdmin = Session::$isAdmin;
 $unsubscribeUrl = Listserv::UNSUBSCRIBE_URL;

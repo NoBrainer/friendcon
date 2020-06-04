@@ -37,7 +37,7 @@
 				<div class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" role="button" id="userDropdown" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
 						<span class="fa fa-user-lock"></span>
-						<span>User</span>
+						<span class="d-inline-block align-middle text-truncate maxWidth-120px"><?php echo $name; ?></span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
 						<a class="dropdown-item" href="/fun/admin">
