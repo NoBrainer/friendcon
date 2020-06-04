@@ -78,7 +78,7 @@ try {
 	// Send an email for the new admin to reset their password
 	$token = Admins::getResetTokenByEmail($email);
 	$subject = "Welcome FriendCon Admin";
-	$resetLink = General::linkHtml('link', "https://friendcon.com/fun/login/resetPassword?token=$token&email=$email");
+	$resetLink = General::linkHtml('link', "https://friendcon.com/fun/admin/resetPassword?token=$token&email=$email");
 	$loginLink = General::linkHtml('login', "https://friendcon.com/fun/admin");
 	$lines = [
 			"Click this $resetLink to reset your password. Once done, you can $loginLink as an admin!"

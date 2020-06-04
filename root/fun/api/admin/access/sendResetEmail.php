@@ -41,7 +41,7 @@ try {
 	// Setup the email
 	$token = Admins::getResetToken($admin);
 	$subject = "FriendCon Password Reset";
-	$link = General::linkHtml('link', "https://friendcon.com/fun/login/resetPassword?token=$token&email=$email");
+	$link = General::linkHtml('link', "https://friendcon.com/fun/admin/resetPassword?token=$token&email=$email");
 	$lines = [
 			"Click this $link to reset your password.",
 			"If you did not request a password reset, ignore this email."

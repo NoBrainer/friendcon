@@ -49,7 +49,7 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 					</button>
 				</div>
 				<div class="form-group row">
-					<a class="col text-right" href="/fun/login/forgotPassword">
+					<a class="col text-right" href="/fun/admin/forgotPassword">
 						<span>Need another password reset email?</span>
 					</a>
 				</div>
@@ -70,7 +70,7 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 		const $submitButton = $('#resetPassword');
 		const $message = $('#message');
 
-		trackStats("LOAD/fun/login/resetPassword");
+		trackStats("LOAD/fun/admin/resetPassword");
 		render();
 
 		function render() {
@@ -122,11 +122,11 @@ if (Param::isBlankString($email) || Param::isBlankString($token)) {
 
 			// Make the server call
 			infoMessage($message, "Resetting...");
-			trackStats("SUBMIT/fun/login/resetPassword");
+			trackStats("SUBMIT/fun/admin/resetPassword");
 			enableSubmitButton(false);
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/admin/resetPassword.php',
+				url: '/fun/api/admin/access/resetPassword.php',
 				data: formData,
 				async: false,
 				cache: false,

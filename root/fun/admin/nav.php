@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
 	<!-- Branding -->
-	<a class="navbar-brand">FriendCon Site Admin</a>
+	<a class="navbar-brand" href="/fun/admin">FriendCon Site Admin</a>
 
 	<!-- Navbar toggler when collapsed -->
 	<button class="navbar-toggler" type="button" data-target="#siteAdminNav" data-toggle="collapse" aria-controls="siteAdminNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@
 						<input class="form-control" type="password" id="navPassword" placeholder="Password" required/>
 					</div>
 					<div class="form-group row">
-						<a class="col text-right" href="/fun/login/forgotPassword" target="_blank">Forgot Your Password?</a>
+						<a class="col text-right" href="/fun/admin/forgotPassword" target="_blank">Forgot Your Password?</a>
 					</div>
 					<div id="navMessage"></div>
 				</div>
@@ -122,7 +122,7 @@
 			trackStats("LOGIN/fun/game");
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/admin/login.php',
+				url: '/fun/api/admin/access/login.php',
 				data: formData,
 				async: false,
 				cache: false,
@@ -141,7 +141,7 @@
 			trackStats("LOGOUT/fun/game");
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/admin/logout.php',
+				url: '/fun/api/admin/access/logout.php',
 				async: false,
 				cache: false,
 				success: (resp) => {

@@ -751,7 +751,7 @@ $requireAdmin = true;
 				infoMessage($resetGameDataMessage, "Resetting game data...");
 				$.ajax({
 					type: 'POST',
-					url: '/fun/api/admin/resetGameData.php',
+					url: '/fun/api/admin/danger/resetGameData.php',
 					data: formData,
 					cache: false,
 					contentType: false,

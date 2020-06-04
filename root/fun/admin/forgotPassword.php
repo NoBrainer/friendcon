@@ -36,7 +36,7 @@ $pageTitle = "Forgot Password";
 		const $submitButton = $('#sendResetEmail');
 		const $message = $('#message');
 
-		trackStats("LOAD/fun/login/forgotPassword");
+		trackStats("LOAD/fun/admin/forgotPassword");
 		render();
 
 		function render() {
@@ -78,11 +78,11 @@ $pageTitle = "Forgot Password";
 
 			// Make the server call
 			infoMessage($message, "Sending token...");
-			trackStats("SUBMIT/fun/login/forgotPassword");
+			trackStats("SUBMIT/fun/admin/forgotPassword");
 			enableSubmitButton(false);
 			$.ajax({
 				type: 'POST',
-				url: '/fun/api/admin/sendResetEmail.php',
+				url: '/fun/api/admin/access/sendResetEmail.php',
 				data: formData,
 				async: false,
 				cache: false,
