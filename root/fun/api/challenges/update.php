@@ -33,6 +33,8 @@ try {
 		echo json_encode($response);
 		return;
 	}
+	$startTime = Param::asTimestamp($_POST['startTime']);
+	$endTime = Param::asTimestamp($_POST['endTime']);
 
 	// Make sure the challenge exists
 	if (!Challenges::exists($challengeIndex)) {

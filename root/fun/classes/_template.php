@@ -3,6 +3,6 @@
 namespace test;
 class Template {
 
-	public static function testFunction() {
+	public static function testFunction(): void {
 	}
 }

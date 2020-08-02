@@ -6,24 +6,24 @@ use util\Sql as Sql;
 
 class Teams {
 
-	public static function add($name) {
+	public static function add(string $name): bool {
 		$query = "INSERT INTO teams (name) VALUES (?)";
 		$affectedRows = Sql::executeSqlForAffectedRows($query, 's', $name);
 		return $affectedRows === 1;
 	}
 
-	public static function delete($teamIndex) {
+	public static function delete(int $teamIndex): bool {
 		$query = "DELETE FROM teams WHERE teamIndex = ?";
 		$affectedRows = Sql::executeSqlForAffectedRows($query, 'i', $teamIndex);
 		return $affectedRows === 1;
 	}
 
-	public static function deleteAllMembers($teamIndex) {
+	public static function deleteAllMembers(int $teamIndex): bool {
 		$affectedRows = Sql::executeSqlForAffectedRows("DELETE FROM teamMembers WHERE teamIndex = ?", 'i', $teamIndex);
 		return $affectedRows === 1;
 	}
 
-	public static function deleteMembers($teamIndex, $memberNames = []) {
+	public static function deleteMembers(int $teamIndex, array $memberNames = []): array {
 		$deleteCount = 0;
 		$failedNames = [];
 
@@ -47,17 +47,17 @@ class Teams {
 		];
 	}
 
-	public static function exists($teamIndex) {
+	public static function exists(int $teamIndex): bool {
 		$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE teamIndex = ?", 's', $teamIndex);
 		return $result->num_rows > 0;
 	}
 
-	public static function existsWithName($name) {
+	public static function existsWithName(string $name): bool {
 		$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE name = ?", 's', $name);
 		return $result->num_rows > 0;
 	}
 
-	public static function get($teamIndex) {
+	public static function get(int $teamIndex): ?array {
 		$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE teamIndex = ?", 'i', $teamIndex);
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
@@ -77,7 +77,7 @@ class Teams {
 		return $team;
 	}
 
-	public static function getAll($maxMemberCount = -1) {
+	public static function getAll(int $maxMemberCount = -1): array {
 		$allTeams = [];
 		$result = Sql::executeSqlForResult("SELECT * FROM teams");
 		while ($row = Sql::getNextRow($result)) {
@@ -114,7 +114,7 @@ class Teams {
 		}
 	}
 
-	public static function getInvalidMemberNames($memberNames) {
+	public static function getInvalidMemberNames(array $memberNames): array {
 		$invalidNames = [];
 		foreach($memberNames as $memberName) {
 			// Validate each name
@@ -125,7 +125,7 @@ class Teams {
 		return $invalidNames;
 	}
 
-	public static function getMinTeamMemberCount() {
+	public static function getMinTeamMemberCount(): int {
 		// Get the teams with member counts and figure out the least members on a single team
 		$minMemberCount = null;
 		$query = <<< SQL
@@ -144,7 +144,7 @@ class Teams {
 		return is_null($minMemberCount) ? 0 : $minMemberCount;
 	}
 
-	public static function getRandomTeamIndex() {
+	public static function getRandomTeamIndex(): int {
 		// Build up the teams within 2 member count of the minimum member count
 		$minMemberCount = Teams::getMinTeamMemberCount();
 		$teamCandidates = Teams::getAll($minMemberCount + 2);
@@ -154,32 +154,32 @@ class Teams {
 		return $randomTeam['teamIndex'];
 	}
 
-	public static function hasApprovedUploads($teamIndex) {
+	public static function hasApprovedUploads(int $teamIndex): bool {
 		$query = "SELECT * FROM uploads WHERE teamIndex = ? AND state > 0";
 		$result = Sql::executeSqlForResult($query, 'i', $teamIndex);
 		return $result->num_rows > 0;
 	}
 
-	public static function hasMembers($teamIndex) {
+	public static function hasMembers(int $teamIndex): bool {
 		$query = "SELECT * FROM teamMembers WHERE teamIndex = ?";
 		$result = Sql::executeSqlForResult($query, 'i', $teamIndex);
 		return $result->num_rows > 0;
 	}
 
-	public static function isSetup() {
+	public static function isSetup(): bool {
 		$result = Sql::executeSqlForResult("SELECT * FROM teams");
 		return $result->num_rows > 0;
 	}
 
-	public static function isValidMemberName($name) {
+	public static function isValidMemberName(?string $name): bool {
 		return !preg_match("[,<>()&]", $name);
 	}
 
-	public static function isValidTeamIndex($teamIndex) {
+	public static function isValidTeamIndex(?int $teamIndex): bool {
 		return Param::isInteger($teamIndex) && $teamIndex >= 1;
 	}
 
-	public static function setMembers($teamIndex, $memberNames) {
+	public static function setMembers(int $teamIndex, array $memberNames): bool {
 		// Build SQL pieces
 		$valueStr = "";
 		$types = "";
@@ -201,7 +201,7 @@ class Teams {
 		return $affectedMemberRows > 0;
 	}
 
-	public static function update($teamIndex, $name = null, $score = null) {
+	public static function update(int $teamIndex, string $name = null, ?int $score = null): bool {
 		// Build the SQL pieces
 		$changes = [];
 		$types = '';

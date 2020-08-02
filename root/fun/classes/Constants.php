@@ -22,15 +22,15 @@ class Constants {
 			'INTERNAL_SERVER_ERROR' => 500
 	];
 
-	public static function captchaConfig() {
+	public static function captchaConfig(): string {
 		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/captcha.php';
 	}
 
-	public static function dbConfig() {
+	public static function dbConfig(): string {
 		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/config/db.php';
 	}
 
-	public static function uploadsDir() {
+	public static function uploadsDir(): string {
 		return $_SERVER['DOCUMENT_ROOT'] . '/../friendcon-private/uploads';
 	}
 }

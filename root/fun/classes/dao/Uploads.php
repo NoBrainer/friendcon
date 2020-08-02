@@ -8,21 +8,21 @@ use util\Sql as Sql;
 
 class Uploads {
 
-	public static function add($teamIndex, $challengeIndex, $file) {
+	public static function add(int $teamIndex, int $challengeIndex, string $file): bool {
 		$query = "INSERT INTO uploads (teamIndex, challengeIndex, file) VALUES (?, ?, ?)";
 		return Sql::executeSql($query, 'iis', $teamIndex, $challengeIndex, $file);
 	}
 
-	public static function delete($file) {
+	public static function delete(string $file): bool {
 		throw new RuntimeException("Uploads::delete() NOT YET IMPLEMENTED."); //TODO
 	}
 
-	public static function exists($file) {
+	public static function exists(string $file): bool {
 		$fullPath = sprintf('%s/%s', Constants::uploadsDir(), $file);
 		return file_exists($fullPath);
 	}
 
-	public static function get($file) {
+	public static function get(string $file): ?array {
 		$query = "SELECT u.*, s.state, c.published FROM uploads u " .
 				"JOIN uploadState s ON u.state = s.value " .
 				"JOIN challenges c ON u.challengeIndex = c.challengeIndex " .
@@ -41,7 +41,7 @@ class Uploads {
 		];
 	}
 
-	public static function getAll($publishedOnly = true) {
+	public static function getAll(bool $publishedOnly = true): array {
 		$condition = ($publishedOnly ? " WHERE u.state > 0 AND c.published = 1" : "");
 		$query = <<< SQL
 			SELECT u.*, s.state, c.published
@@ -69,7 +69,7 @@ class Uploads {
 		return $uploads;
 	}
 
-	public static function getStateValue($stateStr) {
+	public static function getStateValue(string $stateStr): ?int {
 		$result = Sql::executeSqlForResult("SELECT * FROM uploadState WHERE state = ?", 's', $stateStr);
 		if (!Sql::hasRows($result, 1)) {
 			return null;
@@ -78,7 +78,7 @@ class Uploads {
 		return Param::asInteger($row['value']);
 	}
 
-	public static function rotate($file) {
+	public static function rotate(string $file): bool {
 		// Create the full path
 		$fullPath = sprintf('%s/%s', Constants::uploadsDir(), $file);
 
@@ -111,7 +111,7 @@ class Uploads {
 		return Uploads::updateRotationIndex($file);
 	}
 
-	public static function updateRotationIndex($file) {
+	public static function updateRotationIndex(string $file): bool {
 		// Get the rotation index
 		$result = Sql::executeSqlForResult("SELECT * FROM uploads WHERE file = ?", 's', $file);
 		if (!Sql::hasRows($result, 1)) return false;
@@ -125,7 +125,7 @@ class Uploads {
 		return Sql::executeSql("UPDATE uploads SET rotation = ? WHERE file = ?", 'is', $rotationIndex, $file);
 	}
 
-	public static function updateState($file, $stateValue) {
+	public static function updateState(string $file, int $stateValue): bool {
 		$query = "UPDATE uploads SET state = ? WHERE file = ?";
 		return Sql::executeSql($query, 'is', $stateValue, $file);
 	}

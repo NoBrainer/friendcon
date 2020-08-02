@@ -13,7 +13,7 @@ class Session {
 	public static $isGameAdmin;
 	public static $isSiteAdmin;
 
-	public static function initialize() {
+	public static function initialize(): void {
 		session_start();
 		Session::$userSession = $_SESSION['userSession'];
 		Session::$isLoggedIn = isset(Session::$userSession) && !empty(Session::$userSession);
@@ -44,12 +44,12 @@ class Session {
 		}
 	}
 
-	public static function login($uid) {
+	public static function login(string $uid): void {
 		$_SESSION['userSession'] = $uid;
 		Session::initialize();
 	}
 
-	public static function logout() {
+	public static function logout(): void {
 		session_destroy();
 		Session::initialize();
 	}

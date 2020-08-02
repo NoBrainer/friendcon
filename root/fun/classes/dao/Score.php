@@ -6,7 +6,7 @@ use util\Sql as Sql;
 
 class Score {
 
-	public static function getChangeLogEntries() {
+	public static function getChangeLogEntries(): array {
 		$result = Sql::executeSqlForResult("SELECT * FROM scoreChanges");
 		$entries = [];
 		while ($row = Sql::getNextRow($result)) {
@@ -20,7 +20,7 @@ class Score {
 		return $entries;
 	}
 
-	public static function update($teamIndex, $delta, $challengeIndex = null) {
+	public static function update(int $teamIndex, int $delta, ?int $challengeIndex = null): bool {
 		if ($delta === 0) return false;
 
 		// Build the SQL pieces

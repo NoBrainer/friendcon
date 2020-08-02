@@ -14,7 +14,7 @@ class General {
 	 * @param string $target
 	 * @return string
 	 */
-	public static function linkHtml($text, $href, $target = '_blank') {
+	public static function linkHtml(string $text, string $href, string $target = '_blank'): string {
 		if (is_null($target)) return "<a href='$href'>$text</a>";
 		return "<a href='$href' target='$target'>$text</a>";
 	}
@@ -22,14 +22,14 @@ class General {
 	/**
 	 * Send an email from FriendCon Bot. This is an extension of the PHP mail() function with some useful features added.
 	 *
-	 * @param $to
-	 * @param $subject
+	 * @param string $to
+	 * @param string $subject
 	 * @param array $lines
-	 * @param null $headersObject
-	 * @param null $parameters
+	 * @param array|null $headersObject
+	 * @param string|null $parameters
 	 * @return bool - whether or not the email was sent
 	 */
-	public static function sendEmailFromBot($to, $subject, $lines = [], $headersObject = null, $parameters = null) {
+	public static function sendEmailFromBot(string $to, string $subject, array $lines = [], ?array $headersObject = null, ?string $parameters = null): bool {
 		// Convert the array of lines into a message string, putting each line inside of a div
 		$message = "";
 		foreach($lines as $line) {
@@ -63,7 +63,7 @@ class General {
 	 * @param string $another
 	 * @return bool - whether or not $string starts with $another
 	 */
-	public static function startsWith($string, $another) {
+	public static function startsWith(string $string, string $another): bool {
 		return substr($string, 0, strlen($another)) === $another;
 	}
 }

@@ -44,7 +44,7 @@ try {
 	// Make the change
 	$successful = Challenges::publish($challengeIndex, $isPublished);
 	if ($successful) {
-		$response['message'] = "Challenge published.";
+		$response['message'] = $isPublished ? "Challenge published." : "Challenge unpublished.";
 		Http::responseCode('OK');
 	} else {
 		Http::responseCode('NOT_MODIFIED');

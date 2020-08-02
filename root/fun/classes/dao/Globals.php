@@ -26,7 +26,7 @@ class Globals {
 	private const STRING = 'string';
 	private const VALID_TYPES = [Globals::BOOLEAN, Globals::INTEGER, Globals::STRING];
 
-	public static function asType($value, $type) {
+	public static function asType($value, string $type) {
 		if ($type === Globals::BOOLEAN) {
 			return Param::asBoolean($value);
 		} else if ($type === Globals::INTEGER) {
@@ -36,7 +36,7 @@ class Globals {
 		}
 	}
 
-	public static function create($name, $value, $type, $description) {
+	public static function create(string $name, $value, string $type, string $description): ?bool {
 		if (!Session::$isSiteAdmin) return null;
 		if (!Globals::isValidType($type)) throw new BadFunctionCallException("Invalid type [$type].");
 		$query = "INSERT INTO globals (name, value, type, description) VALUES (?, ?, ?, ?)";
@@ -51,20 +51,20 @@ class Globals {
 		return $affectedRows === 1;
 	}
 
-	public static function delete($name) {
+	public static function delete(string $name): ?bool {
 		if (!Session::$isSiteAdmin) return null;
 		$query = "DELETE FROM globals WHERE name = ?";
 		$affectedRows = Sql::executeSqlForAffectedRows($query, 's', $name);
 		return $affectedRows === 1;
 	}
 
-	public static function exists($name) {
+	public static function exists(string $name): bool {
 		$query = "SELECT * FROM globals WHERE name = ?";
 		$result = Sql::executeSqlForResult($query, 's', $name);
 		return Sql::hasRows($result);
 	}
 
-	public static function get($name = null) {
+	public static function get(?string $name = null) {
 		if (is_null($name)) throw new BadFunctionCallException("Cannot get a global without a name.");
 		$query = "SELECT * FROM globals WHERE name = ?";
 		$result = Sql::executeSqlForResult($query, 's', $name);
@@ -79,7 +79,7 @@ class Globals {
 		return $obj;
 	}
 
-	public static function getAll($asMap = false) {
+	public static function getAll(bool $asMap = false): ?array {
 		if (!Session::$isAdmin) return null;
 		$query = "SELECT * FROM globals";
 		$result = Sql::executeSqlForResult($query);
@@ -104,23 +104,23 @@ class Globals {
 		return $globals;
 	}
 
-	public static function isBooleanType($type) {
+	public static function isBooleanType(string $type): bool {
 		return $type === Globals::BOOLEAN;
 	}
 
-	public static function isIntegerType($type) {
+	public static function isIntegerType(string $type): bool {
 		return $type === Globals::INTEGER;
 	}
 
-	public static function isStringType($type) {
+	public static function isStringType(string $type): bool {
 		return $type === Globals::STRING;
 	}
 
-	public static function isValidType($type = null) {
+	public static function isValidType(?string $type = null): bool {
 		return in_array($type, Globals::VALID_TYPES);
 	}
 
-	public static function update($name, $type, $value, $description) {
+	public static function update(?string $name, string $type, $value, string $description): bool {
 		if (is_null($name)) throw new BadFunctionCallException("Cannot set a global without a name.");
 		if (!Globals::exists($name)) throw new LogicException("Must create a global before updating it [$name].");
 		if (!Globals::isValidType($type)) throw new BadFunctionCallException("Invalid type [$type].");

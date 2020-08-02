@@ -5,7 +5,7 @@ use util\Sql as Sql;
 
 class DangerZone {
 
-	public static function resetGameData() {
+	public static function resetGameData(): bool {
 		$query = <<< SQL
 			TRUNCATE challenges;
 			TRUNCATE scoreChanges;

@@ -1,6 +1,7 @@
 <?php
 namespace util;
 
+use BadFunctionCallException as BadFunctionCallException;
 use Constants as Constants;
 use mysqli as mysqli;
 use mysqli_result as mysqli_result;
@@ -15,10 +16,10 @@ class Sql {
 	 * Execute MySQL query with multiple queries joined by semicolons.
 	 *
 	 * @param string $query
-	 * @return boolean
+	 * @return bool
 	 * @see mysqli::multi_query()
 	 */
-	public static function executeMultipleSql($query) {
+	public static function executeMultipleSql(string $query): bool {
 		return Sql::$mysqli->multi_query($query);
 	}
 
@@ -26,12 +27,12 @@ class Sql {
 	 * Execute MySQL query with prepared statement to prevent SQL injection.
 	 *
 	 * @param string $query
-	 * @param string $types
+	 * @param string|null $types
 	 * @param mixed ...$params
-	 * @return boolean
+	 * @return bool
 	 * @see Sql::prepareSqlStatement()
 	 */
-	public static function executeSql($query, $types = '', ...$params) {
+	public static function executeSql(string $query, ?string $types = '', ...$params): bool {
 		if (sizeof(...$params) === 0) {
 			return !!Sql::$mysqli->query($query);
 		}
@@ -46,12 +47,12 @@ class Sql {
 	 * Return the number of affected rows.
 	 *
 	 * @param string $query
-	 * @param string $types
+	 * @param string|null $types
 	 * @param mixed ...$params
-	 * @return integer
+	 * @return int
 	 * @see Sql::prepareSqlStatement()
 	 */
-	public static function executeSqlForAffectedRows($query, $types = '', ...$params) {
+	public static function executeSqlForAffectedRows(string $query, ?string $types = '', ...$params): int {
 		if (sizeof(...$params) === 0) {
 			Sql::$mysqli->query($query);
 			return Sql::$mysqli->affected_rows;
@@ -68,13 +69,13 @@ class Sql {
 	 * Return the info array.
 	 *
 	 * @param string $query
-	 * @param string $types
+	 * @param string|null $types
 	 * @param mixed ...$params
 	 * @return array
 	 * @see Sql::mysqliInfoArray()
 	 * @see Sql::prepareSqlStatement()
 	 */
-	public static function executeSqlForInfo($query, $types = '', ...$params) {
+	public static function executeSqlForInfo(string $query, ?string $types = '', ...$params): array {
 		if (sizeof(...$params) === 0) {
 			Sql::$mysqli->query($query);
 		} else {
@@ -95,12 +96,12 @@ class Sql {
 	 * Return the result.
 	 *
 	 * @param string $query
-	 * @param string $types
+	 * @param string|null $types
 	 * @param mixed ...$params
 	 * @return mysqli_result
 	 * @see Sql::prepareSqlStatement()
 	 */
-	public static function executeSqlForResult($query, $types = '', ...$params) {
+	public static function executeSqlForResult(string $query, ?string $types = '', ...$params): mysqli_result {
 		if (sizeof(...$params) === 0) {
 			return Sql::$mysqli->query($query);
 		}
@@ -114,21 +115,21 @@ class Sql {
 	/**
 	 * Get the next row from a MySQL call's result.
 	 *
-	 * @param mysqli_result $result
-	 * @return array
+	 * @param mysqli_result|null $result
+	 * @return array|null
 	 */
-	public static function getNextRow($result = null) {
+	public static function getNextRow(?mysqli_result $result = null): ?array {
 		return is_null($result) ? null : $result->fetch_assoc();
 	}
 
 	/**
 	 * Check if the result has 1+ rows. If a number is provided, check if the result has exactly that amount of rows.
 	 *
-	 * @param mysqli_result $result
-	 * @param integer $num - number of rows we're checking for (Default: -1, meaning we only care about 1+ rows)
-	 * @return boolean
+	 * @param mysqli_result|null $result
+	 * @param int $num - number of rows we're checking for (Default: -1, meaning we only care about 1+ rows)
+	 * @return bool
 	 */
-	public static function hasRows($result = null, $num = -1) {
+	public static function hasRows(?mysqli_result $result = null, int $num = -1): bool {
 		if (is_null($result)) return false;
 		return $num < 0 ? $result->num_rows > 0 : $result->num_rows == $num;
 	}
@@ -137,7 +138,7 @@ class Sql {
 	 * Initialize the database connection.
 	 * @see mysqli::__construct
 	 */
-	public static function initializeConnection() {
+	public static function initializeConnection(): void {
 		// Variables in this config file:
 		// - $DB - an object with database initialization parameters
 		$DB = null;
@@ -164,7 +165,7 @@ class Sql {
 	 * @return array
 	 * @see mysqli::$info
 	 */
-	public static function mysqliInfoArray() {
+	public static function mysqliInfoArray(): array {
 		preg_match_all('/(\S[^:]+): (\d+)/', Sql::$mysqli->info, $matches);
 		return array_combine($matches[1], $matches[2]);
 	}
@@ -173,15 +174,16 @@ class Sql {
 	 * Create a prepared statement and bind parameters if they're provided.
 	 *
 	 * @param string $query - MySQL query string
-	 * @param string $types - A string that contains one or more characters which specify the types for the corresponding
+	 * @param string|null $types - A string that contains one or more characters which specify the types for the corresponding
 	 * bind variables: i=integer, d=double, s=string, b=blob. (Default: '')
 	 * For example: "iisd" is two integers followed by a string then a double.
 	 * @param mixed $params - The corresponding variables for each character in $types.
 	 * @return mysqli_stmt
 	 * @see mysqli::prepare()
 	 */
-	public static function prepareSqlStatement($query, $types = '', ...$params) {
+	public static function prepareSqlStatement(string $query, ?string $types = '', ...$params): mysqli_stmt {
 		$stmt = Sql::$mysqli->prepare($query);
+		if ($stmt === false) throw new BadFunctionCallException("Error preparing SQL statement [$query]");
 		$stmt->bind_param($types, ...$params);
 		return $stmt;
 	}

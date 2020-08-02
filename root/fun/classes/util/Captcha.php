@@ -11,7 +11,7 @@ class Captcha {
 	public const HOSTNAME = "friendcon.com";
 	public const THRESHOLD = 0.5;
 
-	public static function initialize($unsetSecrets = true) {
+	public static function initialize(bool $unsetSecrets = true): void {
 		// Variables in this config file:
 		// - CAPTCHA_SITE_V2_KEY - a string constant for the reCAPTCHA v2 Site Key
 		// - CAPTCHA_SITE_V3_KEY - a string constant for the reCAPTCHA v3 Site Key
@@ -31,12 +31,12 @@ class Captcha {
 		unset($CAPTCHA_SECRET_V3_KEY);
 	}
 
-	public static function unsetCaptchaSecrets() {
+	public static function unsetCaptchaSecrets(): void {
 		Captcha::$CAPTCHA_SECRET_V2_KEY = null;
 		Captcha::$CAPTCHA_SECRET_V3_KEY = null;
 	}
 
-	public static function verify($token) {
+	public static function verify(string $token) {
 		Captcha::initialize(false);
 		$url = "https://www.google.com/recaptcha/api/siteverify?secret=" . Captcha::$CAPTCHA_SECRET_V3_KEY . "&response=$token";
 		Captcha::unsetCaptchaSecrets();
