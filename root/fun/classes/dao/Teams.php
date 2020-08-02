@@ -48,7 +48,7 @@ class Teams {
 	}
 
 	public static function exists(int $teamIndex): bool {
-		$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE teamIndex = ?", 's', $teamIndex);
+		$result = Sql::executeSqlForResult("SELECT * FROM teams WHERE teamIndex = ?", 'i', $teamIndex);
 		return $result->num_rows > 0;
 	}
 

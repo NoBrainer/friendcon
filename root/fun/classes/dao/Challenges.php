@@ -19,8 +19,7 @@ class Challenges {
 	}
 
 	public static function exists(int $challengeIndex): bool {
-		//TODO: get this working with 'i' types
-		$result = Sql::executeSqlForResult("SELECT * FROM challenges WHERE challengeIndex = ?", 's', $challengeIndex);
+		$result = Sql::executeSqlForResult("SELECT * FROM challenges WHERE challengeIndex = ?", 'i', $challengeIndex);
 		return $result->num_rows > 0;
 	}
 
@@ -31,8 +30,7 @@ class Challenges {
 
 	public static function get(int $challengeIndex): ?array {
 		$query = "SELECT * FROM challenges WHERE challengeIndex = ?";
-		//TODO: get this working with 'i' types
-		$result = Sql::executeSqlForResult($query, 's', $challengeIndex);
+		$result = Sql::executeSqlForResult($query, 'i', $challengeIndex);
 		if (!Sql::hasRows($result, 1)) return null;
 		$row = Sql::getNextRow($result);
 		return [
