@@ -45,7 +45,7 @@ try {
 			// Convert the members string into an array
 			$membersArr = explode(",", $members);
 			$invalidNames = Teams::getInvalidMemberNames($membersArr);
-			if (sizeof($invalidNames) > 0) {
+			if (count($invalidNames) > 0) {
 				$response['error'] = "One or more of the members contains invalid special characters.";
 				$response['invalidNames'] = $invalidNames;
 				Http::responseCode('BAD_REQUEST');

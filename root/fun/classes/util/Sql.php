@@ -33,7 +33,7 @@ class Sql {
 	 * @see Sql::prepareSqlStatement()
 	 */
 	public static function executeSql(string $query, ?string $types = '', ...$params): bool {
-		if (sizeof(...$params) === 0) {
+		if (count(...$params) === 0) {
 			return !!Sql::$mysqli->query($query);
 		}
 		$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
@@ -53,7 +53,7 @@ class Sql {
 	 * @see Sql::prepareSqlStatement()
 	 */
 	public static function executeSqlForAffectedRows(string $query, ?string $types = '', ...$params): int {
-		if (sizeof(...$params) === 0) {
+		if (count(...$params) === 0) {
 			Sql::$mysqli->query($query);
 			return Sql::$mysqli->affected_rows;
 		}
@@ -76,7 +76,7 @@ class Sql {
 	 * @see Sql::prepareSqlStatement()
 	 */
 	public static function executeSqlForInfo(string $query, ?string $types = '', ...$params): array {
-		if (sizeof(...$params) === 0) {
+		if (count(...$params) === 0) {
 			Sql::$mysqli->query($query);
 		} else {
 			$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
@@ -102,7 +102,7 @@ class Sql {
 	 * @see Sql::prepareSqlStatement()
 	 */
 	public static function executeSqlForResult(string $query, ?string $types = '', ...$params): mysqli_result {
-		if (sizeof(...$params) === 0) {
+		if (count(...$params) === 0) {
 			return Sql::$mysqli->query($query);
 		}
 		$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
