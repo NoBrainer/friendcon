@@ -1,10 +1,10 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use dao\Teams as Teams;
-use util\Http as Http;
-use util\Param as Param;
-use util\Session as Session;
+use fun\classes\dao\Teams as Teams;
+use fun\classes\util\Http as Http;
+use fun\classes\util\Param as Param;
+use fun\classes\util\Session as Session;
 
 if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');

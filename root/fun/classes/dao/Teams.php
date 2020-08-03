@@ -1,8 +1,8 @@
 <?php
-namespace dao;
+namespace fun\classes\dao;
 
-use util\Param as Param;
-use util\Sql as Sql;
+use fun\classes\util\Param as Param;
+use fun\classes\util\Sql as Sql;
 
 class Teams {
 

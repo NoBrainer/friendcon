@@ -1,8 +1,8 @@
 <?php
-namespace util;
+namespace fun\classes\util;
 
 use BadFunctionCallException as BadFunctionCallException;
-use Constants as Constants;
+use fun\classes\Constants as Constants;
 use mysqli as mysqli;
 use mysqli_result as mysqli_result;
 use mysqli_stmt as mysqli_stmt;

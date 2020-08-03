@@ -1,11 +1,11 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use dao\Admins as Admins;
-use util\General as General;
-use util\Http as Http;
-use util\Param as Param;
-use util\Session as Session;
+use fun\classes\dao\Admins as Admins;
+use fun\classes\util\General as General;
+use fun\classes\util\Http as Http;
+use fun\classes\util\Param as Param;
+use fun\classes\util\Session as Session;
 
 if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');

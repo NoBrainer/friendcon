@@ -1,11 +1,11 @@
 <?php
-namespace dao;
+namespace fun\classes\dao;
 
 use BadFunctionCallException as BadFunctionCallException;
+use fun\classes\util\Param as Param;
+use fun\classes\util\Session as Session;
+use fun\classes\util\Sql as Sql;
 use LogicException as LogicException;
-use util\Param as Param;
-use util\Session as Session;
-use util\Sql as Sql;
 
 class Globals {
 

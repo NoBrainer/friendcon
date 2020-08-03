@@ -1,6 +1,7 @@
 <?php
 
-namespace util;
+namespace fun\classes\util;
+
 class Setup {
 
 	public static function initialize(): bool {

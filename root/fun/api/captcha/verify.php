@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\Captcha as Captcha;
-use util\Http as Http;
-use util\Param as Param;
+use fun\classes\util\Captcha as Captcha;
+use fun\classes\util\Http as Http;
+use fun\classes\util\Param as Param;
 
 if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');

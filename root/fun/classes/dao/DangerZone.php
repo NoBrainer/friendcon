@@ -1,7 +1,7 @@
 <?php
-namespace dao;
+namespace fun\classes\dao;
 
-use util\Sql as Sql;
+use fun\classes\util\Sql as Sql;
 
 class DangerZone {
 

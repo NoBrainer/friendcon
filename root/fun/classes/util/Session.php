@@ -1,7 +1,7 @@
 <?php
-namespace util;
+namespace fun\classes\util;
 
-use util\Param as Param;
+use fun\classes\util\Param as Param;
 
 class Session {
 

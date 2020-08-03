@@ -1,8 +1,8 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use dao\Globals as Globals;
-use util\Http as Http;
+use fun\classes\dao\Globals as Globals;
+use fun\classes\util\Http as Http;
 
 if (Http::return404IfNotGet()) exit;
 Http::contentType('JSON');

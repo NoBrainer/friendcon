@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\Captcha as Captcha;
-use util\Http as Http;
-use util\Session as Session;
+use fun\classes\util\Captcha as Captcha;
+use fun\classes\util\Http as Http;
+use fun\classes\util\Session as Session;
 
 Captcha::initialize();
 

@@ -1,9 +1,9 @@
 <?php
-namespace dao;
+namespace fun\classes\dao;
 
-use util\General as General;
-use util\Param as Param;
-use util\Sql as Sql;
+use fun\classes\util\General as General;
+use fun\classes\util\Param as Param;
+use fun\classes\util\Sql as Sql;
 
 class Listserv {
 

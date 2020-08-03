@@ -4,7 +4,7 @@ $requireAdmin = false;
 $forwardAdmin = true;
 include('head.php');
 
-use util\Param as Param;
+use fun\classes\util\Param as Param;
 
 $email = isset($_GET['email']) ? Param::asString($_GET['email']) : null;
 $token = isset($_GET['token']) ? Param::asString($_GET['token']) : null;

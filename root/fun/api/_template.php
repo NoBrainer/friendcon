@@ -1,7 +1,7 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use util\Http as Http;
+use fun\classes\util\Http as Http;
 
 if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');

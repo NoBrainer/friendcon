@@ -1,7 +1,7 @@
 <?php
-namespace util;
+namespace fun\classes\util;
 
-use Constants as Constants;
+use fun\classes\Constants as Constants;
 use RuntimeException as RuntimeException;
 
 class General {

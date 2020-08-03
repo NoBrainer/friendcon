@@ -1,9 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use dao\Challenges as Challenges;
-use util\Http as Http;
-use util\Session as Session;
+use fun\classes\dao\Challenges as Challenges;
+use fun\classes\util\Http as Http;
+use fun\classes\util\Session as Session;
 
 if (Http::return404IfNotGet()) exit;
 Http::contentType('JSON');

@@ -1,6 +1,6 @@
 <?php
 
-namespace util;
+namespace fun\classes\util;
 
 use DateTime as DateTime;
 use Exception as Exception;

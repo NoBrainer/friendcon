@@ -1,5 +1,7 @@
 <?php
 
+namespace fun\classes;
+
 class Constants {
 
 	// HTTP Header Content Type
