@@ -1,9 +1,7 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use fun\classes\util\Captcha as Captcha;
-use fun\classes\util\Http as Http;
-use fun\classes\util\Session as Session;
+use fun\classes\util\{Captcha as Captcha, Http as Http, Session as Session};
 
 Captcha::initialize();
 
@@ -11,6 +9,8 @@ Captcha::initialize();
 $name = Session::$name;
 $isLoggedIn = Session::$isLoggedIn;
 $isGameAdmin = Session::$isGameAdmin;
+$requireAdmin = isset($requireAdmin) ? $requireAdmin : false;
+$pageTitle = isset($pageTitle) ? $pageTitle : "Game";
 
 // Short-circuit forwarding
 if ($requireAdmin && !$isGameAdmin) {

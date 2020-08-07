@@ -1,8 +1,7 @@
 <?php
 namespace fun\classes\dao;
 
-use fun\classes\util\Param as Param;
-use fun\classes\util\Sql as Sql;
+use fun\classes\util\{Param as Param, Sql as Sql};
 
 class Score {
 

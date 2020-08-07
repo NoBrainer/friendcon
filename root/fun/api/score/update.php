@@ -1,11 +1,8 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
-use fun\classes\dao\Score as Score;
-use fun\classes\dao\Teams as Teams;
-use fun\classes\util\Http as Http;
-use fun\classes\util\Param as Param;
-use fun\classes\util\Session as Session;
+use fun\classes\dao\{Score as Score, Teams as Teams};
+use fun\classes\util\{Http as Http, Param as Param, Session as Session};
 
 if (Http::return404IfNotPost()) exit;
 Http::contentType('JSON');

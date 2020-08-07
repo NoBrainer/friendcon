@@ -2,8 +2,7 @@
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use fun\classes\dao\Admins as Admins;
-use fun\classes\util\Http as Http;
-use fun\classes\util\Session as Session;
+use fun\classes\util\{Http as Http, Session as Session};
 
 if (Http::return404IfNotGet()) exit;
 Http::contentType('JSON');

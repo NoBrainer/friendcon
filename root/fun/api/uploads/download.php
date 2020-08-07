@@ -2,8 +2,7 @@
 include($_SERVER['DOCUMENT_ROOT'] . '/fun/autoloader.php');
 
 use fun\classes\Constants as Constants;
-use fun\classes\util\Http as Http;
-use fun\classes\util\Param as Param;
+use fun\classes\util\{Http as Http, Param as Param};
 
 try {
 	// Validate input
