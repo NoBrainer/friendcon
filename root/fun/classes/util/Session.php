@@ -1,9 +1,13 @@
 <?php
 namespace fun\classes\util;
 
+use fun\classes\bonsai\Session as BonsaiSession;
 use fun\classes\util\Param as Param;
 
 class Session {
+
+	private const ONE_MINUTE = 60;
+	private const ONE_HOUR = 60 * self::ONE_MINUTE;
 
 	public static $userSession;
 	public static $name;
@@ -14,7 +18,7 @@ class Session {
 	public static $isSiteAdmin;
 
 	public static function initialize(): void {
-		session_start();
+		BonsaiSession::start(self::ONE_HOUR);
 		Session::$userSession = $_SESSION['userSession'];
 		Session::$isLoggedIn = isset(Session::$userSession) && !empty(Session::$userSession);
 
@@ -50,7 +54,7 @@ class Session {
 	}
 
 	public static function logout(): void {
-		session_destroy();
+		BonsaiSession::remove();
 		Session::initialize();
 	}
 }
