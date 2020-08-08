@@ -31,7 +31,7 @@ class Http {
 
 	public static function forwardHttps(): bool {
 		if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
-			Http::forward("https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 308);
+			self::forward("https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], true, 308);
 			return true;
 		}
 		return false;
@@ -50,22 +50,22 @@ class Http {
 	}
 
 	public static function return404(): void {
-		Http::responseCode('NOT_FOUND');
+		self::responseCode('NOT_FOUND');
 		include($_SERVER['DOCUMENT_ROOT'] . '/index.php');
 	}
 
 	public static function return404IfNotGet(): bool {
-		return Http::return404IfNotRequestMethod('GET');
+		return self::return404IfNotRequestMethod('GET');
 	}
 
 	public static function return404IfNotPost(): bool {
-		return Http::return404IfNotRequestMethod('POST');
+		return self::return404IfNotRequestMethod('POST');
 	}
 
 	public static function return404IfNotRequestMethod(string $expectedMethod, ?bool $strictAccess = true): bool {
-		$isAllowed = $strictAccess ? Http::isXHR() : true;
-		if (!$isAllowed || !Http::isRequestMethod($expectedMethod)) {
-			Http::return404();
+		$isAllowed = $strictAccess ? self::isXHR() : true;
+		if (!$isAllowed || !self::isRequestMethod($expectedMethod)) {
+			self::return404();
 			return true;
 		}
 		return false;

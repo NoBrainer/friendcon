@@ -19,42 +19,42 @@ class Session {
 
 	public static function initialize(): void {
 		BonsaiSession::start(self::ONE_HOUR);
-		Session::$userSession = $_SESSION['userSession'];
-		Session::$isLoggedIn = isset(Session::$userSession) && !empty(Session::$userSession);
+		self::$userSession = $_SESSION['userSession'];
+		self::$isLoggedIn = isset(self::$userSession) && !empty(self::$userSession);
 
-		if (Session::$isLoggedIn) {
+		if (self::$isLoggedIn) {
 			// Check the user's privileges
 			$query = "SELECT * FROM admins WHERE uid = ?";
-			$result = Sql::executeSqlForResult($query, 'i', Session::$userSession);
+			$result = Sql::executeSqlForResult($query, 'i', self::$userSession);
 			if (Sql::hasRows($result, 1)) {
-				Session::$isAdmin = true;
+				self::$isAdmin = true;
 				$row = Sql::getNextRow($result);
-				Session::$isGameAdmin = Param::asBoolean($row['gameAdmin']);
-				Session::$isSiteAdmin = Param::asBoolean($row['siteAdmin']);
-				Session::$name = Param::asString($row['name']);
+				self::$isGameAdmin = Param::asBoolean($row['gameAdmin']);
+				self::$isSiteAdmin = Param::asBoolean($row['siteAdmin']);
+				self::$name = Param::asString($row['name']);
 			}
 
 			// Vince is all-powerful
-			if (Session::$userSession === 43) {
-				Session::$isAdmin = true;
-				Session::$isGameAdmin = true;
-				Session::$isSiteAdmin = true;
+			if (self::$userSession === 43) {
+				self::$isAdmin = true;
+				self::$isGameAdmin = true;
+				self::$isSiteAdmin = true;
 			}
 		} else {
 			// Default state
-			Session::$isAdmin = false;
-			Session::$isGameAdmin = false;
-			Session::$isSiteAdmin = false;
+			self::$isAdmin = false;
+			self::$isGameAdmin = false;
+			self::$isSiteAdmin = false;
 		}
 	}
 
 	public static function login(string $uid): void {
 		$_SESSION['userSession'] = $uid;
-		Session::initialize();
+		self::initialize();
 	}
 
 	public static function logout(): void {
 		BonsaiSession::remove();
-		Session::initialize();
+		self::initialize();
 	}
 }

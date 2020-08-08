@@ -117,7 +117,7 @@ class Teams {
 		$invalidNames = [];
 		foreach($memberNames as $memberName) {
 			// Validate each name
-			if (!Teams::isValidMemberName($memberName)) {
+			if (!self::isValidMemberName($memberName)) {
 				$invalidNames[] = $memberName;
 			}
 		}
@@ -145,8 +145,8 @@ class Teams {
 
 	public static function getRandomTeamIndex(): int {
 		// Build up the teams within 2 member count of the minimum member count
-		$minMemberCount = Teams::getMinTeamMemberCount();
-		$teamCandidates = Teams::getAll($minMemberCount + 2);
+		$minMemberCount = self::getMinTeamMemberCount();
+		$teamCandidates = self::getAll($minMemberCount + 2);
 
 		// Randomly pick one of the candidates
 		$randomTeam = $teamCandidates[array_rand($teamCandidates)];

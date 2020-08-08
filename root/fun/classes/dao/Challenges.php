@@ -86,7 +86,7 @@ class Challenges {
 	}
 
 	public static function publish(int $challengeIndex, bool $isPublished): bool {
-		return Challenges::update($challengeIndex, null, 'IGNORE', 'IGNORE', $isPublished);
+		return self::update($challengeIndex, null, 'IGNORE', 'IGNORE', $isPublished);
 	}
 
 	public static function update(int $challengeIndex, string $name = null, ?string $startTime = 'IGNORE', ?string $endTime = 'IGNORE', ?bool $isPublished = null): bool {

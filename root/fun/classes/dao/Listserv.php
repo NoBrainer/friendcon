@@ -50,7 +50,7 @@ class Listserv {
 
 	public static function notifySubscribed(string $email): bool {
 		$subject = "Subscribed to FriendCon Listserv!";
-		$unsubscribeLink = General::linkHtml('unsubscribe', ListServ::UNSUBSCRIBE_URL);
+		$unsubscribeLink = General::linkHtml('unsubscribe', self::UNSUBSCRIBE_URL);
 		$lines = [
 				"Thanks for subscribing! If you didn't do this, please $unsubscribeLink and/or contact admin@friendcon.com."
 		];
@@ -59,7 +59,7 @@ class Listserv {
 
 	public static function notifyUnsubscribed(string $email): bool {
 		$subject = "Unsubscribed from FriendCon Listserv";
-		$resubscribeLink = General::linkHtml('resubscribe', Listserv::SUBSCRIBE_URL);
+		$resubscribeLink = General::linkHtml('resubscribe', self::SUBSCRIBE_URL);
 		$lines = [
 				"You're now unsubscribed from FriendCon. Listservs are not for everyone, but if you ever change your mind, you can always $resubscribeLink."
 		];

@@ -20,7 +20,7 @@ class Sql {
 	 * @see mysqli::multi_query()
 	 */
 	public static function executeMultipleSql(string $query): bool {
-		return Sql::$mysqli->multi_query($query);
+		return self::$mysqli->multi_query($query);
 	}
 
 	/**
@@ -34,9 +34,9 @@ class Sql {
 	 */
 	public static function executeSql(string $query, ?string $types = '', ...$params): bool {
 		if (count(...$params) === 0) {
-			return !!Sql::$mysqli->query($query);
+			return !!self::$mysqli->query($query);
 		}
-		$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
+		$stmt = self::prepareSqlStatement($query, $types, ...$params);
 		$successful = $stmt->execute();
 		$stmt->close();
 		return $successful;
@@ -54,10 +54,10 @@ class Sql {
 	 */
 	public static function executeSqlForAffectedRows(string $query, ?string $types = '', ...$params): int {
 		if (count(...$params) === 0) {
-			Sql::$mysqli->query($query);
-			return Sql::$mysqli->affected_rows;
+			self::$mysqli->query($query);
+			return self::$mysqli->affected_rows;
 		}
-		$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
+		$stmt = self::prepareSqlStatement($query, $types, ...$params);
 		$stmt->execute();
 		$affectedRows = $stmt->affected_rows;
 		$stmt->close();
@@ -77,13 +77,13 @@ class Sql {
 	 */
 	public static function executeSqlForInfo(string $query, ?string $types = '', ...$params): array {
 		if (count(...$params) === 0) {
-			Sql::$mysqli->query($query);
+			self::$mysqli->query($query);
 		} else {
-			$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
+			$stmt = self::prepareSqlStatement($query, $types, ...$params);
 			$stmt->execute();
 			$stmt->close();
 		}
-		$info = Sql::mysqliInfoArray();
+		$info = self::mysqliInfoArray();
 		return [
 				'matched'  => Param::asInteger($info["Rows matched"]),
 				'changed'  => Param::asInteger($info["Changed"]),
@@ -103,9 +103,9 @@ class Sql {
 	 */
 	public static function executeSqlForResult(string $query, ?string $types = '', ...$params): mysqli_result {
 		if (count(...$params) === 0) {
-			return Sql::$mysqli->query($query);
+			return self::$mysqli->query($query);
 		}
-		$stmt = Sql::prepareSqlStatement($query, $types, ...$params);
+		$stmt = self::prepareSqlStatement($query, $types, ...$params);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		$stmt->close();
@@ -144,10 +144,10 @@ class Sql {
 		$DB = null;
 		include(Constants::dbConfig());
 
-		Sql::$mysqli = new mysqli($DB['HOST'], $DB['USER'], $DB['PASS'], $DB['NAME']);
+		self::$mysqli = new mysqli($DB['HOST'], $DB['USER'], $DB['PASS'], $DB['NAME']);
 		unset($DB); //Remove sensitive info from memory
 
-		if (Sql::$mysqli->connect_error) {
+		if (self::$mysqli->connect_error) {
 			die("Error connecting to the database");
 		}
 
@@ -156,7 +156,7 @@ class Sql {
 		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 		// Set the specific UTF8 character set
-		Sql::$mysqli->set_charset("utf8mb4");
+		self::$mysqli->set_charset("utf8mb4");
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Sql {
 	 * @see mysqli::$info
 	 */
 	public static function mysqliInfoArray(): array {
-		preg_match_all('/(\S[^:]+): (\d+)/', Sql::$mysqli->info, $matches);
+		preg_match_all('/(\S[^:]+): (\d+)/', self::$mysqli->info, $matches);
 		return array_combine($matches[1], $matches[2]);
 	}
 
@@ -182,7 +182,7 @@ class Sql {
 	 * @see mysqli::prepare()
 	 */
 	public static function prepareSqlStatement(string $query, ?string $types = '', ...$params): mysqli_stmt {
-		$stmt = Sql::$mysqli->prepare($query);
+		$stmt = self::$mysqli->prepare($query);
 		if ($stmt === false) throw new BadFunctionCallException("Error preparing SQL statement [$query]");
 		$stmt->bind_param($types, ...$params);
 		return $stmt;

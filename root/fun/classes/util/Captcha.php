@@ -22,24 +22,24 @@ class Captcha {
 		include(Constants::captchaConfig());
 
 		if ($unsetSecrets) {
-			Captcha::unsetCaptchaSecrets();
+			self::unsetCaptchaSecrets();
 		} else {
-			Captcha::$CAPTCHA_SECRET_V2_KEY = $CAPTCHA_SECRET_V2_KEY;
-			Captcha::$CAPTCHA_SECRET_V3_KEY = $CAPTCHA_SECRET_V3_KEY;
+			self::$CAPTCHA_SECRET_V2_KEY = $CAPTCHA_SECRET_V2_KEY;
+			self::$CAPTCHA_SECRET_V3_KEY = $CAPTCHA_SECRET_V3_KEY;
 		}
 		unset($CAPTCHA_SECRET_V2_KEY);
 		unset($CAPTCHA_SECRET_V3_KEY);
 	}
 
 	public static function unsetCaptchaSecrets(): void {
-		Captcha::$CAPTCHA_SECRET_V2_KEY = null;
-		Captcha::$CAPTCHA_SECRET_V3_KEY = null;
+		self::$CAPTCHA_SECRET_V2_KEY = null;
+		self::$CAPTCHA_SECRET_V3_KEY = null;
 	}
 
 	public static function verify(string $token) {
-		Captcha::initialize(false);
-		$url = "https://www.google.com/recaptcha/api/siteverify?secret=" . Captcha::$CAPTCHA_SECRET_V3_KEY . "&response=$token";
-		Captcha::unsetCaptchaSecrets();
+		self::initialize(false);
+		$url = "https://www.google.com/recaptcha/api/siteverify?secret=" . self::$CAPTCHA_SECRET_V3_KEY . "&response=$token";
+		self::unsetCaptchaSecrets();
 		return json_decode(file_get_contents($url));
 	}
 }

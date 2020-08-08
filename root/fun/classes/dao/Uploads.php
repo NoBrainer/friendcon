@@ -107,7 +107,7 @@ class Uploads {
 		if (!$rotationSuccess) return false;
 
 		// Update the rotation index and return whether or not it succeeded
-		return Uploads::updateRotationIndex($file);
+		return self::updateRotationIndex($file);
 	}
 
 	public static function updateRotationIndex(string $file): bool {

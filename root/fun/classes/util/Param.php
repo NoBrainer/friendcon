@@ -13,13 +13,13 @@ class Param {
 
 	public static function asBoolean($value, ?bool $default = null): ?bool {
 		if (!isset($value)) return $default;
-		if (in_array($value, Param::VALID_FALSE_VALUES, true)) return false;
-		if (in_array($value, Param::VALID_TRUE_VALUES, true)) return true;
+		if (in_array($value, self::VALID_FALSE_VALUES, true)) return false;
+		if (in_array($value, self::VALID_TRUE_VALUES, true)) return true;
 		return $default;
 	}
 
 	public static function asInteger($value, ?int $default = null): ?int {
-		return Param::isInteger($value) ? intval($value) : $default;
+		return self::isInteger($value) ? intval($value) : $default;
 	}
 
 	public static function asString($value, bool $trim = true): ?string {
@@ -37,11 +37,11 @@ class Param {
 	}
 
 	public static function isBlankString($value): bool {
-		return !Param::isPopulatedString($value);
+		return !self::isPopulatedString($value);
 	}
 
 	public static function isBoolean($value): bool {
-		return isset($value) && in_array($value, Param::VALID_BOOLEAN_VALUES);
+		return isset($value) && in_array($value, self::VALID_BOOLEAN_VALUES);
 	}
 
 	public static function isEmptyString($value): bool {
@@ -54,7 +54,7 @@ class Param {
 	}
 
 	public static function isPopulatedString($value): bool {
-		return Param::isString($value) && !Param::isEmptyString($value);
+		return self::isString($value) && !self::isEmptyString($value);
 	}
 
 	public static function isString($value): bool {

@@ -6,7 +6,7 @@ use fun\classes\util\{Param as Param, Sql as Sql};
 class Admins {
 
 	public static function add(string $name, string $email, bool $isSiteAdmin = false, bool $isGameAdmin = false): bool {
-		$hash = Admins::generateRandomHash($email);
+		$hash = self::generateRandomHash($email);
 		$query = "INSERT INTO admins (name, email, siteAdmin, gameAdmin, hash) VALUES (?, ?, ?, ?, ?)";
 		$affectedRows = Sql::executeSqlForAffectedRows($query, 'ssiis', $name, $email, $isSiteAdmin, $isGameAdmin, $hash);
 		return $affectedRows === 1;
@@ -103,8 +103,8 @@ class Admins {
 	}
 
 	public static function getResetTokenByEmail(string $email): string {
-		$admin = Admins::getByEmail($email, true);
-		return Admins::getResetToken($admin);
+		$admin = self::getByEmail($email, true);
+		return self::getResetToken($admin);
 	}
 
 	public static function updatePassword(string $email, string $password): bool {
