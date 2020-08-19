@@ -54,28 +54,24 @@ include('../head.php');
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="input-group date" id="modalStartPicker" data-target-input="nearest">
+						<div class="input-group date flatpickr" id="modalStartPicker">
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">Start Time:</span>
 							</span>
-							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalStartPicker" data-toggle="datetimepicker" aria-label="Pick start time" readonly>
-							<span class="input-group-append" data-target="#modalStartPicker" data-toggle="datetimepicker">
-								<span class="input-group-text">
-									<i class="fa fa-calendar"></i>
-								</span>
+							<input class="form-control flatpickr-input" type="text" placeholder="NONE" aria-label="Pick start time" data-input>
+							<span class="input-group-append">
+								<a class="btn btn-outline-secondary input-button" title="Clear start time" data-clear>&times;</a>
 							</span>
 						</div>
 					</div>
 					<div class="form-group">
-						<div class="input-group date" id="modalEndPicker" data-target-input="nearest">
+						<div class="input-group date flatpickr" id="modalEndPicker">
 							<span class="input-group-prepend">
 								<span class="input-group-text" style="min-width:100px">End Time:</span>
 							</span>
-							<input class="form-control datetimepicker-input" type="text" placeholder="NONE" data-target="#modalEndPicker" data-toggle="datetimepicker" aria-label="Pick end time" readonly>
-							<span class="input-group-append" data-target="#modalEndPicker" data-toggle="datetimepicker">
-								<span class="input-group-text">
-									<i class="fa fa-calendar"></i>
-								</span>
+							<input class="form-control flatpickr-input" type="text" placeholder="NONE" aria-label="Pick end time" data-input>
+							<span class="input-group-append">
+								<a class="btn btn-outline-secondary input-button" title="Clear end time" data-clear>&times;</a>
 							</span>
 						</div>
 					</div>
@@ -171,14 +167,7 @@ include('../head.php');
 			});
 
 			// Clear the message as the form changes
-			$modalName.keydown(clearMessageUnlessEnter);
-			$modalStartPicker.off('keydown update.datetimepicker change.datetimepicker');
-			$modalEndPicker.off('keydown update.datetimepicker change.datetimepicker');
-			$modalStartPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
-			$modalEndPicker.on('keydown update.datetimepicker change.datetimepicker', clearMessageUnlessEnter);
-			function clearMessageUnlessEnter(e) {
-				if (e.which !== 32) clearMessage($modalMessage);
-			}
+			$modalName.keydown(clearModalMessageUnlessEnter);
 
 			// Edit challenge click handler
 			$('.editChallenge').off().click((e) => {
@@ -202,8 +191,8 @@ include('../head.php');
 				// Set the starting state
 				$modalForm.attr('challengeIndex', challenge.challengeIndex);
 				$modalName.val(prevName);
-				$modalStartPicker.datetimepicker('date', datePickerValue(prevStartTime));
-				$modalEndPicker.datetimepicker('date', datePickerValue(prevEndTime));
+				setDateStringForPicker($modalStartPicker, prevStartTime);
+				setDateStringForPicker($modalEndPicker, prevEndTime);
 			});
 
 			// New challenge click handler
@@ -219,8 +208,8 @@ include('../head.php');
 				// Set the starting state
 				$modalForm.attr('challengeIndex', null);
 				$modalName.val(null);
-				$modalStartPicker.datetimepicker('date', null);
-				$modalEndPicker.datetimepicker('date', null);
+				clearDatePicker($modalStartPicker);
+				clearDatePicker($modalEndPicker);
 			});
 
 			// Delete challenge click handler
@@ -320,8 +309,8 @@ include('../head.php');
 							if (isNew && $modal.data('bs.modal')._isShown) {
 								// Reset form to make it easy for multi-create
 								$modalName.val(null);
-								$modalStartPicker.datetimepicker('date', null);
-								$modalEndPicker.datetimepicker('date', null);
+								clearDatePicker($modalStartPicker);
+								clearDatePicker($modalEndPicker);
 								$modalName.focus();
 							}
 							successMessage($modalMessage, resp.message);
@@ -359,33 +348,13 @@ include('../head.php');
 		}
 
 		function setupDatePicker($picker) {
-			$picker.datetimepicker({
-				buttons: {showClear: true, showClose: true, showToday: true},
-				format: DATE_FORMAT_DISPLAY,
-				icons: {
-					today: 'fa fa-calendar-day',
-					date: 'fa fa-calendar',
-					time: 'fa fa-clock',
-					clear: 'fa fa-trash-alt',
-					close: 'fa fa-check'
-				},
-				tooltips: {
-					today: 'Go to now'
-				},
-				ignoreReadonly: true,
-				maxDate: false,
-				minDate: false,
-				toolbarPlacement: 'top'
+			initializePicker($picker, {
+				onChange: clearModalMessageUnlessEnter
 			});
+		}
 
-			// Prevent setting date on show
-			$modalStartPicker.off('show.datetimepicker').on('show.datetimepicker', preventDefaultTime);
-			$modalEndPicker.off('show.datetimepicker').on('show.datetimepicker', preventDefaultTime);
-			function preventDefaultTime(e) {
-				const $picker = $(e.currentTarget);
-				const initialDate = $picker.datetimepicker('date')._i;
-				if (!initialDate) $picker.datetimepicker('date', null);
-			}
+		function clearModalMessageUnlessEnter(e) {
+			if (e.which !== 32) clearMessage($modalMessage);
 		}
 
 		function scheduleTable() {

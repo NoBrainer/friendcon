@@ -32,7 +32,7 @@ if ($requireAdmin && !$isGameAdmin) {
 	<script type="text/javascript" src="/fun/static/lib/moment/moment.min.js"></script>
 	<script type="text/javascript" src="/fun/static/lib/popper/popper.min.js"></script>
 	<script type="text/javascript" src="/fun/static/lib/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/fun/static/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+	<script type="text/javascript" src="/fun/static/lib/flatpickr/flatpickr.min.js"></script>
 	<script type="text/javascript" src="/fun/static/lib/underscore/underscore.min.js"></script>
 	<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?render=<?php echo CAPTCHA_SITE_V3_KEY; ?>"></script>
 	<script type="text/javascript" src="/fun/js/utils.js"></script>

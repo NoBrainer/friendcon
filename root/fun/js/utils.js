@@ -361,12 +361,50 @@ function setCookie(key, value) {
 }
 
 //================================
-// Fixing tempusdominus DateTimePicker
+// Date/time picker (moment + flatpickr)
 
-// https://github.com/tempusdominus/bootstrap-4/issues/227#issuecomment-538509657
-if (jQuery.fn.datetimepicker) jQuery.fn.datetimepicker.Constructor.prototype._notifyEvent = function _notifyEvent(e) {
-	if (e.type === jQuery.fn.datetimepicker.Constructor.Event.CHANGE && (e.date && e.date.isSame(e.oldDate) || !e.date && !e.oldDate)) {
-		return;
+const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const DATE_FORMAT_DISPLAY = 'MM/DD/YYYY h:mmA';
+const DATE_FORMAT_DISPLAY_FLATPICKR = 'm/d/Y h:iK';
+const NONE = 'NONE';
+
+function clearDatePicker($picker) {
+	$picker[0]._flatpickr.clear();
+}
+
+function dateDisplayFormat(dateTime, emptyString) {
+	emptyString = emptyString || NONE;
+	return dateTime === null ? emptyString : moment(dateTime).format(DATE_FORMAT_DISPLAY);
+}
+
+function dateMillis(dateTime) {
+	return dateTime === null ? -1 : moment(dateTime).unix();
+}
+
+function datePickerValue(dateTime) {
+	return dateTime === null ? null : moment(dateTime);
+}
+
+function initializePicker($picker, opts) {
+	opts = _.extend({
+		wrap: true,
+		enableTime: true,
+		dateFormat: DATE_FORMAT_DISPLAY_FLATPICKR,
+		minuteIncrement: 1
+	}, opts);
+	$picker.flatpickr(opts);
+}
+
+function getDateStringFromPicker($picker) {
+	const date = $picker[0]._flatpickr.selectedDates[0];
+	return date === null || date === undefined ? null : moment(date).format(DATE_FORMAT);
+}
+
+function setDateStringForPicker($picker, date) {
+	if (date === NONE || date === null) {
+		date = null;
+	} else {
+		date = moment(date).format(DATE_FORMAT_DISPLAY);
 	}
-	this._element.trigger(e);
-};
+	$picker[0]._flatpickr.setDate(date);
+}

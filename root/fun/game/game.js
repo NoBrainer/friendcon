@@ -1,13 +1,8 @@
-const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
-const DATE_FORMAT_DISPLAY = 'MM/DD/YYYY h:mmA';
-
 const REJECTED = 'REJECTED';
 const PENDING = 'PENDING';
 const APPROVED = 'APPROVED';
 const HONORED = 'HONORED';
 const WINNER = 'WINNER';
-
-const NONE = 'NONE';
 
 let challenges = [];
 let scoreChanges = [];
@@ -21,19 +16,6 @@ function addChallenge(challenge) {
 
 function addTeam(team) {
 	teams.push(team);
-}
-
-function dateDisplayFormat(dateTime, emptyString) {
-	emptyString = emptyString || NONE;
-	return dateTime === null ? emptyString : moment(dateTime).format(DATE_FORMAT_DISPLAY);
-}
-
-function dateMillis(dateTime) {
-	return dateTime === null ? -1 : moment(dateTime).unix();
-}
-
-function datePickerValue(dateTime) {
-	return dateTime === null ? null : moment(dateTime);
 }
 
 function extractFileFromUrl(url) {
@@ -60,11 +42,6 @@ function getChallengeName(challengeIndex, defaultStr) {
 function getChallengeStartMillis(challengeIndex) {
 	const challenge = getChallenge(challengeIndex) || {startTime: null};
 	return dateMillis(challenge.startTime);
-}
-
-function getDateStringFromPicker($picker) {
-	const date = $picker.datetimepicker('date');
-	return date === null ? null : date.format(DATE_FORMAT);
 }
 
 function getDownloadLinkForUpload(upload) {
